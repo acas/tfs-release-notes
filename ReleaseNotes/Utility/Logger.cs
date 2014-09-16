@@ -107,7 +107,7 @@ namespace ReleaseNotes
                     mbi = MessageBoxIcon.Error;
                     break;
                 case Type.Information:
-                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.ForegroundColor = ConsoleColor.Cyan;
                     mbi = MessageBoxIcon.Asterisk;
                     break;
                 case Type.Warning:

@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace ReleaseNotes
 {
-    class StripHtml
+    class Utilities
     {
         /// <summary>
         /// Strips contrived HTML from a string
@@ -23,6 +23,15 @@ namespace ReleaseNotes
             if (removeWhitespace)
                 noHTML = Regex.Replace(noHTML, @"\s{2,}", " ");
             return noHTML.Trim();
+        }
+
+        /// <summary>
+        /// Gets the path the program is currently executing in
+        /// </summary>
+        /// <returns>The path (with ending slash) </returns>
+        public static string GetExecutingPath()
+        {
+            return System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase) + "/";
         }
     }
 }

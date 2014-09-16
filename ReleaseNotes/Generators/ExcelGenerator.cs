@@ -33,8 +33,8 @@ namespace ReleaseNotes
             app = new Excel.Application();
             this.silent = silent;
             app.Visible = !this.silent;
-            workbook = (Excel.Workbook) app.Workbooks.Add();
-            worksheet = (Excel.Worksheet) workbook.ActiveSheet;
+            workbook = (Excel.Workbook)app.Workbooks.Add();
+            worksheet = (Excel.Worksheet)workbook.ActiveSheet;
             worksheet.Name = worksheetName;
             this.logger = logger.setSilence(this.silent);
         }
@@ -81,20 +81,20 @@ namespace ReleaseNotes
                 // get release notes work item collection
                 WorkItemCollection c = TFSAccessor.TFSAccessorFactory().getReleaseNotesFromQuery(this.projectName, this.iterationPath);
                 if (c == null) throw new Exception("Work items could not be retrieved.");
-                
+
                 // add table information
                 int counter = 1;
                 foreach (WorkItem i in c)
                 {
                     addRow(counter.ToString(), i.Id.ToString(), i.Type.Name, i.Title.ToString(),
-                        i.AreaPath, i.IterationPath, StripHtml.StripHtmlContrived(i.Description, true));
+                        i.AreaPath, i.IterationPath, Utilities.StripHtmlContrived(i.Description, true));
                     counter++;
                 }
 
                 // set sizing and theming
                 autoSize();
                 setDefaultTheme();
-                
+
                 // done!
                 logger.setType(Logger.Type.Success)
                     .setMessage("Table generated.")
@@ -104,7 +104,7 @@ namespace ReleaseNotes
             {
                 // autosize and theme, with error message
                 addRow(e.Message);
-                
+
                 // set sizing and theming
                 autoSize();
                 setDefaultTheme();
@@ -123,7 +123,8 @@ namespace ReleaseNotes
         /// <param name="columnNames"></param>
         public void addRow(params string[] columnNames)
         {
-            for (int i = 0; i < columnNames.Count(); i++) {
+            for (int i = 0; i < columnNames.Count(); i++)
+            {
                 currentRange = getSingleCellRange(this.worksheet, i + 1, currentRow);
                 currentRange.Value = columnNames[i];
                 if (i == 0) { currentRange.EntireColumn.ColumnWidth = 24; }
@@ -143,7 +144,8 @@ namespace ReleaseNotes
         /// <summary>
         /// Autosizes the workbook
         /// </summary>
-        public void autoSize() {
+        public void autoSize()
+        {
             worksheet.UsedRange.Columns.AutoFit();
         }
 
@@ -168,7 +170,7 @@ namespace ReleaseNotes
         /// <returns></returns>
         private Excel.Range getBlockedRange(Excel.Worksheet currentSheet, char firstCol, char lastCol, int firstRow, int lastRow)
         {
-            return (Excel.Range) currentSheet.Range[firstCol.ToString() + firstRow.ToString(), lastCol.ToString() + lastRow.ToString()];
+            return (Excel.Range)currentSheet.Range[firstCol.ToString() + firstRow.ToString(), lastCol.ToString() + lastRow.ToString()];
         }
 
         /// <summary>
@@ -182,7 +184,7 @@ namespace ReleaseNotes
         /// <returns></returns>
         private Excel.Range getBlockedRange(Excel.Worksheet currentSheet, int firstCol, int lastCol, int firstRow, int lastRow)
         {
-            return (Excel.Range) currentSheet.Range[currentSheet.Cells[firstRow, firstCol], currentSheet.Cells[lastRow, lastCol]];
+            return (Excel.Range)currentSheet.Range[currentSheet.Cells[firstRow, firstCol], currentSheet.Cells[lastRow, lastCol]];
         }
 
         /// <summary>
@@ -195,7 +197,7 @@ namespace ReleaseNotes
         /// <returns></returns>
         private Excel.Range getMultiCellRange(Excel.Worksheet currentSheet, char firstCol, char lastCol, int row)
         {
-            return (Excel.Range) currentSheet.Range[firstCol.ToString() + row.ToString() + ":" + lastCol.ToString() + row.ToString(), Type.Missing];
+            return (Excel.Range)currentSheet.Range[firstCol.ToString() + row.ToString() + ":" + lastCol.ToString() + row.ToString(), Type.Missing];
         }
 
         /// <summary>
@@ -208,7 +210,7 @@ namespace ReleaseNotes
         /// <returns></returns>
         private Excel.Range getMultiCellRange(Excel.Worksheet currentSheet, int firstCol, int lastCol, int row)
         {
-            return (Excel.Range) currentSheet.Range[currentSheet.Cells[row, firstCol], currentSheet.Cells[row, lastCol]];
+            return (Excel.Range)currentSheet.Range[currentSheet.Cells[row, firstCol], currentSheet.Cells[row, lastCol]];
         }
 
         /// <summary>
@@ -220,7 +222,7 @@ namespace ReleaseNotes
         /// <returns></returns>
         private Excel.Range getSingleCellRange(Excel.Worksheet currentSheet, char col, int row)
         {
-            return (Excel.Range) currentSheet.Range[col.ToString() + row.ToString(), Type.Missing];
+            return (Excel.Range)currentSheet.Range[col.ToString() + row.ToString(), Type.Missing];
         }
 
         /// <summary>
@@ -232,7 +234,7 @@ namespace ReleaseNotes
         /// <returns></returns>
         private Excel.Range getSingleCellRange(Excel.Worksheet currentSheet, int col, int row)
         {
-            return (Excel.Range) currentSheet.Range[currentSheet.Cells[row, col], currentSheet.Cells[row, col]];
+            return (Excel.Range)currentSheet.Range[currentSheet.Cells[row, col], currentSheet.Cells[row, col]];
         }
 
         /// <summary>
@@ -240,50 +242,47 @@ namespace ReleaseNotes
         /// </summary>
         ~ExcelGenerator()
         {
-            if (app != null)
+            try
             {
                 // remove user control
                 app.UserControl = false;
 
-                try
-                {
-                    // save this workbook in the application directory
-                    workbook.SaveAs(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase)
-                            + "/" + worksheet.Name + ".xlsx",
-                        Excel.XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing,
-                        false, false, Excel.XlSaveAsAccessMode.xlNoChange,
-                        Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+                // save this workbook in the application directory
+                workbook.SaveAs(Utilities.GetExecutingPath() + worksheet.Name + ".xlsx",
+                    Excel.XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing,
+                    false, false, Excel.XlSaveAsAccessMode.xlNoChange,
+                    Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
 
-                    // quit
-                    app.Workbooks.Close();
-                    app.Quit();
+                // quit
+                app.Workbooks.Close();
+                app.Quit();
 
 
-                    // unmarshall all COM objects
-                    Marshal.ReleaseComObject(currentRange);
-                    Marshal.ReleaseComObject(worksheet);
-                    Marshal.ReleaseComObject(workbook);
-                    Marshal.ReleaseComObject(app);
+                // unmarshall all COM objects
+                Marshal.ReleaseComObject(currentRange);
+                Marshal.ReleaseComObject(worksheet);
+                Marshal.ReleaseComObject(workbook);
+                Marshal.ReleaseComObject(app);
 
-                    // set to null
-                    currentRange = null;
-                    worksheet = null;
-                    workbook = null;
-                    app = null;
-                }
-                catch (COMException e)
-                {
-                    // exception, up to system to free objects
-                    // once program is gone
-                    (new Logger())
-                        .setType(Logger.Type.Warning)
-                        .setSilence(this.silent)
-                        .setMessage(e.Message + "\n Excel may not have been freed from user control, " + 
-                                                "is waiting on user save, or cannot save (another open workbook?).")
-                        .display();   
-                }
+                // set to null
+                currentRange = null;
+                worksheet = null;
+                workbook = null;
+                app = null;
             }
-            //collect the remaining garbage
+            catch (COMException e)
+            {
+                // exception, up to system to free objects
+                // once program is gone
+                (new Logger())
+                    .setType(Logger.Type.Warning)
+                    .setSilence(this.silent)
+                    .setMessage(e.Message + "\n Excel may not have been freed from user control, " +
+                                            "is waiting on user save, or cannot save (another open workbook?).")
+                    .display();
+            }
+
+            // collect the remaining garbage
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }

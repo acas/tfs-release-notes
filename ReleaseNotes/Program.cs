@@ -17,19 +17,21 @@ namespace ReleaseNotes
                 .setMessage("Release Notes v.001")
                 .setType(Logger.Type.Message)
                 .display();
-            try {
 
-            // set vars from args (hardcoded until able to run with cmd line args)
-            string projectName = "DealSpan";
-            string iterationPath = "14.4";
-            string generatorType = "EXCEL".ToLowerInvariant();
-            string documentDescription = projectName + " " + iterationPath + " Release Notes";
+            // try to generate the notes
+            try
+            {
+                // set vars from args (hardcoded until able to run with cmd line args)
+                string projectName = "DealSpan";
+                string iterationPath = "14.4";
+                string generatorType = "WORD".ToLowerInvariant();
+                string documentDescription = projectName + " " + iterationPath + " Release Notes";
 
-            if (projectName == null || projectName == "") { throw new Exception("Project name invalid"); };
-            if (iterationPath == null || iterationPath == "") { throw new Exception("Iteration path invalid."); }
+                if (projectName == null || projectName == "") { throw new Exception("Project name invalid"); };
+                if (iterationPath == null || iterationPath == "") { throw new Exception("Iteration path invalid."); }
 
-            // create release notes generator
-            ReleaseNotesGenerator generator = null;
+                // create release notes generator
+                ReleaseNotesGenerator generator = null;
                 switch (generatorType)
                 {
                     case "excel":
