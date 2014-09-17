@@ -28,15 +28,18 @@ namespace ReleaseNotes
             // try to generate the notes
             try
             {
+                // check cmd args length
+                if (args.Length != 7) { throw new IndexOutOfRangeException("Too many/few command line arguments"); }
+
                 // set vars from args (hardcoded until able to run with cmd line args)
-                string projectName = "DealSpan";
-                string iterationPath = "14.4";
-                string generatorType = "WORD".ToLowerInvariant();
+                string projectName = args[0];
+                string iterationPath = args[1];
+                string generatorType = args[2].ToLowerInvariant();
                 string documentDescription = projectName + " " + iterationPath + " Release Notes";
-                string databaseServer = "";
-                string webServer = "";
-                string database = "";
-                string webLink = "";
+                string databaseServer = args[3];
+                string webServer = args[4];
+                string database = args[5];
+                string webLink = args[6];
 
                 if (projectName == null || projectName == "") { throw new Exception("Project name invalid."); };
                 if (iterationPath == null || iterationPath == "") { throw new Exception("Iteration path invalid."); }
