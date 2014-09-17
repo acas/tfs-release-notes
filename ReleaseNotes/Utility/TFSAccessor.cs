@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data;
 using Microsoft.TeamFoundation;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.Proxy;
@@ -59,7 +60,9 @@ namespace ReleaseNotes
             }
             catch (Exception e)
             {
-                (new Logger()).setType(Logger.Type.Error).setMessage(e.Message).display();
+                (new Logger()).setType(Logger.Type.Error)
+                    .setMessage(e.Message)
+                    .display();
                 return null;
             }
         }
@@ -80,6 +83,28 @@ namespace ReleaseNotes
                 "OR [System.WorkItemType] = 'Product Backlog Item')" +
                 "AND [System.State] IN ('Committed', 'Done')" +
                 "AND [System.IterationPath] = '" + projectName + "\\Release " + iterationNumber + "'");
+        }
+
+        /// <summary>
+        /// Gets the release notes query as a datatable (it should do it this way in the first place)
+        /// </summary>
+        /// <param name="projectName"></param>
+        /// <param name="iterationNumber"></param>
+        /// <returns>A data table of the minimal release notes data</returns>
+        public DataTable getReleaseNotesAsDataTable(string projectName, string iterationNumber)
+        {
+            DataTable releaseNotesTable = new DataTable();
+            releaseNotesTable.Columns.Add("ID", typeof(int));
+            releaseNotesTable.Columns.Add("WorkItem", typeof(string));
+            releaseNotesTable.Columns.Add("Title", typeof(string));
+            releaseNotesTable.Columns.Add("Area", typeof(string));
+            releaseNotesTable.Columns.Add("Iteration", typeof(string));
+
+            WorkItemCollection c = getReleaseNotesFromQuery(projectName, iterationNumber);
+            if (c != null)
+                foreach (WorkItem i in c)
+                    releaseNotesTable.Rows.Add(i.Id, i.Type.Name, i.Title, i.AreaPath, i.IterationPath);
+            return releaseNotesTable;
         }
 
         /// <summary>

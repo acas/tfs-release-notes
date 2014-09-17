@@ -87,7 +87,7 @@ namespace ReleaseNotes
                 foreach (WorkItem i in c)
                 {
                     addRow(counter.ToString(), i.Id.ToString(), i.Type.Name, i.Title.ToString(),
-                        i.AreaPath, i.IterationPath, Utilities.StripHtmlContrived(i.Description, true));
+                        i.AreaPath, i.IterationPath, Utilities.stripHtmlContrived(i.Description, true));
                     counter++;
                 }
 
@@ -248,7 +248,7 @@ namespace ReleaseNotes
                 app.UserControl = false;
 
                 // save this workbook in the application directory
-                workbook.SaveAs(Utilities.GetExecutingPath() + worksheet.Name + ".xlsx",
+                workbook.SaveAs(Utilities.getExecutingPath() + worksheet.Name + ".xlsx",
                     Excel.XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing,
                     false, false, Excel.XlSaveAsAccessMode.xlNoChange,
                     Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
