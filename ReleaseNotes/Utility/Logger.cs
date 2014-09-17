@@ -134,9 +134,9 @@ namespace ReleaseNotes
                 case Method.Console:
                     if (!this.silence)
                         if (this.type != Type.General)
-                            Console.WriteLine("[" + this.type.ToString() + ": " + this.logString + " @ " + DateTime.Now + " ]");
+                            Console.WriteLine(" [" + this.type.ToString() + ": " + this.logString + " @ " + DateTime.Now.ToShortTimeString() + " ]");
                         else
-                            Console.WriteLine("[ " + this.logString + " @ " + DateTime.Now + " ]");
+                            Console.WriteLine(" [ " + this.logString + " @ " + DateTime.Now + " ]");
                     break;
                 
                 case Method.MessageBox:

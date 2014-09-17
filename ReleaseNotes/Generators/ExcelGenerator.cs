@@ -32,7 +32,8 @@ namespace ReleaseNotes
         {
             app = new Excel.Application();
             this.silent = silent;
-            app.Visible = !this.silent;
+            app.Visible = false;
+            app.UserControl = false;
             workbook = (Excel.Workbook)app.Workbooks.Add();
             worksheet = (Excel.Worksheet)workbook.ActiveSheet;
             worksheet.Name = worksheetName;
@@ -71,22 +72,36 @@ namespace ReleaseNotes
         public override void generateReleaseNotes()
         {
             // create excel writer
-            logger.setMessage("Generating Excel release notes table...").setType(Logger.Type.Information).display();
+            logger.setMessage("Generating Excel release notes table.")
+                .setType(Logger.Type.Information)
+                .display();
 
+            // try to generate release notes
             try
             {
+                // connect to TFS
+                TFSAccessor t = TFSAccessor.TFSAccessorFactory();
+
+                // log generating document
+                logger.setMessage("Preparing document, please wait...")
+                    .setType(Logger.Type.Information)
+                    .display();
+
+                // set application visibility
+                app.Visible = !this.silent;
+
                 // add header row
-                addRow("#", "ID", "Work Item Type", "Title", "Area Path", "Iteration", "Description");
+                addTableRow("#", "ID", "Work Item Type", "Title", "Area Path", "Iteration", "Description");
 
                 // get release notes work item collection
-                WorkItemCollection c = TFSAccessor.TFSAccessorFactory().getReleaseNotesFromQuery(this.projectName, this.iterationPath);
+                WorkItemCollection c = t.getReleaseNotesFromQuery(this.projectName, this.iterationPath);
                 if (c == null) throw new Exception("Work items could not be retrieved.");
 
                 // add table information
                 int counter = 1;
                 foreach (WorkItem i in c)
                 {
-                    addRow(counter.ToString(), i.Id.ToString(), i.Type.Name, i.Title.ToString(),
+                    addTableRow(counter.ToString(), i.Id.ToString(), i.Type.Name, i.Title.ToString(),
                         i.AreaPath, i.IterationPath, Utilities.stripHtmlContrived(i.Description, true));
                     counter++;
                 }
@@ -103,25 +118,27 @@ namespace ReleaseNotes
             catch (Exception e)
             {
                 // autosize and theme, with error message
-                addRow(e.Message);
+                addTableRow(e.Message);
 
                 // set sizing and theming
                 autoSize();
                 setDefaultTheme();
+
+                // log error
                 logger.setType(Logger.Type.Error)
                     .setMessage("Table not generated. " + e.Message)
                     .display();
             }
 
             // give the user control
-            giveUserControl();
+            setUserControl();
         }
 
         /// <summary>
         /// Add a row to an Excel sheet
         /// </summary>
         /// <param name="columnNames"></param>
-        public void addRow(params string[] columnNames)
+        public void addTableRow(params string[] columnNames)
         {
             for (int i = 0; i < columnNames.Count(); i++)
             {
@@ -136,7 +153,7 @@ namespace ReleaseNotes
         /// <summary>
         /// Gives the user control of the workbook
         /// </summary>
-        public void giveUserControl(bool userControl = true)
+        public void setUserControl(bool userControl = true)
         {
             app.UserControl = userControl;
         }
@@ -155,7 +172,8 @@ namespace ReleaseNotes
         public void setDefaultTheme()
         {
             Excel.Range styled = worksheet.UsedRange;
-            worksheet.ListObjects.AddEx(Excel.XlListObjectSourceType.xlSrcRange, styled, Type.Missing, Excel.XlYesNoGuess.xlYes, Type.Missing).Name = "TableStyle";
+            worksheet.ListObjects.AddEx(Excel.XlListObjectSourceType.xlSrcRange, 
+                styled, Type.Missing, Excel.XlYesNoGuess.xlYes, Type.Missing).Name = "TableStyle";
             worksheet.ListObjects.Item["TableStyle"].TableStyle = "TableStyleMedium2";
         }
 
@@ -277,8 +295,8 @@ namespace ReleaseNotes
                 (new Logger())
                     .setType(Logger.Type.Warning)
                     .setSilence(this.silent)
-                    .setMessage(e.Message + "\n Excel may not have been freed from user control, " +
-                                            "is waiting on user save, or cannot save (another open workbook?).")
+                    .setMessage(e.Message + "\n Excel may not have been freed from user control, \n" +
+                                            "is waiting on user save, \nor cannot save (another open workbook?).")
                     .display();
             }
 

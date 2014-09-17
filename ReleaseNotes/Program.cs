@@ -12,11 +12,15 @@ namespace ReleaseNotes
     {
         static void Main(string[] args)
         {
+            // print the program header
+            printProgramHeader();
+
             // create logger
             Logger logger = new Logger()
-                .setMessage("Release Notes v.001")
-                .setType(Logger.Type.Message)
-                .display();
+                .setType(Logger.Type.Message);
+
+            // silent mode (server side?) is false by default
+            bool silent = false;
 
             // try to generate the notes
             try
@@ -53,15 +57,41 @@ namespace ReleaseNotes
             }
             catch (Exception e)
             {
+                // display error
                 logger
                     .setType(Logger.Type.Error)
                     .setMessage(e.Message)
                     .display();
             }
 
-            // wait for exit
-            logger.setType(Logger.Type.Message).setMessage("Press any key to exit.").display();
-            Console.ReadKey();
+            if (!silent)
+            {
+                // wait for exit
+                logger.setType(Logger.Type.General)
+                    .setMessage("Press any key to exit.")
+                    .display();
+
+                // wait for key
+                Console.ReadKey();
+            }
+        }
+
+        /// <summary>
+        /// Prints the program header
+        /// </summary>
+        static void printProgramHeader()
+        {
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.Blue;
+            Console.WriteLine(" *******************************************************");
+            Console.WriteLine(" * ACAS Release Notes                                  *");
+            Console.WriteLine(" * Author: Jon Fast                                    *");
+            Console.WriteLine(" * License: MIT                                        *");
+            Console.WriteLine(" *******************************************************");
+            Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.Black;
         }
     }
 }

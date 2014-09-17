@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Generators\ExcelGenerator.cs" />
+    <Compile Include="Generators\HTMLGenerator.cs" />
     <Compile Include="Generators\ReleaseNotesGenerator.cs" />
     <Compile Include="Resources\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

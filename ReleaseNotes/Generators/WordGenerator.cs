@@ -28,9 +28,9 @@ namespace ReleaseNotes
         {
             app = new Word.Application();
             this.silent = silent;
-            app.Visible = !this.silent;
+            app.Visible = false;
             document = app.Documents.Add(Type.Missing, Type.Missing, Word.WdNewDocumentType.wdNewBlankDocument, !this.silent);
-            document.UserControl = !this.silent;
+            document.UserControl = false;
             this.logger = logger.setSilence(this.silent);
         }
 
@@ -72,6 +72,17 @@ namespace ReleaseNotes
             // try to generate the document
             try
             {
+                // connect to TFS
+                TFSAccessor TFS = TFSAccessor.TFSAccessorFactory();
+
+                // log generating document
+                logger.setMessage("Preparing document, please wait...")
+                    .setType(Logger.Type.Information)
+                    .display();
+
+                // make visible, if applicable
+                app.Visible = !this.silent;
+
                 // set margins
                 document.PageSetup.LeftMargin = app.InchesToPoints(0.25F);
                 document.PageSetup.TopMargin = app.InchesToPoints(0.25F);
@@ -115,9 +126,6 @@ namespace ReleaseNotes
                 headerRange.Text = "APPLICATION BUILD/RELEASE NOTES\n";
                 headerRange.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
                 headerRange.Font.Bold = 1; // true
-
-                // connect to TFS
-                TFSAccessor TFS = TFSAccessor.TFSAccessorFactory();
 
                 // add another paragraph
                 Word.Paragraph programInformationParagraph = document.Paragraphs.Add();
@@ -197,13 +205,13 @@ namespace ReleaseNotes
             }
 
             // give the user control
-            giveUserControl();
+            setUserControl();
         }
 
         /// <summary>
         /// Gives the user control over the document
         /// </summary>
-        public void giveUserControl(bool userControl = true)
+        public void setUserControl(bool userControl = true)
         {
             document.UserControl = userControl;
         }
@@ -441,7 +449,7 @@ namespace ReleaseNotes
                 document.UserControl = false;
 
                 // save this document
-                document.SaveAs2(Utilities.getExecutingPath() + projectName + " " + iterationPath + " " + "Release Notes.docx", Word.WdSaveFormat.wdFormatDocument,
+                document.SaveAs2(Utilities.getExecutingPath() + projectName + " " + iterationPath + " Release Notes.docx", Word.WdSaveFormat.wdFormatDocumentDefault,
                     Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, true, true, Type.Missing, Type.Missing, Type.Missing,
                     Type.Missing, Type.Missing, Word.WdLineEndingType.wdCRLF, Type.Missing, Type.Missing);
 
@@ -464,8 +472,8 @@ namespace ReleaseNotes
                 (new Logger())
                     .setType(Logger.Type.Warning)
                     .setSilence(this.silent)
-                    .setMessage(e.Message + "\n Word may not have been freed from user control, " +
-                                            "is waiting on user save, or cannot save (another open document?).")
+                    .setMessage(e.Message + "\n Word may not have been freed from user control, \n" +
+                                            "is waiting on user save, \n or cannot save (another open document?).")
                     .display();
             }
 
