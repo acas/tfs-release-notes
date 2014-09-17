@@ -176,7 +176,7 @@ namespace ReleaseNotes
                 programServerData.Add("Database Server", this.databaseServer);
                 programServerData.Add("Database", this.database);
                 programServerData.Add("Source", Settings.Settings.Default.TFSServer
-                    + projectName + "/_versionControl\n"
+                    + projectName + "/_versionControl" + (char) 11
                     + "(Changeset: " + latestChangesetNumber.ToString() + ")");
 
                 // create application information table
@@ -293,7 +293,17 @@ namespace ReleaseNotes
                         tableCell.Range.Font.TextColor.RGB = ColorTranslator.ToOle(Color.FromArgb(0, 112, 192));
                         if (counter != tableKeys.Count())
                         {
-                            tableCell.Range.Text = tableKeyValuePairs[currentKey];
+                            if (currentKey.Equals("Source"))
+                            {
+                                tableCell.Range.Hyperlinks.Add(document.Range(tableCell.Range.Start, tableCell.Range.End), tableKeyValuePairs[currentKey], Type.Missing,
+                                    "Source Control", tableKeyValuePairs[currentKey], Type.Missing);
+                                tableCell.Range.Font.Name = "Arial";
+                                tableCell.Range.Font.Size = 8;
+                            }
+                            else
+                            {
+                                tableCell.Range.Text = tableKeyValuePairs[currentKey];
+                            }
                             counter++;
                         }
                         else
