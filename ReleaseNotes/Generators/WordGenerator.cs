@@ -135,11 +135,12 @@ namespace ReleaseNotes
                 informationTableData.Add("Application", this.projectName);
                 informationTableData.Add("Release Date", DateTime.Now.ToShortDateString());
                 informationTableData.Add("Release", this.projectName + " " + this.iterationPath);
-                informationTableData.Add("Iteration (Sprint) #", "Unavailable");
+                informationTableData.Add("Iteration (Sprint) #", this.iterationPath);
                 informationTableData.Add("Build #", "Unavailable");
 
                 // create application information table
-                Word.Table programInformationTable = createHorizontalStackedTable(programInformationParagraph.Range, 2, informationTableData, Word.WdRowAlignment.wdAlignRowCenter);
+                Word.Table programInformationTable = createHorizontalStackedTable(programInformationParagraph.Range, 2, 
+                    informationTableData, Word.WdRowAlignment.wdAlignRowCenter);
 
                 // split
                 insertTableSplit(programInformationParagraph);
@@ -147,17 +148,20 @@ namespace ReleaseNotes
                 // new heading
                 createHeading("Access", false);
                 Word.Paragraph accessParagraph = document.Paragraphs.Add();
+                
+                // add hyperlink
+                string hyperLinkText = "https://" + projectName.ToLowerInvariant() + ".americancapital.com/";
+
+                // create caption
                 string accessParagraphText = "Application is accessible at: ";
-                accessParagraph.Range.Text = Utilities.implicitMalloc(accessParagraphText, 1000);
+                accessParagraph.Range.Text = Utilities.implicitMalloc(accessParagraphText, hyperLinkText.Length);
                 
                 // several indents needed
                 for (int i = 0; i < 3; i++) { accessParagraph.Indent(); }
 
-                // add hyperlink
-                string hyperLinkText = "https://" + projectName.ToLowerInvariant() + ".americancapital.com/";
                 document.Hyperlinks.Add(document.Range(accessParagraph.Range.Start + accessParagraphText.Length, 
                     accessParagraph.Range.Start + accessParagraphText.Length + hyperLinkText.Length), 
-                    hyperLinkText, Type.Missing, "DealSpan Home", hyperLinkText, Type.Missing);
+                    hyperLinkText, Type.Missing, "DealSpan", hyperLinkText, Type.Missing);
 
                 // split
                 insertTableSplit(accessParagraph);
@@ -288,7 +292,7 @@ namespace ReleaseNotes
                     }
                     else
                     {
-                        tableCell.Range.Font.ColorIndex = Word.WdColorIndex.wdTeal;
+                        tableCell.Range.Font.TextColor.RGB = ColorTranslator.ToOle(Color.FromArgb(0, 112, 192));
                         if (counter != tableKeys.Count())
                         {
                             tableCell.Range.Text = tableKeyValuePairs[currentKey];
@@ -328,6 +332,7 @@ namespace ReleaseNotes
                 // create the entire table with styling
                 Word.Table table = document.Tables.Add(range, dt.Rows.Count + 1, dt.Columns.Count,
                     Word.WdDefaultTableBehavior.wdWord9TableBehavior, Word.WdAutoFitBehavior.wdAutoFitFixed);
+                table.Range.Cells.VerticalAlignment = Word.WdCellVerticalAlignment.wdCellAlignVerticalCenter;
                 table.Rows.Alignment = tableAlignment;
                 table.PreferredWidth = app.InchesToPoints(7.0F);
                 table.Borders.InsideLineStyle = Word.WdLineStyle.wdLineStyleNone;
@@ -341,7 +346,7 @@ namespace ReleaseNotes
                     headerRange.Bold = 1;
                     headerRange.Font.Name = "Arial";
                     headerRange.Cells.VerticalAlignment = Word.WdCellVerticalAlignment.wdCellAlignVerticalCenter;
-                    headerRange.Rows.Height = 18;
+                    headerRange.Rows.Height = 24;
                     headerRange.Font.ColorIndex = Word.WdColorIndex.wdWhite;
                     headerRange.Shading.BackgroundPatternColor = (Word.WdColor) ColorTranslator.ToOle(Color.FromArgb(23, 64, 109));
                     for (int i = 0; i < dt.Columns.Count; i++)
@@ -358,6 +363,7 @@ namespace ReleaseNotes
                 {
                     // apply data styling
                     Word.Range rowRange = table.Rows[counter].Range;
+                    table.Rows[counter].Height = 24;
                     rowRange.Bold = 0;
                     rowRange.Font.Name = "Arial";
                     rowRange.Font.Size = 8;
@@ -367,7 +373,7 @@ namespace ReleaseNotes
                     if (counter % 2 == 0)
                         rowRange.Shading.BackgroundPatternColor = (Word.WdColor) ColorTranslator.ToOle(Color.WhiteSmoke);
                     else
-                        rowRange.Shading.BackgroundPatternColor = (Word.WdColor) ColorTranslator.ToOle(Color.LightBlue);
+                        rowRange.Shading.BackgroundPatternColor = (Word.WdColor)ColorTranslator.ToOle(Color.FromArgb(220, 233, 238));
 
                     // get all field values and apply to the data table
                     for (int i = 0; i < dt.Columns.Count; i++)
