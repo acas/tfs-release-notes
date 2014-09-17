@@ -148,20 +148,17 @@ namespace ReleaseNotes
                 // new heading
                 createHeading("Access", false);
                 Word.Paragraph accessParagraph = document.Paragraphs.Add();
-                
-                // add hyperlink
-                string hyperLinkText = "https://" + projectName.ToLowerInvariant() + ".americancapital.com/";
 
                 // create caption
                 string accessParagraphText = "Application is accessible at: ";
-                accessParagraph.Range.Text = Utilities.implicitMalloc(accessParagraphText, hyperLinkText.Length);
+                accessParagraph.Range.Text = Utilities.implicitMalloc(accessParagraphText, webLink.Length);
                 
                 // several indents needed
                 for (int i = 0; i < 3; i++) { accessParagraph.Indent(); }
 
                 document.Hyperlinks.Add(document.Range(accessParagraph.Range.Start + accessParagraphText.Length, 
-                    accessParagraph.Range.Start + accessParagraphText.Length + hyperLinkText.Length), 
-                    hyperLinkText, Type.Missing, "DealSpan", hyperLinkText, Type.Missing);
+                    accessParagraph.Range.Start + accessParagraphText.Length + webLink.Length), 
+                    webLink, Type.Missing, projectName, webLink, Type.Missing);
 
                 // split
                 insertTableSplit(accessParagraph);
@@ -174,9 +171,9 @@ namespace ReleaseNotes
 
                 // aggregate information
                 Dictionary<string, string> programServerData = new Dictionary<string, string>();
-                programServerData.Add("Web Server", "pro00websv01.acas.corp.americancapital.com");
-                programServerData.Add("Database Server", "SQLNONFinancialCluster02.americancapital.com");
-                programServerData.Add("Database", projectName);
+                programServerData.Add("Web Server", this.webServer);
+                programServerData.Add("Database Server", this.databaseServer);
+                programServerData.Add("Database", this.database);
                 programServerData.Add("Source", Settings.Settings.Default.TFSServer
                     + projectName + "/_versionControl\n"
                     + "(Changeset: " + "Unavailable" + ")");
@@ -192,7 +189,7 @@ namespace ReleaseNotes
                 createHeading("Included Requirements");
 
                 // get release notes work item data table
-                DataTable workItemsDataTable = TFS.getReleaseNotesAsDataTable(this.projectName, this.iterationPath);
+                DataTable workItemsDataTable = TFS.getReleaseNotesAsDataTable(projectName, iterationPath);
                 if (workItemsDataTable == null) throw new Exception("Work items table could not be retrieved.");
 
                 // add another paragraph
