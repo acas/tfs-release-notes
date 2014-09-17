@@ -11,6 +11,7 @@ using Microsoft.TeamFoundation.Framework.Client;
 using Microsoft.TeamFoundation.VersionControl.Client;
 using Microsoft.TeamFoundation.Server;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
+using Microsoft.TeamFoundation.Build.Client;
 
 namespace ReleaseNotes
 {
@@ -75,6 +76,10 @@ namespace ReleaseNotes
         /// <returns>Release notes work item collection</returns>
         public WorkItemCollection getReleaseNotesFromQuery(string projectName, string iterationNumber)
         {
+            (new Logger())
+                .setMessage("Querying work items.")
+                .setType(Logger.Type.Information)
+                .display();
             return getWorkItemsFromQuery("SELECT [System.ID], [System.Title], [System.AreaPath], [System.IterationPath], [System.Description] " +
                 "FROM workitems " +
                 "WHERE [System.TeamProject] = '" + projectName + "' " +
@@ -108,13 +113,54 @@ namespace ReleaseNotes
         }
 
         /// <summary>
+        /// Gets the latest changeset for this project
+        /// </summary>
+        /// <param name="projectName"></param>
+        /// <param name="iterationNumber"></param>
+        /// <returns></returns>
+        public int getLatestChangesetNumber(string projectName)
+        {
+            (new Logger())
+                .setMessage("Querying changeset numbers.")
+                .setType(Logger.Type.Information)
+                .display();
+            VersionControlServer versionControlServer = this.projectCollection.GetService<VersionControlServer>();
+            var teamProjectServerPath = versionControlServer.GetTeamProject(projectName).ServerItem;
+            var latestChangesetQuery = versionControlServer.QueryHistory(new QueryHistoryParameters(new ItemSpec(teamProjectServerPath, RecursionType.Full, 0)));
+            var latestChangesets = latestChangesetQuery.Cast<Changeset>();
+            return latestChangesets.First().ChangesetId;
+        }
+
+        /// <summary>
+        /// Gets the latest build number
+        /// </summary>
+        /// <param name="projectName"></param>
+        /// <returns></returns>
+        public string getLatestBuildNumber(string projectName)
+        {
+            (new Logger())
+                .setMessage("Querying build definitions.")
+                .setType(Logger.Type.Information)
+                .display();
+            IBuildServer buildServer = this.projectCollection.GetService<IBuildServer>();
+            IBuildDetailSpec buildSpec = buildServer.CreateBuildDetailSpec(projectName);
+            buildSpec.MaxBuildsPerDefinition = 1;
+            buildSpec.QueryOrder = BuildQueryOrder.FinishTimeDescending;
+            IBuildQueryResult query = buildServer.QueryBuilds(buildSpec);
+            IBuildDetail detail = query.Builds[0];
+            return detail.BuildNumber;
+        }
+
+        /// <summary>
         /// Factory pattern interface for creating a TfsAccessor.
         /// Catches errors relates to creating the interface (ie. authentication issues)
         /// </summary>
         /// <returns>A TfsAccessor</returns>
         public static TFSAccessor TFSAccessorFactory()
         {
-            Logger errorLogger = new Logger().setMessage("Connected to TFS").setType(Logger.Type.Information);
+            var errorLogger = (new Logger())
+                .setMessage("Connected to TFS")
+                .setType(Logger.Type.Information);
             try
             {
                 TFSAccessor a = new TFSAccessor(Settings.Settings.Default.TFSServer);

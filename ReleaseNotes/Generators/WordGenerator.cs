@@ -136,7 +136,7 @@ namespace ReleaseNotes
                 informationTableData.Add("Release Date", DateTime.Now.ToShortDateString());
                 informationTableData.Add("Release", this.projectName + " " + this.iterationPath);
                 informationTableData.Add("Iteration (Sprint) #", this.iterationPath);
-                informationTableData.Add("Build #", "Unavailable");
+                informationTableData.Add("Build #", TFS.getLatestBuildNumber(this.projectName));
 
                 // create application information table
                 Word.Table programInformationTable = createHorizontalStackedTable(programInformationParagraph.Range, 2, 
@@ -170,13 +170,14 @@ namespace ReleaseNotes
                 Word.Paragraph programServerParagraph = document.Paragraphs.Add();
 
                 // aggregate information
+                int latestChangesetNumber = TFS.getLatestChangesetNumber(this.projectName);
                 Dictionary<string, string> programServerData = new Dictionary<string, string>();
                 programServerData.Add("Web Server", this.webServer);
                 programServerData.Add("Database Server", this.databaseServer);
                 programServerData.Add("Database", this.database);
                 programServerData.Add("Source", Settings.Settings.Default.TFSServer
                     + projectName + "/_versionControl\n"
-                    + "(Changeset: " + "Unavailable" + ")");
+                    + "(Changeset: " + latestChangesetNumber.ToString() + ")");
 
                 // create application information table
                 Word.Table programServerTable = createHorizontalStackedTable(programServerParagraph.Range, 1, 
