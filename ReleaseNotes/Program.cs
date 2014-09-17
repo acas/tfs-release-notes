@@ -12,15 +12,18 @@ namespace ReleaseNotes
     {
         static void Main(string[] args)
         {
-            // print the program header
-            printProgramHeader();
+            // silent mode (server side?) is false by default
+            bool silent = false;
+            
+            if (!silent)
+            {
+                // print the program header
+                printProgramHeader();
+            }
 
             // create logger
             Logger logger = new Logger()
                 .setType(Logger.Type.Message);
-
-            // silent mode (server side?) is false by default
-            bool silent = false;
 
             // try to generate the notes
             try
@@ -30,9 +33,17 @@ namespace ReleaseNotes
                 string iterationPath = "14.4";
                 string generatorType = "WORD".ToLowerInvariant();
                 string documentDescription = projectName + " " + iterationPath + " Release Notes";
+                string databaseServer = "";
+                string webServer = "";
+                string database = "";
+                string webLink = "";
 
-                if (projectName == null || projectName == "") { throw new Exception("Project name invalid"); };
+                if (projectName == null || projectName == "") { throw new Exception("Project name invalid."); };
                 if (iterationPath == null || iterationPath == "") { throw new Exception("Iteration path invalid."); }
+                if (databaseServer == null || databaseServer == "") { throw new Exception("Database server name invalid."); }
+                if (webServer == null || webServer == "") { throw new Exception("Web server nmame invalid."); }
+                if (database == null || database == "") { throw new Exception("Database invalid"); }
+                if (webLink == null || webLink == "") { throw new Exception("Web link invalid"); }
 
                 // create release notes generator
                 ReleaseNotesGenerator generator = null;
@@ -47,12 +58,16 @@ namespace ReleaseNotes
                     case "html":
                         throw new NotImplementedException("Not implemented generator type");
                     default:
-                        throw new NotImplementedException("Invalid generator type specified");
+                        throw new Exception("Invalid generator type specified");
                 }
 
                 // set relevant vars and generate
                 generator.setProjectName(projectName);
                 generator.setIterationPath(iterationPath);
+                generator.setDatabase(database);
+                generator.setDatabaseServer(databaseServer);
+                generator.setWebServer(webServer);
+                generator.setProjectWebLink(webLink);
                 generator.generateReleaseNotes();
             }
             catch (Exception e)
