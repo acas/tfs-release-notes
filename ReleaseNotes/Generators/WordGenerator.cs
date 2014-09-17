@@ -378,7 +378,18 @@ namespace ReleaseNotes
                     // get all field values and apply to the data table
                     for (int i = 0; i < dt.Columns.Count; i++)
                     {
-                        rowRange.Cells[i + 1].Range.Text = row[i].ToString();
+                        if (dt.Columns[i].ColumnName == "ID")
+                        {
+                            string hyperlinkText = Settings.Settings.Default.TFSServer + projectName + "/_workitems#_a=edit&id=" + row[i].ToString() + "&triage=true";
+                            rowRange.Cells[i + 1].Range.Text = Utilities.implicitMalloc(row[i].ToString(), 6);
+                            rowRange.Cells[i + 1].Range.Bold = 1;
+                            rowRange.Cells[i + 1].Range.Hyperlinks.Add(document.Range(rowRange.Cells[i+1].Range.Start, rowRange.Cells[i+1].Range.End), 
+                                hyperlinkText, Type.Missing, "Work Item", row[i].ToString(), Type.Missing);
+                        }
+                        else
+                        {
+                            rowRange.Cells[i + 1].Range.Text = row[i].ToString();
+                        }
                     }
                     counter++;
                 }
