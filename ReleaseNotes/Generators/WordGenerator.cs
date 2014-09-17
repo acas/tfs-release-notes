@@ -147,10 +147,17 @@ namespace ReleaseNotes
                 // new heading
                 createHeading("Access", false);
                 Word.Paragraph accessParagraph = document.Paragraphs.Add();
-                accessParagraph.Range.Text = "Application is accessible at: https://" + projectName.ToLowerInvariant() + ".americancapital.com/";
-
+                string accessParagraphText = "Application is accessible at: ";
+                accessParagraph.Range.Text = Utilities.implicitMalloc(accessParagraphText, 1000);
+                
                 // several indents needed
                 for (int i = 0; i < 3; i++) { accessParagraph.Indent(); }
+
+                // add hyperlink
+                string hyperLinkText = "https://" + projectName.ToLowerInvariant() + ".americancapital.com/";
+                document.Hyperlinks.Add(document.Range(accessParagraph.Range.Start + accessParagraphText.Length, 
+                    accessParagraph.Range.Start + accessParagraphText.Length + hyperLinkText.Length), 
+                    hyperLinkText, Type.Missing, "DealSpan Home", hyperLinkText, Type.Missing);
 
                 // split
                 insertTableSplit(accessParagraph);

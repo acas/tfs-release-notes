@@ -65,5 +65,17 @@ namespace ReleaseNotes
                     (char.IsLower(name[i - 1]) || 
                     (i < name.Count() - 1 && char.IsLower(name[i + 1])))) ? " " + x : x.ToString()));
         }
+
+        /// <summary>
+        /// Implicitly mallocs a fixed size for a hyperlink, to be calculated
+        /// </summary>
+        /// <param name="existingBuffer"></param>
+        /// <param name="sizeofRemaining"></param>
+        /// <returns>A string with right padding given a particular size</returns>
+        public static string implicitMalloc(string existingBuffer, int sizeofRemaining)
+        {
+            for (int i = 0; i < sizeofRemaining; i++) { existingBuffer += " "; }
+            return existingBuffer;
+        }
     }
 }
