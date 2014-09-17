@@ -473,7 +473,8 @@ namespace ReleaseNotes
                 document.UserControl = false;
 
                 // save this document
-                document.SaveAs2(Utilities.getExecutingPath() + projectName + " " + iterationPath + " Release Notes.docx", Word.WdSaveFormat.wdFormatDocumentDefault,
+                document.SaveAs2(Utilities.getExecutingPath() + projectName + " " + iterationPath 
+                    + " Release Notes.docx", Word.WdSaveFormat.wdFormatDocumentDefault,
                     Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, true, true, Type.Missing, Type.Missing, Type.Missing,
                     Type.Missing, Type.Missing, Word.WdLineEndingType.wdCRLF, Type.Missing, Type.Missing);
 
