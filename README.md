@@ -1,4 +1,6 @@
 tfs-release-notes
 =================
 
-Generates release notes out of TFS
+Generates customizeable release notes for a project hosted on Team Foundation Server with Word and Excel.
+
+
