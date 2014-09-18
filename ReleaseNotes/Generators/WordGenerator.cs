@@ -116,33 +116,13 @@ namespace ReleaseNotes
                 ACASLogo.ScaleWidth = 55.0F;
 
                 // create heading
-                createSimpleText(settings["Doc Type"]);
+                createBlockHeader(settings["Doc Type"]);
                
                 // create horizontal table paragraph
                 createHorizontalTableParagraph(getDefaultExecutiveSummary(), 2, false);
 
-                #region Access Section
-
-                // new heading
-                createHeading("Access", false);
-                Word.Paragraph accessParagraph = document.Paragraphs.Add();
-
-                // create caption
-                string accessParagraphText = "Application is accessible at: ";
-                string webLink = settings["Web Location"];
-                accessParagraph.Range.Text = Utilities.implicitMalloc(accessParagraphText, webLink.Length);
-                
-                // several indents needed
-                for (int i = 0; i < 3; i++) { accessParagraph.Indent(); }
-
-                document.Hyperlinks.Add(document.Range(accessParagraph.Range.Start + accessParagraphText.Length, 
-                    accessParagraph.Range.Start + accessParagraphText.Length + webLink.Length), 
-                    webLink, Type.Missing, settings["Project Name"], webLink, Type.Missing);
-
-                // split
-                insertTableSplit(accessParagraph);
-
-                #endregion
+                // create access section
+                createKeyValueHyperlinkSection("Access", "Application is accessible at: ", settings["Web Location"]);
 
                 // create the details section
                 createHorizontalTableParagraph(getDefaultDetails(), 1, true);
@@ -186,7 +166,7 @@ namespace ReleaseNotes
             document.UserControl = userControl;
         }
 
-        private void createSimpleText(string text)
+        private void createBlockHeader(string text)
         {
             // get range of the first paragraph
             Word.Paragraph titleParagraph = document.Paragraphs.Add();
@@ -198,6 +178,34 @@ namespace ReleaseNotes
             headerRange.Text = text;
             headerRange.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
             headerRange.Font.Bold = 1;
+        }
+
+        /// <summary>
+        /// Create key value hyperlink section
+        /// </summary>
+        /// <param name="headername"></param>
+        /// <param name="text"></param>
+        /// <param name="hyperlink"></param>
+        private void createKeyValueHyperlinkSection(string headername, string text, string hyperlink)
+        {
+            // new heading
+            createHeading(headername, false);
+            Word.Paragraph accessParagraph = document.Paragraphs.Add();
+
+            // create caption
+            string accessParagraphText = text;
+            string webLink = hyperlink;
+            accessParagraph.Range.Text = Utilities.implicitMalloc(accessParagraphText, webLink.Length);
+
+            // several indents needed
+            for (int i = 0; i < 3; i++) { accessParagraph.Indent(); }
+
+            document.Hyperlinks.Add(document.Range(accessParagraph.Range.Start + accessParagraphText.Length,
+                accessParagraph.Range.Start + accessParagraphText.Length + webLink.Length),
+                webLink, Type.Missing, settings["Project Name"], webLink, Type.Missing);
+
+            // split
+            insertTableSplit(accessParagraph);
         }
 
         // utility methods

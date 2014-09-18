@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
+using System.Data;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 
 namespace ReleaseNotes
@@ -84,25 +85,12 @@ namespace ReleaseNotes
                 // set application visibility
                 app.Visible = !this.silent;
 
-                // add header row
-                addTableRow("#", "ID", "Work Item Type", "Title", "Area Path", "Iteration", "Description");
-
                 // get release notes work item collection
-                WorkItemCollection c = TFS.getReleaseNotesFromQuery();
-                if (c == null) throw new Exception("Work items could not be retrieved.");
+                DataTable d = TFS.getReleaseNotesAsDataTable();
+                if (d == null) throw new Exception("Work items could not be retrieved.");
 
-                // add table information
-                int counter = 1;
-                foreach (WorkItem i in c)
-                {
-                    addTableRow(counter.ToString(), i.Id.ToString(), i.Type.Name, i.Title.ToString(),
-                        i.AreaPath, i.IterationPath, Utilities.stripHtmlContrived(i.Description, true));
-                    counter++;
-                }
-
-                // set sizing and theming
-                autoSize();
-                setDefaultTheme();
+                // create the table
+                createVerticalTable(d);
 
                 // done!
                 logger.setType(Logger.Type.Success)
@@ -112,7 +100,7 @@ namespace ReleaseNotes
             catch (Exception e)
             {
                 // autosize and theme, with error message
-                addTableRow(e.Message);
+                addVerticalTableRow(new string[] { e.Message });
 
                 // set sizing and theming
                 autoSize();
@@ -131,17 +119,44 @@ namespace ReleaseNotes
         /// <summary>
         /// Add a row to an Excel sheet
         /// </summary>
-        /// <param name="columnNames"></param>
-        public void addTableRow(params string[] columnNames)
+        /// <param name="columnValues"></param>
+        public void addVerticalTableRow(string[] columnValues)
         {
-            for (int i = 0; i < columnNames.Count(); i++)
+            for (int i = 0; i < columnValues.Count(); i++)
             {
                 currentRange = getSingleCellRange(this.worksheet, i + 1, currentRow);
-                currentRange.Value = columnNames[i];
+                currentRange.Value = columnValues[i];
                 if (i == 0) { currentRange.EntireColumn.ColumnWidth = 24; }
             }
             currentRange.EntireRow.RowHeight = 24;
             this.currentRow++;
+        }
+
+        /// <summary>
+        /// Creates a vertical style table
+        /// </summary>
+        /// <param name="dataTable"></param>
+        public void createVerticalTable(DataTable dataTable)
+        {
+            // add header row
+            addVerticalTableRow(Utilities.tableColumnsToStringArray(dataTable));
+
+            // add table information
+            foreach (DataRow row in dataTable.Rows)
+                addVerticalTableRow(Utilities.tableRowToStringArray(row));
+
+            // set sizing and theming
+            autoSize();
+            setDefaultTheme();
+        }
+
+        /// <summary>
+        /// Creates a horizontal table from a named lookup
+        /// </summary>
+        /// <param name="nl"></param>
+        public void createHorizontalStackedTable(NamedLookup nl)
+        {
+
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -76,6 +77,33 @@ namespace ReleaseNotes
         {
             for (int i = 0; i < sizeofRemaining; i++) { existingBuffer += " "; }
             return existingBuffer;
+        }
+
+        /// <summary>
+        /// Data table columns to string array
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <returns></returns>
+        public static string[] tableColumnsToStringArray(DataTable dt)
+        {
+            List<String> tableColumns = new List<String>();
+            foreach (DataColumn dc in dt.Columns)
+                tableColumns.Add(dc.ColumnName);
+            return tableColumns.ToArray<string>();
+        }
+
+        /// <summary>
+        /// Turns a data row into an array of string
+        /// </summary>
+        /// <param name="dr"></param>
+        /// <returns></returns>
+        public static string[] tableRowToStringArray(DataRow dr)
+        {
+            List<string> tableRows = new List<string>();
+            string[] tableColumns = tableColumnsToStringArray(dr.Table);
+            foreach (string columnName in tableColumns)
+                tableRows.Add(dr[columnName].ToString());
+            return tableRows.ToArray<String>();
         }
     }
 }
