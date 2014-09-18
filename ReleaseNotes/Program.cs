@@ -28,35 +28,32 @@ namespace ReleaseNotes
             // try to generate the notes
             try
             {
+                // create release notes generator
+                IReleaseNotesGenerator generator = null;
+
                 // check cmd args length
-                if (args.Length != 7) { throw new IndexOutOfRangeException("Too many/few command line arguments"); }
+                if (args.Length != 8) { throw new IndexOutOfRangeException("Too many/few command line arguments"); }
 
                 // set vars from args (hardcoded until able to run with cmd line args)
-                string projectName = args[0];
-                string iterationPath = args[1];
-                string generatorType = args[2].ToLowerInvariant();
-                string documentDescription = projectName + " " + iterationPath + " Release Notes";
-                string databaseServer = args[3];
-                string webServer = args[4];
-                string database = args[5];
-                string webLink = args[6];
+                string generatorType = args[3].ToLowerInvariant();
 
-                if (projectName == null || projectName == "") { throw new Exception("Project name invalid."); };
-                if (iterationPath == null || iterationPath == "") { throw new Exception("Iteration path invalid."); }
-                if (databaseServer == null || databaseServer == "") { throw new Exception("Database server name invalid."); }
-                if (webServer == null || webServer == "") { throw new Exception("Web server nmame invalid."); }
-                if (database == null || database == "") { throw new Exception("Database invalid"); }
-                if (webLink == null || webLink == "") { throw new Exception("Web link invalid"); }
+                var settings = new BaseReleaseNotesGenerator.NamedLookup("Settings");
+                settings["Team Project Path"] = args[0];
+                settings["Project Name"] = args[1];
+                settings["Iteration"] = args[2];
+                settings["Database"] = args[6];
+                settings["Database Server"] = args[4];
+                settings["Web Server"] = args[5];
+                settings["Doc Type"] = "APPLICATION BUILD/RELEASE NOTES\n";
+                settings["Web Location"] = args[7];
 
-                // create release notes generator
-                ReleaseNotesGenerator generator = null;
                 switch (generatorType)
                 {
                     case "excel":
-                        generator = ExcelGenerator.ExcelGeneratorFactory(documentDescription);
+                        generator = ExcelGenerator.ExcelGeneratorFactory(settings);
                         break;
                     case "word":
-                        generator = WordGenerator.WordGeneratorFactory(documentDescription);
+                        generator = WordGenerator.WordGeneratorFactory(settings);
                         break;
                     case "html":
                         throw new NotImplementedException("Not implemented generator type");
@@ -64,13 +61,7 @@ namespace ReleaseNotes
                         throw new Exception("Invalid generator type specified");
                 }
 
-                // set relevant vars and generate
-                generator.setProjectName(projectName);
-                generator.setIterationPath(iterationPath);
-                generator.setDatabase(database);
-                generator.setDatabaseServer(databaseServer);
-                generator.setWebServer(webServer);
-                generator.setProjectWebLink(webLink);
+                // generate
                 generator.generateReleaseNotes();
             }
             catch (Exception e)

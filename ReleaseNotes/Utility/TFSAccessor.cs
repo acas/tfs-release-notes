@@ -156,14 +156,14 @@ namespace ReleaseNotes
         /// Catches errors relates to creating the interface (ie. authentication issues)
         /// </summary>
         /// <returns>A TfsAccessor</returns>
-        public static TFSAccessor TFSAccessorFactory()
+        public static TFSAccessor TFSAccessorFactory(string serverTeamProjectUrl)
         {
             var errorLogger = (new Logger())
                 .setMessage("Connected to TFS")
                 .setType(Logger.Type.Information);
             try
             {
-                TFSAccessor a = new TFSAccessor(Settings.Settings.Default.TFSServer);
+                TFSAccessor a = new TFSAccessor(serverTeamProjectUrl);
                 if (a != null)
                     errorLogger.display();
                 return a;

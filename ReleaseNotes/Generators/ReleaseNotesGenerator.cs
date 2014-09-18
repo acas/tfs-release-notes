@@ -6,93 +6,108 @@ using System.Threading.Tasks;
 
 namespace ReleaseNotes
 {
-    abstract class ReleaseNotesGenerator
+    interface IReleaseNotesGenerator
     {
+        void generateReleaseNotes();
+    }
+
+    class BaseReleaseNotesGenerator
+    {
+        public struct NamedLookup
+        {
+            private string name;
+            private Dictionary<string, string> lookup;
+            
+            public NamedLookup(string name) {
+                this.name = name;
+                this.lookup = new Dictionary<string, string>();
+            }
+
+            public NamedLookup(string name, Dictionary<string, string> predefinedLookup)
+            {
+                this.name = name;
+                this.lookup = predefinedLookup;
+            }
+
+            public string getName()
+            {
+                return this.name;
+            }
+
+            public string this[string name] 
+            {
+                get { return this.lookup[name]; }
+                set
+                {
+                    if (name != null && value != null)
+                        lookup[name] =  value.ToString();
+                }
+            }
+
+            public void removeProperty(string name)
+            {
+                lookup.Remove(name);
+            }
+
+            public Dictionary<string, string> getLookup() {
+                return this.lookup;
+            }
+        }
+
         protected bool silent;
         protected Logger logger;
-        protected string projectName = "";
-        protected string iterationPath = "";
-        protected string webServer = "";
-        protected string databaseServer = "";
-        protected string database = "";
-        protected string webLink = "";
+        protected TFSAccessor TFS;
+        private List<NamedLookup> propertiesList = new List<NamedLookup>();
+        protected NamedLookup settings;
 
-        /// <summary>
-        /// Generates the release notes for the specified application
-        /// and iteration path
-        /// </summary>
-        public abstract void generateReleaseNotes();
-
-        /// <summary>
-        /// Gets the project name
-        /// </summary>
-        /// <returns></returns>
-        public string getProjectName()
+        public BaseReleaseNotesGenerator(NamedLookup settings)
         {
-            return this.projectName;
+            this.settings = settings;
+            this.TFS = TFSAccessor.TFSAccessorFactory(settings["Team Project Path"]);
+            this.logger = new Logger();
+            this.silent = false;
         }
 
-        /// <summary>
-        /// Sets the project name
-        /// </summary>
-        /// <param name="projectName"></param>
-        public void setProjectName(string projectName)
+        public void addPropertiesList(string name, Dictionary<string, string> lookup)
         {
-            this.projectName = projectName;
+            if (lookup != null && name != null)
+                propertiesList.Add(new NamedLookup(name));
         }
 
-        /// <summary>
-        /// Gets the iteration path
-        /// </summary>
-        /// <returns></returns>
-        public string getIterationPath()
+        public void removePropertiesList(int index)
         {
-            return this.iterationPath;
+            propertiesList.RemoveAt(index);
         }
 
-        /// <summary>
-        /// Sets the iteration path
-        /// </summary>
-        /// <param name="iterationPath"></param>
-        public void setIterationPath(string iterationPath)
+        public void removePropertiesList(string name)
         {
-            this.iterationPath = iterationPath;
+            propertiesList = propertiesList.Where(a => !a.getName().Equals(name)).ToList();
         }
 
-        /// <summary>
-        /// Sets the database server
-        /// </summary>
-        /// <param name="databaseServer"></param>
-        public void setDatabaseServer(string databaseServer)
+        public List<NamedLookup> getPropertiesList()
         {
-            this.databaseServer = databaseServer;
+            return this.propertiesList;
         }
 
-        /// <summary>
-        /// Sets the web server
-        /// </summary>
-        /// <param name="webServer"></param>
-        public void setWebServer(string webServer)
+        public NamedLookup getDefaultExecutiveSummary()
         {
-            this.webServer = webServer;
+            NamedLookup executiveSummary = new NamedLookup("Executive Summary");
+            executiveSummary["Application"] = settings["Project Name"];
+            executiveSummary["Release Date"] = DateTime.Now.ToShortDateString();
+            executiveSummary["Release"] = settings["Project Name"] + " " + settings["Iteration"];
+            executiveSummary["Iteration (Sprint) #"] = settings["Iteration"];
+            executiveSummary["Build #"] = "0";
+            return executiveSummary;
         }
 
-        /// <summary>
-        /// Sets the database name
-        /// </summary>
-        /// <param name="database"></param>
-        public void setDatabase(string database)
+        public NamedLookup getDefaultDetails()
         {
-            this.database = database;
-        }
-
-        /// <summary>
-        /// Project web link
-        /// </summary>
-        /// <param name="link"></param>
-        public void setProjectWebLink(string webLink)
-        {
-            this.webLink = webLink;
+            NamedLookup sourceServerInformation = new NamedLookup("Details");
+            sourceServerInformation["Web Server"] = settings["Web Server"];
+            sourceServerInformation["Database Server"] = settings["Database Server"];
+            sourceServerInformation["Database"] = settings["Database"];
+            sourceServerInformation["Source"] = "IDK";
+            return sourceServerInformation;
         }
     }
 }

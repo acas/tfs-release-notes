@@ -13,7 +13,7 @@ using System.Threading;
 
 namespace ReleaseNotes
 {
-    class WordGenerator : ReleaseNotesGenerator
+    class WordGenerator : BaseReleaseNotesGenerator, IReleaseNotesGenerator
     {
         private Word.Application app;
         private Word.Document document;
@@ -24,14 +24,12 @@ namespace ReleaseNotes
         /// <param name="documentName"></param>
         /// <param name="silent"></param>
         /// <param name="logger"></param>
-        private WordGenerator(string documentName, bool silent, Logger logger)
+        private WordGenerator(NamedLookup settings) : base(settings)
         {
             app = new Word.Application();
-            this.silent = silent;
             app.Visible = false;
             document = app.Documents.Add(Type.Missing, Type.Missing, Word.WdNewDocumentType.wdNewBlankDocument, !this.silent);
             document.UserControl = false;
-            this.logger = logger.setSilence(this.silent);
         }
 
         /// <summary>
@@ -42,17 +40,15 @@ namespace ReleaseNotes
         /// <param name="silent"></param>
         /// <param name="logger"></param>
         /// <returns></returns>
-        public static WordGenerator WordGeneratorFactory(string documentName = "Unknown", bool silent = false, Logger logger = null)
+        public static WordGenerator WordGeneratorFactory(NamedLookup settings)
         {
             try
             {
-                if (logger == null) logger = new Logger();
-                return new WordGenerator(documentName, silent, logger);
+                return new WordGenerator(settings);
             }
             catch (COMException e)
             {
                 (new Logger())
-                    .setSilence(silent)
                     .setType(Logger.Type.Error)
                     .setMessage(e.Message).display();
                 return null;
@@ -62,8 +58,14 @@ namespace ReleaseNotes
         /// <summary>
         /// Documented in super
         /// </summary>
-        public override void generateReleaseNotes()
+        public void generateReleaseNotes()
         {
+            // good for iterating through multiple KV lists
+            // to generate several tables at once...
+            // going to need to abstract into a union type for both
+            // horizontally and vertically keyed tables
+            List<NamedLookup> sections = getPropertiesList();
+
             // create excel writer
             logger.setMessage("Generating Word release notes document.")
                 .setType(Logger.Type.Information)
@@ -72,9 +74,6 @@ namespace ReleaseNotes
             // try to generate the document
             try
             {
-                // connect to TFS
-                TFSAccessor TFS = TFSAccessor.TFSAccessorFactory();
-
                 // log generating document
                 logger.setMessage("Preparing document, please wait...")
                     .setType(Logger.Type.Information)
@@ -116,34 +115,13 @@ namespace ReleaseNotes
                 ACASLogo.ScaleHeight = 55.0F;
                 ACASLogo.ScaleWidth = 55.0F;
 
-                // get range of the first paragraph
-                Word.Paragraph titleParagraph = document.Paragraphs.Add();
-                Word.Range headerRange = titleParagraph.Range;
+                // create heading
+                createSimpleText(settings["Doc Type"]);
+               
+                // create horizontal table paragraph
+                createHorizontalTableParagraph(getDefaultExecutiveSummary(), 2, false);
 
-                // create the document title
-                headerRange.Font.Name = "Times New Roman";
-                headerRange.Font.Size = 12;
-                headerRange.Text = "APPLICATION BUILD/RELEASE NOTES\n";
-                headerRange.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                headerRange.Font.Bold = 1; // true
-
-                // add another paragraph
-                Word.Paragraph programInformationParagraph = document.Paragraphs.Add();
-
-                // aggregate information
-                Dictionary<string, string> informationTableData = new Dictionary<string, string>();
-                informationTableData.Add("Application", this.projectName);
-                informationTableData.Add("Release Date", DateTime.Now.ToShortDateString());
-                informationTableData.Add("Release", this.projectName + " " + this.iterationPath);
-                informationTableData.Add("Iteration (Sprint) #", this.iterationPath);
-                informationTableData.Add("Build #", TFS.getLatestBuildNumber(this.projectName));
-
-                // create application information table
-                Word.Table programInformationTable = createHorizontalStackedTable(programInformationParagraph.Range, 2, 
-                    informationTableData, Word.WdRowAlignment.wdAlignRowCenter);
-
-                // split
-                insertTableSplit(programInformationParagraph);
+                #region Access Section
 
                 // new heading
                 createHeading("Access", false);
@@ -151,6 +129,7 @@ namespace ReleaseNotes
 
                 // create caption
                 string accessParagraphText = "Application is accessible at: ";
+                string webLink = settings["Web Location"];
                 accessParagraph.Range.Text = Utilities.implicitMalloc(accessParagraphText, webLink.Length);
                 
                 // several indents needed
@@ -158,39 +137,21 @@ namespace ReleaseNotes
 
                 document.Hyperlinks.Add(document.Range(accessParagraph.Range.Start + accessParagraphText.Length, 
                     accessParagraph.Range.Start + accessParagraphText.Length + webLink.Length), 
-                    webLink, Type.Missing, projectName, webLink, Type.Missing);
+                    webLink, Type.Missing, settings["Project Name"], webLink, Type.Missing);
 
                 // split
                 insertTableSplit(accessParagraph);
 
-                // new heading
-                createHeading("Details");
+                #endregion
 
-                // add another paragraph
-                Word.Paragraph programServerParagraph = document.Paragraphs.Add();
-
-                // aggregate information
-                int latestChangesetNumber = TFS.getLatestChangesetNumber(this.projectName);
-                Dictionary<string, string> programServerData = new Dictionary<string, string>();
-                programServerData.Add("Web Server", this.webServer);
-                programServerData.Add("Database Server", this.databaseServer);
-                programServerData.Add("Database", this.database);
-                programServerData.Add("Source", Settings.Settings.Default.TFSServer
-                    + projectName + "/_versionControl" + (char) 11
-                    + "(Changeset: " + latestChangesetNumber.ToString() + ")");
-
-                // create application information table
-                Word.Table programServerTable = createHorizontalStackedTable(programServerParagraph.Range, 1, 
-                    programServerData, Word.WdRowAlignment.wdAlignRowCenter);
-
-                // split
-                insertTableSplit(programServerParagraph);
+                // create the details section
+                createHorizontalTableParagraph(getDefaultDetails(), 1, true);
 
                 // create a heading
                 createHeading("Included Requirements");
 
                 // get release notes work item data table
-                DataTable workItemsDataTable = TFS.getReleaseNotesAsDataTable(projectName, iterationPath);
+                DataTable workItemsDataTable = TFS.getReleaseNotesAsDataTable(settings["Project Name"], settings["Iteration"]);
                 if (workItemsDataTable == null) throw new Exception("Work items table could not be retrieved.");
 
                 // add another paragraph
@@ -225,6 +186,20 @@ namespace ReleaseNotes
             document.UserControl = userControl;
         }
 
+        private void createSimpleText(string text)
+        {
+            // get range of the first paragraph
+            Word.Paragraph titleParagraph = document.Paragraphs.Add();
+            Word.Range headerRange = titleParagraph.Range;
+
+            // create the document title
+            headerRange.Font.Name = "Times New Roman";
+            headerRange.Font.Size = 12;
+            headerRange.Text = text;
+            headerRange.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+            headerRange.Font.Bold = 1;
+        }
+
         // utility methods
         /// <summary>
         /// Creates a horizontally stacked data table from the data
@@ -234,7 +209,7 @@ namespace ReleaseNotes
         /// <param name="tableKeyValuePairs"></param>
         /// <param name="tableAlignment"></param>
         /// <returns></returns>
-        private Word.Table createHorizontalStackedTable(Word.Range range, int numberOfSplits, 
+        private Word.Table createHorizontalTable(Word.Range range, int numberOfSplits, 
             Dictionary<string, string> tableKeyValuePairs, Word.WdRowAlignment tableAlignment)
         {
             // 2 splits = 4 columns
@@ -317,6 +292,29 @@ namespace ReleaseNotes
         }
 
         /// <summary>
+        /// Creates a paragrpah with an embedded horizontal table and optional header
+        /// </summary>
+        /// <param name="lookupData"></param>
+        /// <param name="splits"></param>
+        /// <param name="header"></param>
+        void createHorizontalTableParagraph(NamedLookup data, int splits, bool header)
+        {
+            // if header needed
+            if (header)
+                createHeading(data.getName(), true);
+
+            // add another paragraph
+            Word.Paragraph newParagraph = document.Paragraphs.Add();
+
+            // create application information table
+            Word.Table programInformationTable = createHorizontalTable(newParagraph.Range, splits,
+                data.getLookup(), Word.WdRowAlignment.wdAlignRowCenter);
+
+            // split
+            insertTableSplit(newParagraph);
+        }
+
+        /// <summary>
         /// Creates a vertical style data table from the data
         /// </summary>
         /// <param name="range"></param>
@@ -388,7 +386,7 @@ namespace ReleaseNotes
                     {
                         if (dt.Columns[i].ColumnName == "ID")
                         {
-                            string hyperlinkText = Settings.Settings.Default.TFSServer + projectName + "/_workitems#_a=edit&id=" + row[i].ToString() + "&triage=true";
+                            string hyperlinkText = settings["Team Project Path"] + settings["Project Name"] + "/_workitems#_a=edit&id=" + row[i].ToString() + "&triage=true";
                             rowRange.Cells[i + 1].Range.Text = Utilities.implicitMalloc(row[i].ToString(), 6);
                             rowRange.Cells[i + 1].Range.Bold = 1;
                             rowRange.Cells[i + 1].Range.Hyperlinks.Add(document.Range(rowRange.Cells[i+1].Range.Start, rowRange.Cells[i+1].Range.End), 
@@ -481,7 +479,7 @@ namespace ReleaseNotes
                 document.UserControl = false;
 
                 // save this document
-                document.SaveAs2(Utilities.getExecutingPath() + projectName + " " + iterationPath 
+                document.SaveAs2(Utilities.getExecutingPath() + settings["Project Name"] + " " + settings["Iteration"]
                     + " Release Notes.docx", Word.WdSaveFormat.wdFormatDocumentDefault,
                     Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, true, true, Type.Missing, Type.Missing, Type.Missing,
                     Type.Missing, Type.Missing, Word.WdLineEndingType.wdCRLF, Type.Missing, Type.Missing);

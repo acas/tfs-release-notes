@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace ReleaseNotes.Generators
 {
-    class HTMLGenerator : ReleaseNotesGenerator
+    class HTMLGenerator : BaseReleaseNotesGenerator, IReleaseNotesGenerator
     {
-        public HTMLGenerator()
+        public HTMLGenerator(NamedLookup settings) : base(settings)
         {
             // nada yet
         }
 
-        public override void generateReleaseNotes()
+        public void generateReleaseNotes()
         {
             throw new NotImplementedException();
         }

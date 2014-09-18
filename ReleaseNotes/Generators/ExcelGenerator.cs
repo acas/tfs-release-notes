@@ -9,7 +9,7 @@ using Microsoft.TeamFoundation.WorkItemTracking.Client;
 
 namespace ReleaseNotes
 {
-    class ExcelGenerator : ReleaseNotesGenerator
+    class ExcelGenerator : BaseReleaseNotesGenerator, IReleaseNotesGenerator
     {
         // excel persistent object
         private Excel.Application app;
@@ -28,16 +28,14 @@ namespace ReleaseNotes
         /// <param name="isVisible"></param>
         /// <param name="silent"></param>
         /// <param name="logger"></param>
-        private ExcelGenerator(string worksheetName, bool silent, Logger logger)
+        private ExcelGenerator(NamedLookup settings) : base(settings)
         {
             app = new Excel.Application();
-            this.silent = silent;
             app.Visible = false;
             app.UserControl = false;
             workbook = (Excel.Workbook)app.Workbooks.Add();
             worksheet = (Excel.Worksheet)workbook.ActiveSheet;
-            worksheet.Name = worksheetName;
-            this.logger = logger.setSilence(this.silent);
+            worksheet.Name = settings["Project Name"] + settings["Iteration"];
         }
 
         /// <summary>
@@ -48,18 +46,16 @@ namespace ReleaseNotes
         /// <param name="silent"></param>
         /// <param name="logger"></param>
         /// <returns>A release notes generator for Excel</returns>
-        public static ExcelGenerator ExcelGeneratorFactory(string worksheetName = "Unknown", bool silent = false, Logger logger = null)
+        public static ExcelGenerator ExcelGeneratorFactory(NamedLookup settings)
         {
             try
             {
-                if (logger == null) logger = new Logger();
-                return new ExcelGenerator(worksheetName, silent, logger);
+                return new ExcelGenerator(settings);
             }
             catch (COMException e)
             {
                 (new Logger())
                     .setType(Logger.Type.Error)
-                    .setSilence(silent)
                     .setMessage(e.Message + "\n Are you trying to run this server-side?...")
                     .display();
                 return null;
@@ -69,8 +65,9 @@ namespace ReleaseNotes
         /// <summary>
         /// Documented in super
         /// </summary>
-        public override void generateReleaseNotes()
+        public void generateReleaseNotes()
         {
+
             // create excel writer
             logger.setMessage("Generating Excel release notes table.")
                 .setType(Logger.Type.Information)
@@ -79,9 +76,6 @@ namespace ReleaseNotes
             // try to generate release notes
             try
             {
-                // connect to TFS
-                TFSAccessor t = TFSAccessor.TFSAccessorFactory();
-
                 // log generating document
                 logger.setMessage("Preparing document, please wait...")
                     .setType(Logger.Type.Information)
@@ -94,7 +88,7 @@ namespace ReleaseNotes
                 addTableRow("#", "ID", "Work Item Type", "Title", "Area Path", "Iteration", "Description");
 
                 // get release notes work item collection
-                WorkItemCollection c = t.getReleaseNotesFromQuery(this.projectName, this.iterationPath);
+                WorkItemCollection c = TFS.getReleaseNotesFromQuery(settings["Project Name"], settings["Iteration"]);
                 if (c == null) throw new Exception("Work items could not be retrieved.");
 
                 // add table information
