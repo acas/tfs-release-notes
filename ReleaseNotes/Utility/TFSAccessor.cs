@@ -19,17 +19,21 @@ namespace ReleaseNotes
     {
         private TfsTeamProjectCollection projectCollection;
         private WorkItemStore workItems;
-        private TfsClientCredentials credentials = new TfsClientCredentials(); 
+        private TfsClientCredentials credentials = new TfsClientCredentials();
+        private string projectName;
+        private string iterationNumber;
 
         /// <summary>
         /// Constructor for TfsAccessor, creates a TFS interface
         /// </summary>
         /// <param name="TfsServerUri"></param>
-        private TFSAccessor(string TfsServerUri)
+        private TFSAccessor(string TfsServerUri, string projectName, string iterationNumber)
         {
             this.projectCollection = new TfsTeamProjectCollection(new Uri(TfsServerUri));
             this.projectCollection.EnsureAuthenticated();
             this.workItems = (WorkItemStore) projectCollection.GetService(typeof(WorkItemStore));
+            this.projectName = projectName;
+            this.iterationNumber = iterationNumber;
         }
 
         /// <summary>
@@ -74,7 +78,7 @@ namespace ReleaseNotes
         /// <param name="projectName"></param>
         /// <param name="iterationNumber"></param>
         /// <returns>Release notes work item collection</returns>
-        public WorkItemCollection getReleaseNotesFromQuery(string projectName, string iterationNumber)
+        public WorkItemCollection getReleaseNotesFromQuery()
         {
             (new Logger())
                 .setMessage("Querying work items.")
@@ -96,7 +100,7 @@ namespace ReleaseNotes
         /// <param name="projectName"></param>
         /// <param name="iterationNumber"></param>
         /// <returns>A data table of the minimal release notes data</returns>
-        public DataTable getReleaseNotesAsDataTable(string projectName, string iterationNumber)
+        public DataTable getReleaseNotesAsDataTable()
         {
             DataTable releaseNotesTable = new DataTable();
             releaseNotesTable.Columns.Add("ID", typeof(int));
@@ -105,7 +109,7 @@ namespace ReleaseNotes
             releaseNotesTable.Columns.Add("Area", typeof(string));
             releaseNotesTable.Columns.Add("Iteration", typeof(string));
 
-            WorkItemCollection c = getReleaseNotesFromQuery(projectName, iterationNumber);
+            WorkItemCollection c = getReleaseNotesFromQuery();
             if (c != null)
                 foreach (WorkItem i in c)
                     releaseNotesTable.Rows.Add(i.Id, i.Type.Name, i.Title, i.AreaPath, i.IterationPath);
@@ -118,7 +122,7 @@ namespace ReleaseNotes
         /// <param name="projectName"></param>
         /// <param name="iterationNumber"></param>
         /// <returns></returns>
-        public int getLatestChangesetNumber(string projectName)
+        public int getLatestChangesetNumber()
         {
             (new Logger())
                 .setMessage("Querying changeset numbers.")
@@ -156,14 +160,14 @@ namespace ReleaseNotes
         /// Catches errors relates to creating the interface (ie. authentication issues)
         /// </summary>
         /// <returns>A TfsAccessor</returns>
-        public static TFSAccessor TFSAccessorFactory(string serverTeamProjectUrl)
+        public static TFSAccessor TFSAccessorFactory(string serverTeamProjectUrl, string projectName, string iterationNumber)
         {
             var errorLogger = (new Logger())
                 .setMessage("Connected to TFS")
                 .setType(Logger.Type.Information);
             try
             {
-                TFSAccessor a = new TFSAccessor(serverTeamProjectUrl);
+                TFSAccessor a = new TFSAccessor(serverTeamProjectUrl, projectName, iterationNumber);
                 if (a != null)
                     errorLogger.display();
                 return a;
