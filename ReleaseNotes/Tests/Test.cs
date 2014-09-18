@@ -15,15 +15,15 @@ namespace ReleaseNotes
         [TestMethod]
         public void testConnection()
         {
-            TFSAccessor t = TFSAccessor.TFSAccessorFactory("");
+            TFSAccessor t = TFSAccessor.TFSAccessorFactory("", "", "");
             Assert.IsNotNull(t);
         }
 
         [TestMethod]
         public void testQuery()
         {
-            TFSAccessor t = TFSAccessor.TFSAccessorFactory("");
-            WorkItemCollection wic = t.getReleaseNotesFromQuery("Dealspan", "14.4");
+            TFSAccessor t = TFSAccessor.TFSAccessorFactory("", "", "");
+            WorkItemCollection wic = t.getReleaseNotesFromQuery();
             Assert.IsNotNull(wic);
         }
 

@@ -88,7 +88,7 @@ namespace ReleaseNotes
                 addTableRow("#", "ID", "Work Item Type", "Title", "Area Path", "Iteration", "Description");
 
                 // get release notes work item collection
-                WorkItemCollection c = TFS.getReleaseNotesFromQuery(settings["Project Name"], settings["Iteration"]);
+                WorkItemCollection c = TFS.getReleaseNotesFromQuery();
                 if (c == null) throw new Exception("Work items could not be retrieved.");
 
                 // add table information

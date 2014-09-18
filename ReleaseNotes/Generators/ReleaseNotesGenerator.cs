@@ -63,7 +63,7 @@ namespace ReleaseNotes
         public BaseReleaseNotesGenerator(NamedLookup settings)
         {
             this.settings = settings;
-            this.TFS = TFSAccessor.TFSAccessorFactory(settings["Team Project Path"]);
+            this.TFS = TFSAccessor.TFSAccessorFactory(settings["Team Project Path"], settings["Project Name"], settings["Iteration"]);
             this.logger = new Logger();
             this.silent = false;
         }
@@ -96,7 +96,7 @@ namespace ReleaseNotes
             executiveSummary["Release Date"] = DateTime.Now.ToShortDateString();
             executiveSummary["Release"] = settings["Project Name"] + " " + settings["Iteration"];
             executiveSummary["Iteration (Sprint) #"] = settings["Iteration"];
-            executiveSummary["Build #"] = "0";
+            executiveSummary["Build #"] = TFS.getLatestBuildNumber(settings["Project Name"]);
             return executiveSummary;
         }
 
@@ -106,7 +106,7 @@ namespace ReleaseNotes
             sourceServerInformation["Web Server"] = settings["Web Server"];
             sourceServerInformation["Database Server"] = settings["Database Server"];
             sourceServerInformation["Database"] = settings["Database"];
-            sourceServerInformation["Source"] = "IDK";
+            sourceServerInformation["Source"] = "(Changeset: " + TFS.getLatestChangesetNumber() + ")";
             return sourceServerInformation;
         }
     }

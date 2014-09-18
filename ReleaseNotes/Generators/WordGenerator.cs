@@ -151,7 +151,7 @@ namespace ReleaseNotes
                 createHeading("Included Requirements");
 
                 // get release notes work item data table
-                DataTable workItemsDataTable = TFS.getReleaseNotesAsDataTable(settings["Project Name"], settings["Iteration"]);
+                DataTable workItemsDataTable = TFS.getReleaseNotesAsDataTable();
                 if (workItemsDataTable == null) throw new Exception("Work items table could not be retrieved.");
 
                 // add another paragraph
