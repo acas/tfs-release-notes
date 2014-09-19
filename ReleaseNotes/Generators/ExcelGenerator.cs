@@ -24,30 +24,24 @@ namespace ReleaseNotes
         private char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
 
         /// <summary>
-        /// Excel generator constructor
+        /// Generates an excel instance
         /// </summary>
-        /// <param name="worksheetName"></param>
-        /// <param name="isVisible"></param>
-        /// <param name="silent"></param>
-        /// <param name="logger"></param>
+        /// <param name="settings"></param>
         private ExcelGenerator(NamedLookup settings) : base(settings)
         {
             app = new Excel.Application();
-            app.Visible = false;
-            app.UserControl = false;
+            app.Visible = !this.silent;
+            app.UserControl = !this.silent;
             workbook = (Excel.Workbook)app.Workbooks.Add();
             worksheet = (Excel.Worksheet)workbook.ActiveSheet;
             worksheet.Name = settings["Project Name"] + settings["Iteration"];
         }
 
         /// <summary>
-        /// Factory for generating Excel writers
+        /// Generates an Excel instance
         /// </summary>
-        /// <param name="worksheetName"></param>
-        /// <param name="isVisible"></param>
-        /// <param name="silent"></param>
-        /// <param name="logger"></param>
-        /// <returns>A release notes generator for Excel</returns>
+        /// <param name="settings"></param>
+        /// <returns></returns>
         public static ExcelGenerator ExcelGeneratorFactory(NamedLookup settings)
         {
             try
@@ -58,86 +52,19 @@ namespace ReleaseNotes
             {
                 (new Logger())
                     .setType(Logger.Type.Error)
-                    .setMessage(e.Message + "\n Are you trying to run this server-side?...")
+                    .setMessage(e.Message + "Excel not initialized. \n Are you trying to run this server-side?...")
                     .display();
                 return null;
             }
         }
 
         /// <summary>
-        /// Documented in super
-        /// </summary>
-        public void generateReleaseNotes()
-        {
-
-            // create excel writer
-            logger.setMessage("Generating Excel release notes table.")
-                .setType(Logger.Type.Information)
-                .display();
-
-            // try to generate release notes
-            try
-            {
-                // log generating document
-                logger.setMessage("Preparing document, please wait...")
-                    .setType(Logger.Type.Information)
-                    .display();
-
-                // set application visibility
-                app.Visible = !this.silent;
-
-                // get release notes work item collection
-                DataTable d = TFS.getReleaseNotesAsDataTable();
-                if (d == null) throw new Exception("Work items could not be retrieved.");
-
-                // create the table
-                createVerticalTable(d);
-
-                // done!
-                logger.setType(Logger.Type.Success)
-                    .setMessage("Table generated.")
-                    .display();
-            }
-            catch (Exception e)
-            {
-                // autosize and theme, with error message
-                addVerticalTableRow(new string[] { e.Message });
-
-                // set sizing and theming
-                autoSize();
-                setDefaultTheme();
-
-                // log error
-                logger.setType(Logger.Type.Error)
-                    .setMessage("Table not generated. " + e.Message)
-                    .display();
-            }
-
-            // give the user control
-            setUserControl();
-        }
-
-        /// <summary>
-        /// Add a row to an Excel sheet
-        /// </summary>
-        /// <param name="columnValues"></param>
-        public void addVerticalTableRow(string[] columnValues)
-        {
-            for (int i = 0; i < columnValues.Count(); i++)
-            {
-                currentRange = getSingleCellRange(this.worksheet, i + 1, currentRow);
-                currentRange.Value = columnValues[i];
-                if (i == 0) { currentRange.EntireColumn.ColumnWidth = 24; }
-            }
-            currentRange.EntireRow.RowHeight = 24;
-            this.currentRow++;
-        }
-
-        /// <summary>
         /// Creates a vertical style table
         /// </summary>
         /// <param name="dataTable"></param>
-        public void createVerticalTable(DataTable dataTable)
+        /// <param name="headerText"></param>
+        /// <param name="header"></param>
+        public override void createVerticalTable(DataTable dataTable, string headerText, bool header)
         {
             // add header row
             addVerticalTableRow(Utilities.tableColumnsToStringArray(dataTable));
@@ -152,26 +79,39 @@ namespace ReleaseNotes
         }
 
         /// <summary>
-        /// Creates a horizontal table from a named lookup
+        /// Creates an error message in the table
         /// </summary>
-        /// <param name="nl"></param>
-        public void createHorizontalStackedTable(NamedLookup nl)
+        /// <param name="message"></param>
+        public override void createErrorMessage(string message)
         {
+            // autosize and theme, with error message
+            addVerticalTableRow(new string[] { message });
 
+            // set sizing and theming
+            autoSize();
+            setDefaultTheme();
         }
 
         /// <summary>
-        /// Gives the user control of the workbook
+        /// Add a row to an Excel sheet
         /// </summary>
-        public void setUserControl(bool userControl = true)
+        /// <param name="columnValues"></param>
+        private void addVerticalTableRow(string[] columnValues)
         {
-            app.UserControl = userControl;
+            for (int i = 0; i < columnValues.Count(); i++)
+            {
+                currentRange = getSingleCellRange(this.worksheet, i + 1, currentRow);
+                currentRange.Value = columnValues[i];
+                if (i == 0) { currentRange.EntireColumn.ColumnWidth = 24; }
+            }
+            currentRange.EntireRow.RowHeight = 24;
+            this.currentRow++;
         }
 
         /// <summary>
         /// Autosizes the workbook
         /// </summary>
-        public void autoSize()
+        private void autoSize()
         {
             worksheet.UsedRange.Columns.AutoFit();
         }
@@ -179,7 +119,7 @@ namespace ReleaseNotes
         /// <summary>
         /// Sets the workbooks default theme
         /// </summary>
-        public void setDefaultTheme()
+        private void setDefaultTheme()
         {
             Excel.Range styled = worksheet.UsedRange;
             worksheet.ListObjects.AddEx(Excel.XlListObjectSourceType.xlSrcRange, 

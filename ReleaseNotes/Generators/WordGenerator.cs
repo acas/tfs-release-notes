@@ -20,11 +20,9 @@ namespace ReleaseNotes
         private Word.Document document;
 
         /// <summary>
-        /// Constructor for a word generator object
+        /// Generates a word instance
         /// </summary>
-        /// <param name="documentName"></param>
-        /// <param name="silent"></param>
-        /// <param name="logger"></param>
+        /// <param name="settings"></param>
         private WordGenerator(NamedLookup settings) : base(settings)
         {
             app = new Word.Application();
@@ -34,12 +32,9 @@ namespace ReleaseNotes
         }
 
         /// <summary>
-        /// Constructor (factory method) for a word generator object
+        /// Generates a word instance
         /// </summary>
-        /// <param name="documentName"></param>
-        /// <param name="isVisible"></param>
-        /// <param name="silent"></param>
-        /// <param name="logger"></param>
+        /// <param name="settings"></param>
         /// <returns></returns>
         public static WordGenerator WordGeneratorFactory(NamedLookup settings)
         {
@@ -72,14 +67,6 @@ namespace ReleaseNotes
 
             // thread sleep to allow COM interop to catch up
             Thread.Sleep(100);
-        }
-
-        /// <summary>
-        /// Formats document post creation
-        /// </summary>
-        public override void createDocumentSpecificPostFormatting()
-        {
-            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -384,10 +371,9 @@ namespace ReleaseNotes
         }
 
         /// <summary>
-        /// Creates a word section heading
+        /// Creates a heading with text
         /// </summary>
         /// <param name="headerText"></param>
-        /// <param name="extraSpace">If extra formatting space needed (for tables)</param>
         public override void createHeading(string headerText)
         {
             // add a details header
@@ -402,7 +388,6 @@ namespace ReleaseNotes
 
             // split
             insertTableSplit(heading);
-            Word.Paragraph empty = document.Paragraphs.Add();
         }
 
         /// <summary>
