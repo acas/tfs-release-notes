@@ -20,10 +20,12 @@ namespace ReleaseNotes
         // override all of these
         public virtual void createTitle(string titleText) { }
         public virtual void createHeader(string headingText) { }
-        public virtual void createHorizontalTable(NamedLookup nl, int splits, bool header) 
+
+        public virtual void createHorizontalTable(NamedLookup data, int splits, bool header) 
         {
             Contract.Requires<ArgumentNullException>(splits > 0, "At least 1 table split must be specified");
         }
+
         public virtual void createVerticalTable(DataTable dt, string headerText, bool header) 
         {
             Contract.Requires<ArgumentNullException>(dt != null, "Data cannot be null");
@@ -31,6 +33,7 @@ namespace ReleaseNotes
             Contract.Requires<ArgumentNullException>(dt.Columns.Count > 0, "Column count must be greater than 0.");
             Contract.Requires<ArgumentNullException>(headerText != null, "Header text cannot be null");
         }
+
         public virtual void createDocumentSpecificPreFormatting() { }
         public virtual void createDocumentSpecificPostFormatting() { }
         public virtual void createNamedSection(string headername, string text, string hyperlink) { }
@@ -79,6 +82,10 @@ namespace ReleaseNotes
             return this.propertiesList;
         }
 
+        /// <summary>
+        /// Creates some default executive summary details
+        /// </summary>
+        /// <returns></returns>
         public NamedLookup getDefaultExecutiveSummary()
         {
             NamedLookup executiveSummary = new NamedLookup("Executive Summary");
@@ -90,6 +97,10 @@ namespace ReleaseNotes
             return executiveSummary;
         }
 
+        /// <summary>
+        /// Creates some default details you can choose 
+        /// </summary>
+        /// <returns></returns>
         public NamedLookup getDefaultDetails()
         {
             NamedLookup sourceServerInformation = new NamedLookup("Details");
@@ -100,6 +111,9 @@ namespace ReleaseNotes
             return sourceServerInformation;
         }
 
+        /// <summary>
+        /// Generate the release notes
+        /// </summary>
         public void generateReleaseNotes()
         {
             // set silent to false
@@ -117,6 +131,9 @@ namespace ReleaseNotes
                 logger.setMessage("Preparing document, please wait...")
                     .setType(Logger.Type.Information)
                     .display();
+
+                // pre formatting
+                createDocumentSpecificPreFormatting();
 
                 // create graphic
                 createHeaderGraphic(null);
@@ -140,7 +157,7 @@ namespace ReleaseNotes
                 createNewPage("Test Cases");
 
                 // create a vertical table for test cases/user stories here
-
+                // unimplemented
 
                 // post formatting
                 createDocumentSpecificPostFormatting();

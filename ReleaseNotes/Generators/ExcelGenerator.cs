@@ -273,6 +273,11 @@ namespace ReleaseNotes
             Excel.Range range = getMultiCellRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, currentRow);
             range.RowHeight = height + 1;
 
+            // resize the first columnm
+            range = getSingleCellRange(worksheet, currentColumnOffset, 1);
+            range.ColumnWidth = width + 1;
+
+            // go forward 
             advanceRow(0);
         }
 
