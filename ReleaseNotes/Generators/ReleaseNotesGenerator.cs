@@ -5,6 +5,7 @@ using System.Text;
 using System.Data;
 using System.Threading.Tasks;
 using ReleaseNotes.Utility;
+using System.Diagnostics.Contracts;
 
 namespace ReleaseNotes
 {
@@ -18,15 +19,25 @@ namespace ReleaseNotes
 
         // override all of these
         public virtual void createTitle(string titleText) { }
-        public virtual void createHeading(string headingText) { }
-        public virtual void createHorizontalTable(NamedLookup nl, int splits, bool header) { }
-        public virtual void createVerticalTable(DataTable dt, string headerText, bool header) { }
+        public virtual void createHeader(string headingText) { }
+        public virtual void createHorizontalTable(NamedLookup nl, int splits, bool header) 
+        {
+            Contract.Requires<ArgumentNullException>(splits > 0, "At least 1 table split must be specified");
+        }
+        public virtual void createVerticalTable(DataTable dt, string headerText, bool header) 
+        {
+            Contract.Requires<ArgumentNullException>(dt != null, "Data cannot be null");
+            Contract.Requires<ArgumentNullException>((dt.Rows.Count > 0 && !header) || (dt.Rows.Count > 1 && !header), "Row count must be greater than 0.");
+            Contract.Requires<ArgumentNullException>(dt.Columns.Count > 0, "Column count must be greater than 0.");
+            Contract.Requires<ArgumentNullException>(headerText != null, "Header text cannot be null");
+        }
         public virtual void createDocumentSpecificPreFormatting() { }
         public virtual void createDocumentSpecificPostFormatting() { }
         public virtual void createNamedSection(string headername, string text, string hyperlink) { }
         public virtual void createErrorMessage(string message) { }
         public virtual void createHeaderGraphic(string path) { }
-        public virtual void createNewWorksheet(string worksheetName) { }
+        public virtual void createNewPage(string worksheetName) { }
+        public virtual void save() { }
 
         public ReleaseNotesGenerator(NamedLookup settings)
         {
@@ -126,9 +137,13 @@ namespace ReleaseNotes
                 createVerticalTable(TFS.getReleaseNotesAsDataTable(), "Included Requirements", true);
 
                 // create a new worksheet
-                createNewWorksheet("Test Cases");
+                createNewPage("Test Cases");
 
                 // create a vertical table for test cases/user stories here
+
+
+                // post formatting
+                createDocumentSpecificPostFormatting();
 
                 // done!
                 logger.setType(Logger.Type.Success)

@@ -123,7 +123,7 @@ namespace ReleaseNotes
         public override void createNamedSection(string headername, string text, string hyperlink)
         {
             // new heading
-            createHeading(headername);
+            createHeader(headername);
             Word.Paragraph accessParagraph = document.Paragraphs.Add();
 
             // create caption
@@ -150,9 +150,12 @@ namespace ReleaseNotes
         /// <param name="header"></param>
         public override void createHorizontalTable(NamedLookup data, int splits, bool header)
         {
+            // test preconditions
+            base.createHorizontalTable(data, splits, header);
+
             // if header needed
             if (header)
-                createHeading(data.getName());
+                createHeader(data.getName());
 
             // add another paragraph
             Word.Paragraph paragraph = document.Paragraphs.Add();
@@ -165,10 +168,10 @@ namespace ReleaseNotes
             List<string> tableKeys = data.getLookup().Keys.ToList();
 
             // determine the optimal number of rows for the table
-            int numberOfRows = (tableKeys.Count() / splits) + (tableKeys.Count() % splits);
+            int optimalNumberOfRows = (tableKeys.Count() / splits) + (tableKeys.Count() % splits);
 
             // create the entire table with styling
-            Word.Table table = document.Tables.Add(range, numberOfRows, numberOfColumns,
+            Word.Table table = document.Tables.Add(range, optimalNumberOfRows, numberOfColumns,
                 Word.WdDefaultTableBehavior.wdWord9TableBehavior, Word.WdAutoFitBehavior.wdAutoFitFixed);
             table.PreferredWidth = app.InchesToPoints(6.0F);
             table.Rows.Alignment = Word.WdRowAlignment.wdAlignRowCenter;
@@ -188,7 +191,7 @@ namespace ReleaseNotes
             table.Borders.OutsideColor = Word.WdColor.wdColorGray55;
 
             // set styling for horizontal columns
-            for (int i = 1; i <= numberOfRows; i++)
+            for (int i = 1; i <= optimalNumberOfRows; i++)
             {
                 for (int j = 1; j <= numberOfColumns; j++)
                 {
@@ -247,6 +250,9 @@ namespace ReleaseNotes
         /// <param name="header"></param>
         public override void createVerticalTable(DataTable dt, string headerText, bool header)
         {
+            // test preconditions
+            base.createVerticalTable(dt, headerText, header);
+
             // need a counter to get word rows
             int counter = 1;
 
@@ -259,12 +265,7 @@ namespace ReleaseNotes
 
                 // create header
                 if (header)
-                    createHeading(headerText);
-
-                // find errors with pulled data
-                if (dt == null) throw new InvalidDataException("Data object was not initialized.");
-                if (((dt.Rows.Count == 0 && !header) || (dt.Rows.Count < 1 && header)) || dt.Columns.Count == 0)
-                    throw new InvalidDataException("Not enough data was pulled in");
+                    createHeader(headerText);
 
                 // create the entire table with styling
                 Word.Table table = document.Tables.Add(range, dt.Rows.Count + 1, dt.Columns.Count,
@@ -374,7 +375,7 @@ namespace ReleaseNotes
         /// Creates a heading with text
         /// </summary>
         /// <param name="headerText"></param>
-        public override void createHeading(string headerText)
+        public override void createHeader(string headerText)
         {
             // add a details header
             Word.Paragraph heading = document.Paragraphs.Add();

@@ -10,6 +10,7 @@ using System.Data;
 using System.IO;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using ReleaseNotes.Utility;
+using System.Drawing;
 
 namespace ReleaseNotes
 {
@@ -25,7 +26,7 @@ namespace ReleaseNotes
         private int currentRow = 1;
         private int currentColumnCount = 4;
         private int currentColumnOffset = 2;
-        private const int totalAllowedRows = 24;
+        private const int totalAllowedColumns = 24;
 
         // alphabet (for columns)
         private char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
@@ -42,6 +43,7 @@ namespace ReleaseNotes
             workbook = (Excel.Workbook)app.Workbooks.Add();
             worksheet = (Excel.Worksheet)workbook.ActiveSheet;
             worksheet.Name = "Release Notes";
+            app.ActiveWindow.DisplayGridlines = false;
         }
 
         /// <summary>
@@ -78,7 +80,7 @@ namespace ReleaseNotes
             
             // create header
             if (header)
-                createHeading(headerText);
+                createHeader(headerText);
 
             // set the current column count
             this.starterRow = currentRow;
@@ -91,9 +93,93 @@ namespace ReleaseNotes
                 addVerticalTableRow(Utilities.tableRowToStringArray(row), false);
 
             // set sizing and theming
-            autoSize();
             setDefaultTheme(header);
-            tableSplit(0);
+            setBasicTheme(true);
+            advanceRow(0);
+        }
+
+        /// <summary>
+        /// Creates a horizontal data table in Excel
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="splits"></param>
+        /// <param name="header"></param>
+        public override void createHorizontalTable(NamedLookup data, int splits, bool header)
+        {
+            // 2 splits = 4 columns
+            this.currentColumnCount = 2 * splits;
+            this.starterRow = this.currentRow;
+
+            // if header needed
+            if (header)
+                createHeader(data.getName());
+
+            // get a list of the keys
+            List<string> tableKeys = data.getLookup().Keys.ToList();
+
+            // determine the optimal number of rows for the table
+            int optimalRowNumber = (tableKeys.Count() / splits) + (tableKeys.Count() % splits);
+
+            // counter variable
+            int counter = 0;
+
+            for (int i = 1; i <= optimalRowNumber; i++)
+            {
+                for (int j = 1; j <= this.currentColumnCount; j++)
+                {
+                    Excel.Range cellRange = getSingleCellRange(worksheet, j + currentColumnOffset - 1, currentRow);
+
+                    string currentKey = "";
+                    if (counter != tableKeys.Count())
+                        currentKey = tableKeys.ElementAt(counter);
+
+                    cellRange.RowHeight = 18;
+                    cellRange.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+                    cellRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
+                    cellRange.Font.Bold = 1;
+                    cellRange.Font.Size = 10;
+                    cellRange.Font.Name = "Arial";
+
+                    if (j % 2 != 0)
+                    {
+                        cellRange.Interior.Color = Excel.XlRgbColor.rgbLightGrey;
+                        cellRange.Value = currentKey;
+                    }
+                    else
+                    {
+                        if (counter != tableKeys.Count())
+                        {
+                            cellRange.Font.Color = ColorTranslator.ToOle(Color.FromArgb(0, 112, 192));
+                            if (currentKey.Equals("Source"))
+                            {
+                                // hyperlink
+                                cellRange.Font.Name = "Arial";
+                                cellRange.Font.Size = 10;
+                                cellRange.Value = data[currentKey];
+                            }
+                            else
+                            {
+                                cellRange.Value = data[currentKey];
+                            }
+                            counter++;
+                        }
+                        else
+                        {
+                            cellRange.Value = "";
+                        }
+                    }
+                }
+
+                if (i == optimalRowNumber)
+                {
+                    // style with basic theme
+                    setBasicTheme(true);
+                }
+                advanceRow(0);
+            }
+
+            // insert final table split
+            advanceRow();
         }
 
         /// <summary>
@@ -103,13 +189,13 @@ namespace ReleaseNotes
         public override void createTitle(string titleText)
         {
             // don't start at the top of the table
-            tableSplit(0);
+            advanceRow(0);
             
             // create something reasonably sized
-            this.currentColumnCount = totalAllowedRows / 4;
+            this.currentColumnCount = totalAllowedColumns / 4;
 
             // get the range of the title
-            Excel.Range titleRowRange = getMultiCellRange(worksheet, currentColumnOffset, currentColumnCount, currentRow);
+            Excel.Range titleRowRange = getMultiCellRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, currentRow);
 
             // merge
             titleRowRange.Merge();
@@ -124,11 +210,11 @@ namespace ReleaseNotes
             titleRowRange.Cells.Borders.Color = Excel.XlRgbColor.rgbBlack;
             titleRowRange.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
             titleRowRange.Cells.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-            titleRowRange.Cells.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+            titleRowRange.Cells.VerticalAlignment = Excel.XlVAlign.xlVAlignTop;
             titleRowRange.Cells.Value = titleText;
 
             // increment the current row
-            tableSplit();
+            advanceRow();
             autoSize();
         }
 
@@ -136,7 +222,7 @@ namespace ReleaseNotes
         /// Creates an Excel table heading
         /// </summary>
         /// <param name="headingText"></param>
-        public override void createHeading(string headingText)
+        public override void createHeader(string headingText)
         {
             // get the range of the title
             Excel.Range titleRowRange = getMultiCellRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, currentRow);
@@ -157,7 +243,7 @@ namespace ReleaseNotes
             titleRowRange.Cells.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
             titleRowRange.Cells.Value = headingText;
 
-            tableSplit(0);
+            advanceRow(0);
             autoSize();
         }
 
@@ -181,13 +267,13 @@ namespace ReleaseNotes
             // add a picture to the worksheet
             worksheet.Shapes.AddPicture(Utilities.getExecutingPath() + "ACAS.jpg", 
                 Microsoft.Office.Core.MsoTriState.msoFalse, 
-                Microsoft.Office.Core.MsoTriState.msoCTrue, 0, 0, width, height);
+                Microsoft.Office.Core.MsoTriState.msoCTrue, 5, 5, width, height);
 
             // resize the first row to avoid a border issue
             Excel.Range range = getMultiCellRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, currentRow);
             range.RowHeight = height + 1;
 
-            tableSplit(0);
+            advanceRow(0);
         }
 
         /// <summary>
@@ -222,7 +308,7 @@ namespace ReleaseNotes
             }
 
             // set row height
-            range.EntireRow.RowHeight = 24;
+            range.EntireRow.RowHeight = 33;
 
             // merge if supplied
             if (merge)
@@ -238,7 +324,7 @@ namespace ReleaseNotes
         /// <summary>
         /// Splits the table
         /// </summary>
-        private void tableSplit(int numExtraRows = 1)
+        private void advanceRow(int numExtraRows = 1)
         {
             currentRow++;
             for (int i = 0; i < numExtraRows; i++) { currentRow++; }
@@ -254,6 +340,26 @@ namespace ReleaseNotes
         }
 
         /// <summary>
+        /// Formats anything post document creation
+        /// </summary>
+        public override void createDocumentSpecificPostFormatting()
+        {
+            this.worksheet.UsedRange.WrapText = true;
+
+            for (int i = 1; i <= this.worksheet.UsedRange.Columns.Count; i++)
+            {
+                Excel.Range columnCell = getSingleCellRange(worksheet, i, 1);
+                columnCell.EntireColumn.ColumnWidth = 28;
+            }
+
+            for (int i = 1; i <= this.worksheet.UsedRange.Rows.Count; i++)
+            {
+                Excel.Range rowCell = getSingleCellRange(worksheet, 1, i);
+                rowCell.EntireRow.RowHeight = 28;
+            }
+        }
+
+        /// <summary>
         /// Sets the workbooks default theme
         /// </summary>
         private void setDefaultTheme(bool header)
@@ -265,6 +371,24 @@ namespace ReleaseNotes
             worksheet.ListObjects.AddEx(Excel.XlListObjectSourceType.xlSrcRange, 
                 styled, Type.Missing, headerExists, Type.Missing).Name = "TableStyle";
             worksheet.ListObjects.Item["TableStyle"].TableStyle = "TableStyleMedium2";
+        }
+
+        /// <summary>
+        /// Sets a basic theme for the currently selected table range
+        /// </summary>
+        private void setBasicTheme(bool innerBordersThemed)
+        {
+            Excel.Range styled = getBlockedRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, starterRow, currentRow);
+            styled.Borders[Excel.XlBordersIndex.xlEdgeBottom].Color = Excel.XlRgbColor.rgbBlack;
+            styled.Borders[Excel.XlBordersIndex.xlEdgeTop].Color = Excel.XlRgbColor.rgbBlack;
+            styled.Borders[Excel.XlBordersIndex.xlEdgeRight].Color = Excel.XlRgbColor.rgbBlack;
+            styled.Borders[Excel.XlBordersIndex.xlEdgeLeft].Color = Excel.XlRgbColor.rgbBlack;
+
+            if (innerBordersThemed)
+            {
+                styled.Borders[Excel.XlBordersIndex.xlInsideHorizontal].Color = Excel.XlRgbColor.rgbBlack;
+                styled.Borders[Excel.XlBordersIndex.xlInsideVertical].Color = Excel.XlRgbColor.rgbBlack;
+            }
         }
 
         /// <summary>

@@ -21,7 +21,7 @@ namespace ReleaseNotes.Generators
             throw new NotImplementedException();
         }
 
-        public override void createHeading(string headingText)
+        public override void createHeader(string headingText)
         {
             throw new NotImplementedException();
         }
