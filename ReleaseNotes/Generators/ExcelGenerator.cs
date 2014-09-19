@@ -19,7 +19,6 @@ namespace ReleaseNotes
         private Excel.Application app;
         private Excel.Workbook workbook;
         private Excel.Worksheet worksheet;
-        private Excel.Range currentRange;
 
         // excel positioning vars
         private int starterRow = 1;
@@ -161,8 +160,8 @@ namespace ReleaseNotes
                 Microsoft.Office.Core.MsoTriState.msoCTrue, 0, 0, width, height);
 
             // resize the first row to avoid a border issue
-            currentRange = getMultiCellRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, currentRow);
-            currentRange.RowHeight = height + 1;
+            Excel.Range range = getMultiCellRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, currentRow);
+            range.RowHeight = height + 1;
 
             tableSplit(0);
         }
@@ -187,22 +186,25 @@ namespace ReleaseNotes
         /// <param name="columnValues"></param>
         private void addVerticalTableRow(string[] columnValues, bool merge)
         {
+            // get a range
+            Excel.Range range = null;
+
             // set column values
             for (int i = 0; i < columnValues.Count(); i++)
             {
-                currentRange = getSingleCellRange(this.worksheet, currentColumnOffset + i, currentRow);
-                currentRange.Value = columnValues[i];
-                if (i == 0) { currentRange.EntireColumn.ColumnWidth = 24; }
+                range = getSingleCellRange(this.worksheet, currentColumnOffset + i, currentRow);
+                range.Value = columnValues[i];
+                if (i == 0) { range.EntireColumn.ColumnWidth = 24; }
             }
 
             // set row height
-            currentRange.EntireRow.RowHeight = 24;
+            range.EntireRow.RowHeight = 24;
 
             // merge if supplied
             if (merge)
             {
-                currentRange = getMultiCellRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, currentRow);
-                currentRange.Merge();
+                range = getMultiCellRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, currentRow);
+                range.Merge();
             }
 
             // increase the current row count
@@ -341,16 +343,11 @@ namespace ReleaseNotes
 
 
                 // unmarshall all COM objects
-                if (currentRange != null)
-                {
-                    Marshal.ReleaseComObject(currentRange);
-                }
                 Marshal.ReleaseComObject(worksheet);
                 Marshal.ReleaseComObject(workbook);
                 Marshal.ReleaseComObject(app);
 
                 // set to null
-                currentRange = null;
                 worksheet = null;
                 workbook = null;
                 app = null;
