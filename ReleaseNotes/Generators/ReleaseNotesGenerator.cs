@@ -96,7 +96,7 @@ namespace ReleaseNotes
             executiveSummary["Release Date"] = DateTime.Now.ToShortDateString();
             executiveSummary["Release"] = settings["Project Name"] + " " + settings["Iteration"];
             executiveSummary["Iteration (Sprint) #"] = settings["Iteration"];
-            executiveSummary["Build #"] = TFS.getLatestBuildNumber(settings["Project Name"]);
+            executiveSummary["Build #"] = TFS.getLatestBuildNumber();
             return executiveSummary;
         }
 

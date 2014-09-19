@@ -12,6 +12,7 @@ using Microsoft.TeamFoundation.VersionControl.Client;
 using Microsoft.TeamFoundation.Server;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.TeamFoundation.Build.Client;
+using Microsoft.TeamFoundation.TestManagement.Client;
 
 namespace ReleaseNotes
 {
@@ -140,7 +141,7 @@ namespace ReleaseNotes
         /// </summary>
         /// <param name="projectName"></param>
         /// <returns></returns>
-        public string getLatestBuildNumber(string projectName)
+        public string getLatestBuildNumber()
         {
             (new Logger())
                 .setMessage("Querying build definitions.")
@@ -153,6 +154,17 @@ namespace ReleaseNotes
             IBuildQueryResult query = buildServer.QueryBuilds(buildSpec);
             IBuildDetail detail = query.Builds[0];
             return detail.BuildNumber;
+        }
+
+        /// <summary>
+        /// Gets test cases
+        /// </summary>
+        public DataTable getTestCases()
+        {
+            ITestManagementService testManagementService = this.projectCollection.GetService<ITestManagementService>();
+            ITestManagementTeamProject testProject = testManagementService.GetTeamProject(this.projectName);
+            ITestCaseHelper testCaseHelper = testProject.TestCases;
+            return null;
         }
 
         /// <summary>
