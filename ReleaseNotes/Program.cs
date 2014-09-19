@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.TeamFoundation.Framework.Client;
 using ReleaseNotes.Utility;
-
+using System.Threading;
 namespace ReleaseNotes
 {
     class Program
@@ -94,14 +94,21 @@ namespace ReleaseNotes
             Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.White;
             Console.BackgroundColor = ConsoleColor.Blue;
-            Console.WriteLine(" *******************************************************");
-            Console.WriteLine(" * ACAS Release Notes                                  *");
-            Console.WriteLine(" * Author: Jon Fast                                    *");
-            Console.WriteLine(" * License: MIT                                        *");
-            Console.WriteLine(" *******************************************************");
+            correctHeader(); Console.WriteLine("*******************************************************");
+            correctHeader(); Console.WriteLine("* ACAS Release Notes                                  *");
+            correctHeader(); Console.WriteLine("* Author: Jon Fast                                    *");
+            correctHeader(); Console.WriteLine("* License: MIT                                        *");
+            correctHeader(); Console.WriteLine("*******************************************************");
             Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.White;
             Console.BackgroundColor = ConsoleColor.Black;
+        }
+
+        static void correctHeader()
+        {
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.Write(" ");
+            Console.BackgroundColor = ConsoleColor.Blue;
         }
     }
 }

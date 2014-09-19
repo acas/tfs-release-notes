@@ -136,7 +136,7 @@ namespace ReleaseNotes
                         if (this.type != Type.General)
                             Console.WriteLine(" [" + this.type.ToString() + ": " + this.logString + " @ " + DateTime.Now.ToShortTimeString() + " ]");
                         else
-                            Console.WriteLine(" [ " + this.logString + " @ " + DateTime.Now + " ]");
+                            Console.WriteLine(" [ " + this.logString + " ]");
                     break;
                 
                 case Method.MessageBox:

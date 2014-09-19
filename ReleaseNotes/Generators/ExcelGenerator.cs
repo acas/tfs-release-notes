@@ -73,9 +73,15 @@ namespace ReleaseNotes
         /// <param name="header"></param>
         public override void createVerticalTable(DataTable dataTable, string headerText, bool header)
         {
+            // set the column count
+            this.currentColumnCount = dataTable.Columns.Count;
+            
+            // create header
+            if (header)
+                createHeading(headerText);
+
             // set the current column count
             this.starterRow = currentRow;
-            this.currentColumnCount = dataTable.Columns.Count;
 
             // add header row
             addVerticalTableRow(Utilities.tableColumnsToStringArray(dataTable), false);
@@ -87,9 +93,7 @@ namespace ReleaseNotes
             // set sizing and theming
             autoSize();
             setDefaultTheme(header);
-
-            // move ahead a row
-            this.currentRow++;
+            tableSplit(0);
         }
 
         /// <summary>
@@ -99,8 +103,8 @@ namespace ReleaseNotes
         public override void createTitle(string titleText)
         {
             // don't start at the top of the table
-            this.currentRow++;
-
+            tableSplit(0);
+            
             // create something reasonably sized
             this.currentColumnCount = totalAllowedRows / 4;
 
@@ -134,7 +138,27 @@ namespace ReleaseNotes
         /// <param name="headingText"></param>
         public override void createHeading(string headingText)
         {
-            
+            // get the range of the title
+            Excel.Range titleRowRange = getMultiCellRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, currentRow);
+
+            // merge
+            titleRowRange.Merge();
+            titleRowRange.RowHeight = 15;
+
+            // set the title
+            titleRowRange.Cells.Font.Name = "Calibri";
+            titleRowRange.Cells.Font.Size = 14;
+            titleRowRange.Cells.Font.Bold = 1;
+            titleRowRange.Cells.Font.Color = Excel.XlRgbColor.rgbBlack;
+            titleRowRange.Cells.Interior.Color = Excel.XlRgbColor.rgbWhite;
+            titleRowRange.Cells.Borders.Color = Excel.XlRgbColor.rgbBlack;
+            titleRowRange.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            titleRowRange.Cells.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            titleRowRange.Cells.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+            titleRowRange.Cells.Value = headingText;
+
+            tableSplit(0);
+            autoSize();
         }
 
         /// <summary>
