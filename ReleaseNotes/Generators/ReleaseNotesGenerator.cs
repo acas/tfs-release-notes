@@ -30,9 +30,20 @@ namespace ReleaseNotes
         public ReleaseNotesGenerator(NamedLookup settings)
         {
             this.settings = settings;
+            checkRequiredFields();
             this.TFS = TFSAccessor.TFSAccessorFactory(settings["Team Project Path"], settings["Project Name"], settings["Iteration"]);
             this.logger = new Logger();
             this.silent = false;
+        }
+
+        public void checkRequiredFields()
+        {
+            List<bool> keysAlright = new List<bool>();
+            keysAlright.Add(settings.getLookup().ContainsKey("Team Project Path"));
+            keysAlright.Add(settings.getLookup().ContainsKey("Project Name"));
+            keysAlright.Add(settings.getLookup().ContainsKey("Iteration"));
+            if (keysAlright.Where(a => a == false).ToList().Count() > 0)
+                throw new Exception("Expected params not found.");
         }
 
         public void addPropertiesList(string name, Dictionary<string, string> lookup)
@@ -102,7 +113,7 @@ namespace ReleaseNotes
                 createTitle(settings["Doc Type"]);
 
                 // create horizontal table paragraph
-                createHorizontalTable(getDefaultExecutiveSummary(), 2, false);
+                createHorizontalTable(getDefaultExecutiveSummary(), 2, true);
 
                 // create access section
                 createNamedSection("Access", "Application is accessible at: ", settings["Web Location"]);
