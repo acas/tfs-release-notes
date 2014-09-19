@@ -56,7 +56,7 @@ namespace ReleaseNotes.Generators
             throw new NotImplementedException();
         }
 
-        public override void createCorporateHeaderGraphic()
+        public override void createHeaderGraphic(string path)
         {
             throw new NotImplementedException();
         }

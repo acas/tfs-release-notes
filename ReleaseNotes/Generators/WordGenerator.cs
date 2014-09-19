@@ -72,7 +72,7 @@ namespace ReleaseNotes
         /// <summary>
         /// Creates a header graphic
         /// </summary>
-        public override void createCorporateHeaderGraphic()
+        public override void createHeaderGraphic(string path = null)
         {
             // add header graphics
             // save the graphic before its path can be referenced

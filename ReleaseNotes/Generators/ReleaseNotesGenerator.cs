@@ -25,7 +25,7 @@ namespace ReleaseNotes
         public virtual void createDocumentSpecificPostFormatting() { }
         public virtual void createNamedSection(string headername, string text, string hyperlink) { }
         public virtual void createErrorMessage(string message) { }
-        public virtual void createCorporateHeaderGraphic() { }
+        public virtual void createHeaderGraphic(string path) { }
         public virtual void createNewWorksheet(string worksheetName) { }
 
         public ReleaseNotesGenerator(NamedLookup settings)
@@ -108,7 +108,7 @@ namespace ReleaseNotes
                     .display();
 
                 // create graphic
-                createCorporateHeaderGraphic();
+                createHeaderGraphic(null);
 
                 // create heading
                 createTitle(settings["Doc Type"]);

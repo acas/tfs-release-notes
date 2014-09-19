@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Excel = Microsoft.Office.Interop.Excel;
+using Microsoft.Office.Core;
 using System.Runtime.InteropServices;
 using System.Data;
+using System.IO;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using ReleaseNotes.Utility;
 
@@ -13,16 +15,18 @@ namespace ReleaseNotes
 {
     class ExcelGenerator : ReleaseNotesGenerator
     {
-        // excel persistent object
+        // excel persistent objects
         private Excel.Application app;
         private Excel.Workbook workbook;
         private Excel.Worksheet worksheet;
         private Excel.Range currentRange;
+
+        // excel positioning vars
         private int starterRow = 1;
         private int currentRow = 1;
-        private int currentColumnCount = 1;
-        private int currentColumnOffset = 1;
-        private const int totalAllowedRows = 10;
+        private int currentColumnCount = 4;
+        private int currentColumnOffset = 2;
+        private const int totalAllowedRows = 24;
 
         // alphabet (for columns)
         private char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
@@ -95,7 +99,34 @@ namespace ReleaseNotes
         /// <param name="titleText"></param>
         public override void createTitle(string titleText)
         {
-  
+            // don't start at the top of the table
+            this.currentRow++;
+
+            // create something reasonably sized
+            this.currentColumnCount = totalAllowedRows / 4;
+
+            // get the range of the title
+            Excel.Range titleRowRange = getMultiCellRange(worksheet, currentColumnOffset, currentColumnCount, currentRow);
+
+            // merge
+            titleRowRange.Merge();
+            titleRowRange.RowHeight = 30;
+
+            // set the title
+            titleRowRange.Cells.Font.Name = "Times New Roman";
+            titleRowRange.Cells.Font.Size = 14;
+            titleRowRange.Cells.Font.Bold = 1;
+            titleRowRange.Cells.Font.Color = Excel.XlRgbColor.rgbBlack;
+            titleRowRange.Cells.Interior.Color = Excel.XlRgbColor.rgbLightGray;
+            titleRowRange.Cells.Borders.Color = Excel.XlRgbColor.rgbBlack;
+            titleRowRange.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            titleRowRange.Cells.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            titleRowRange.Cells.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+            titleRowRange.Cells.Value = titleText;
+
+            // increment the current row
+            tableSplit();
+            autoSize();
         }
 
         /// <summary>
@@ -105,6 +136,35 @@ namespace ReleaseNotes
         public override void createHeading(string headingText)
         {
             
+        }
+
+        /// <summary>
+        /// Creates the header graphic for this table
+        /// </summary>
+        /// <param name="path"></param>
+        public override void createHeaderGraphic(string path)
+        {
+            // add header graphics
+            // save the graphic before its path can be referenced
+            if (!File.Exists(Utilities.getExecutingPath() + "ACAS.jpg"))
+            {
+                Resources.Resources.ACAS.Save(@"ACAS.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+            }
+
+            // height
+            int height = 70;
+            int width = 125;
+
+            // add a picture to the worksheet
+            worksheet.Shapes.AddPicture(Utilities.getExecutingPath() + "ACAS.jpg", 
+                Microsoft.Office.Core.MsoTriState.msoFalse, 
+                Microsoft.Office.Core.MsoTriState.msoCTrue, 0, 0, width, height);
+
+            // resize the first row to avoid a border issue
+            currentRange = getMultiCellRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, currentRow);
+            currentRange.RowHeight = height + 1;
+
+            tableSplit(0);
         }
 
         /// <summary>
@@ -130,7 +190,7 @@ namespace ReleaseNotes
             // set column values
             for (int i = 0; i < columnValues.Count(); i++)
             {
-                currentRange = getSingleCellRange(this.worksheet, i + 1, currentRow);
+                currentRange = getSingleCellRange(this.worksheet, currentColumnOffset + i, currentRow);
                 currentRange.Value = columnValues[i];
                 if (i == 0) { currentRange.EntireColumn.ColumnWidth = 24; }
             }
@@ -141,7 +201,7 @@ namespace ReleaseNotes
             // merge if supplied
             if (merge)
             {
-                currentRange = getMultiCellRange(worksheet, currentColumnOffset, currentColumnCount, currentRow);
+                currentRange = getMultiCellRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, currentRow);
                 currentRange.Merge();
             }
 
@@ -150,11 +210,20 @@ namespace ReleaseNotes
         }
 
         /// <summary>
+        /// Splits the table
+        /// </summary>
+        private void tableSplit(int numExtraRows = 1)
+        {
+            currentRow++;
+            for (int i = 0; i < numExtraRows; i++) { currentRow++; }
+        }
+
+        /// <summary>
         /// Autosizes the workbook
         /// </summary>
         private void autoSize()
         {
-            Excel.Range sized = getBlockedRange(worksheet, currentColumnOffset, currentColumnCount, starterRow, currentRow);
+            Excel.Range sized = getBlockedRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, starterRow, currentRow);
             sized.Columns.AutoFit();
         }
 
@@ -163,7 +232,7 @@ namespace ReleaseNotes
         /// </summary>
         private void setDefaultTheme(bool header)
         {
-            Excel.Range styled = getBlockedRange(worksheet, currentColumnOffset, currentColumnCount, starterRow, currentRow);
+            Excel.Range styled = getBlockedRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, starterRow, currentRow);
             Excel.XlYesNoGuess headerExists = Excel.XlYesNoGuess.xlNo;
             if (header)
                 headerExists = Excel.XlYesNoGuess.xlYes;
@@ -272,7 +341,10 @@ namespace ReleaseNotes
 
 
                 // unmarshall all COM objects
-                Marshal.ReleaseComObject(currentRange);
+                if (currentRange != null)
+                {
+                    Marshal.ReleaseComObject(currentRange);
+                }
                 Marshal.ReleaseComObject(worksheet);
                 Marshal.ReleaseComObject(workbook);
                 Marshal.ReleaseComObject(app);
