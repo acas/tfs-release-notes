@@ -26,6 +26,7 @@ namespace ReleaseNotes
         public virtual void createNamedSection(string headername, string text, string hyperlink) { }
         public virtual void createErrorMessage(string message) { }
         public virtual void createCorporateHeaderGraphic() { }
+        public virtual void createNewWorksheet(string worksheetName) { }
 
         public ReleaseNotesGenerator(NamedLookup settings)
         {
@@ -123,6 +124,11 @@ namespace ReleaseNotes
 
                 // create a vertical table
                 createVerticalTable(TFS.getReleaseNotesAsDataTable(), "Included Requirements", true);
+
+                // create a new worksheet
+                createNewWorksheet("Test Cases");
+
+                // create a vertical table for test cases/user stories here
 
                 // done!
                 logger.setType(Logger.Type.Success)

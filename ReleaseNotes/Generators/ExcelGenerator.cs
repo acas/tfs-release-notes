@@ -18,7 +18,11 @@ namespace ReleaseNotes
         private Excel.Workbook workbook;
         private Excel.Worksheet worksheet;
         private Excel.Range currentRange;
+        private int starterRow = 1;
         private int currentRow = 1;
+        private int currentColumnCount = 1;
+        private int currentColumnOffset = 1;
+        private const int totalAllowedRows = 10;
 
         // alphabet (for columns)
         private char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
@@ -34,7 +38,7 @@ namespace ReleaseNotes
             app.UserControl = !this.silent;
             workbook = (Excel.Workbook)app.Workbooks.Add();
             worksheet = (Excel.Worksheet)workbook.ActiveSheet;
-            worksheet.Name = settings["Project Name"] + settings["Iteration"];
+            worksheet.Name = "Release Notes";
         }
 
         /// <summary>
@@ -66,16 +70,41 @@ namespace ReleaseNotes
         /// <param name="header"></param>
         public override void createVerticalTable(DataTable dataTable, string headerText, bool header)
         {
+            // set the current column count
+            this.starterRow = currentRow;
+            this.currentColumnCount = dataTable.Columns.Count;
+
             // add header row
-            addVerticalTableRow(Utilities.tableColumnsToStringArray(dataTable));
+            addVerticalTableRow(Utilities.tableColumnsToStringArray(dataTable), false);
 
             // add table information
             foreach (DataRow row in dataTable.Rows)
-                addVerticalTableRow(Utilities.tableRowToStringArray(row));
+                addVerticalTableRow(Utilities.tableRowToStringArray(row), false);
 
             // set sizing and theming
             autoSize();
-            setDefaultTheme();
+            setDefaultTheme(header);
+
+            // move ahead a row
+            this.currentRow++;
+        }
+
+        /// <summary>
+        /// Creates a title for this Excel document
+        /// </summary>
+        /// <param name="titleText"></param>
+        public override void createTitle(string titleText)
+        {
+  
+        }
+
+        /// <summary>
+        /// Creates an Excel table heading
+        /// </summary>
+        /// <param name="headingText"></param>
+        public override void createHeading(string headingText)
+        {
+            
         }
 
         /// <summary>
@@ -85,26 +114,38 @@ namespace ReleaseNotes
         public override void createErrorMessage(string message)
         {
             // autosize and theme, with error message
-            addVerticalTableRow(new string[] { message });
+            addVerticalTableRow(new string[] { message }, true);
 
             // set sizing and theming
             autoSize();
-            setDefaultTheme();
+            setDefaultTheme(false);
         }
 
         /// <summary>
         /// Add a row to an Excel sheet
         /// </summary>
         /// <param name="columnValues"></param>
-        private void addVerticalTableRow(string[] columnValues)
+        private void addVerticalTableRow(string[] columnValues, bool merge)
         {
+            // set column values
             for (int i = 0; i < columnValues.Count(); i++)
             {
                 currentRange = getSingleCellRange(this.worksheet, i + 1, currentRow);
                 currentRange.Value = columnValues[i];
                 if (i == 0) { currentRange.EntireColumn.ColumnWidth = 24; }
             }
+
+            // set row height
             currentRange.EntireRow.RowHeight = 24;
+
+            // merge if supplied
+            if (merge)
+            {
+                currentRange = getMultiCellRange(worksheet, currentColumnOffset, currentColumnCount, currentRow);
+                currentRange.Merge();
+            }
+
+            // increase the current row count
             this.currentRow++;
         }
 
@@ -113,17 +154,21 @@ namespace ReleaseNotes
         /// </summary>
         private void autoSize()
         {
-            worksheet.UsedRange.Columns.AutoFit();
+            Excel.Range sized = getBlockedRange(worksheet, currentColumnOffset, currentColumnCount, starterRow, currentRow);
+            sized.Columns.AutoFit();
         }
 
         /// <summary>
         /// Sets the workbooks default theme
         /// </summary>
-        private void setDefaultTheme()
+        private void setDefaultTheme(bool header)
         {
-            Excel.Range styled = worksheet.UsedRange;
+            Excel.Range styled = getBlockedRange(worksheet, currentColumnOffset, currentColumnCount, starterRow, currentRow);
+            Excel.XlYesNoGuess headerExists = Excel.XlYesNoGuess.xlNo;
+            if (header)
+                headerExists = Excel.XlYesNoGuess.xlYes;
             worksheet.ListObjects.AddEx(Excel.XlListObjectSourceType.xlSrcRange, 
-                styled, Type.Missing, Excel.XlYesNoGuess.xlYes, Type.Missing).Name = "TableStyle";
+                styled, Type.Missing, headerExists, Type.Missing).Name = "TableStyle";
             worksheet.ListObjects.Item["TableStyle"].TableStyle = "TableStyleMedium2";
         }
 
@@ -216,7 +261,7 @@ namespace ReleaseNotes
                 app.UserControl = false;
 
                 // save this workbook in the application directory
-                workbook.SaveAs(Utilities.getExecutingPath() + worksheet.Name + ".xlsx",
+                workbook.SaveAs(Utilities.getExecutingPath() + settings["Project Name"] + " " + settings["Iteration"] + " Release Notes.xlsx",
                     Excel.XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing,
                     false, false, Excel.XlSaveAsAccessMode.xlNoChange,
                     Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
