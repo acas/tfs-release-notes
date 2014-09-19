@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.TeamFoundation.Framework.Client;
+using ReleaseNotes.Utility;
 
 namespace ReleaseNotes
 {
@@ -29,7 +30,7 @@ namespace ReleaseNotes
             try
             {
                 // create release notes generator
-                IReleaseNotesGenerator generator = null;
+                ReleaseNotesGenerator generator = null;
 
                 // check cmd args length
                 if (args.Length != 8) { throw new IndexOutOfRangeException("Too many/few command line arguments"); }
@@ -37,7 +38,7 @@ namespace ReleaseNotes
                 // set vars from args (hardcoded until able to run with cmd line args)
                 string generatorType = args[3].ToLowerInvariant();
 
-                var settings = new BaseReleaseNotesGenerator.NamedLookup("Settings");
+                var settings = new NamedLookup("Settings");
                 settings["Team Project Path"] = args[0];
                 settings["Project Name"] = args[1];
                 settings["Iteration"] = args[2];

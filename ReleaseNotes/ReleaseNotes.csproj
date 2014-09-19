@@ -93,6 +93,7 @@
     <Compile Include="Utility\Logger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\Types.cs" />
     <Compile Include="Utility\Utilities.cs" />
     <Compile Include="Tests\Test.cs" />
     <Compile Include="Utility\TFSAccessor.cs" />

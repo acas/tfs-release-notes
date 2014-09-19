@@ -7,10 +7,11 @@ using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 using System.Data;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
+using ReleaseNotes.Utility;
 
 namespace ReleaseNotes
 {
-    class ExcelGenerator : BaseReleaseNotesGenerator, IReleaseNotesGenerator
+    class ExcelGenerator : ReleaseNotesGenerator
     {
         // excel persistent object
         private Excel.Application app;

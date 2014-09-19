@@ -2,65 +2,32 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Data;
 using System.Threading.Tasks;
+using ReleaseNotes.Utility;
 
 namespace ReleaseNotes
 {
-    interface IReleaseNotesGenerator
+    class ReleaseNotesGenerator
     {
-        void generateReleaseNotes();
-    }
-
-    class BaseReleaseNotesGenerator
-    {
-        public struct NamedLookup
-        {
-            private string name;
-            private Dictionary<string, string> lookup;
-            
-            public NamedLookup(string name) {
-                this.name = name;
-                this.lookup = new Dictionary<string, string>();
-            }
-
-            public NamedLookup(string name, Dictionary<string, string> predefinedLookup)
-            {
-                this.name = name;
-                this.lookup = predefinedLookup;
-            }
-
-            public string getName()
-            {
-                return this.name;
-            }
-
-            public string this[string name] 
-            {
-                get { return this.lookup[name]; }
-                set
-                {
-                    if (name != null && value != null)
-                        lookup[name] =  value.ToString();
-                }
-            }
-
-            public void removeProperty(string name)
-            {
-                lookup.Remove(name);
-            }
-
-            public Dictionary<string, string> getLookup() {
-                return this.lookup;
-            }
-        }
-
         protected bool silent;
         protected Logger logger;
         protected TFSAccessor TFS;
-        private List<NamedLookup> propertiesList = new List<NamedLookup>();
         protected NamedLookup settings;
+        private List<NamedLookup> propertiesList = new List<NamedLookup>();
 
-        public BaseReleaseNotesGenerator(NamedLookup settings)
+        // override all of these
+        public virtual void createTitle(string titleText) { }
+        public virtual void createHeading(string headingText) { }
+        public virtual void createHorizontalTable(NamedLookup nl, int splits, bool header) { }
+        public virtual void createVerticalTable(DataTable dt, string headerText, bool header) { }
+        public virtual void createDocumentSpecificPreFormatting() { }
+        public virtual void createDocumentSpecificPostFormatting() { }
+        public virtual void createNamedSection(string headername, string text, string hyperlink) { }
+        public virtual void createErrorMessage(string message) { }
+        public virtual void createCorporateHeaderGraphic() { }
+
+        public ReleaseNotesGenerator(NamedLookup settings)
         {
             this.settings = settings;
             this.TFS = TFSAccessor.TFSAccessorFactory(settings["Team Project Path"], settings["Project Name"], settings["Iteration"]);
@@ -108,6 +75,56 @@ namespace ReleaseNotes
             sourceServerInformation["Database"] = settings["Database"];
             sourceServerInformation["Source"] = "(Changeset: " + TFS.getLatestChangesetNumber() + ")";
             return sourceServerInformation;
+        }
+
+        public void generateReleaseNotes()
+        {
+            // set silent to false
+            silent = false;
+
+            // create excel writer
+            logger.setMessage("Generating Word release notes document.")
+                .setType(Logger.Type.Information)
+                .display();
+
+            // try to generate the document
+            try
+            {
+                // log generating document
+                logger.setMessage("Preparing document, please wait...")
+                    .setType(Logger.Type.Information)
+                    .display();
+
+                // create graphic
+                createCorporateHeaderGraphic();
+
+                // create heading
+                createTitle(settings["Doc Type"]);
+
+                // create horizontal table paragraph
+                createHorizontalTable(getDefaultExecutiveSummary(), 2, false);
+
+                // create access section
+                createNamedSection("Access", "Application is accessible at: ", settings["Web Location"]);
+
+                // create the details section
+                createHorizontalTable(getDefaultDetails(), 1, true);
+
+                // create a vertical table
+                createVerticalTable(TFS.getReleaseNotesAsDataTable(), "Included Requirements", true);
+
+                // done!
+                logger.setType(Logger.Type.Success)
+                    .setMessage("Document generated.")
+                    .display();
+            }
+            catch (Exception e)
+            {
+                // set sizing and theming
+                logger.setType(Logger.Type.Error)
+                    .setMessage("Document not generated. " + e.Message)
+                    .display();
+            }
         }
     }
 }
