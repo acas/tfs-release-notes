@@ -205,14 +205,12 @@ namespace ReleaseNotes
 
                     // if not test step, ignore
                     if (!(action is ITestStep))
-                    {
                         continue;
-                    }
                     else
                     {
                         // get the test step
                         var step = action as ITestStep;
-                        int stepNumber = counter; //step.Id;
+                        int stepNumber = counter;
                         string stepTitle = Utilities.stripHtmlContrived(step.Title, true);
                         string result = Utilities.stripHtmlContrived(step.ExpectedResult, true);
                         steps += "Step #" + stepNumber + ": " + stepTitle + "\n";

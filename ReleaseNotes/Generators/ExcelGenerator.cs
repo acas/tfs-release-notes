@@ -94,7 +94,7 @@ namespace ReleaseNotes
 
             // set sizing and theming
             setDefaultTheme(header);
-            setBasicTheme(true);
+            setBasicTheme(false);
             advanceRow();
         }
 
@@ -108,7 +108,7 @@ namespace ReleaseNotes
         {
             // 2 splits = 4 columns
             this.currentColumnCount = 2 * splits;
-            this.starterRow = this.currentRow;
+            this.starterRow = this.currentRow + 1;
 
             // if header needed
             if (header)
@@ -190,9 +190,6 @@ namespace ReleaseNotes
         {
             // don't start at the top of the table
             advanceRow(0);
-            
-            // create something reasonably sized
-            this.currentColumnCount = totalAllowedColumns / 4;
 
             // get the range of the title
             Excel.Range titleRowRange = getMultiCellRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, currentRow);
@@ -206,9 +203,9 @@ namespace ReleaseNotes
             titleRowRange.Cells.Font.Size = 14;
             titleRowRange.Cells.Font.Bold = 1;
             titleRowRange.Cells.Font.Color = Excel.XlRgbColor.rgbBlack;
-            titleRowRange.Cells.Interior.Color = Excel.XlRgbColor.rgbLightGray;
-            titleRowRange.Cells.Borders.Color = Excel.XlRgbColor.rgbBlack;
-            titleRowRange.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            // titleRowRange.Cells.Interior.Color = Excel.XlRgbColor.rgbLightGray;
+            // titleRowRange.Cells.Borders.Color = Excel.XlRgbColor.rgbBlack;
+            // titleRowRange.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
             titleRowRange.Cells.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
             titleRowRange.Cells.VerticalAlignment = Excel.XlVAlign.xlVAlignTop;
             titleRowRange.Cells.Value = titleText;
@@ -237,8 +234,8 @@ namespace ReleaseNotes
             titleRowRange.Cells.Font.Bold = 1;
             titleRowRange.Cells.Font.Color = Excel.XlRgbColor.rgbBlack;
             titleRowRange.Cells.Interior.Color = Excel.XlRgbColor.rgbWhite;
-            titleRowRange.Cells.Borders.Color = Excel.XlRgbColor.rgbBlack;
-            titleRowRange.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            // titleRowRange.Cells.Borders.Color = Excel.XlRgbColor.rgbBlack;
+            // titleRowRange.Cells.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
             titleRowRange.Cells.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
             titleRowRange.Cells.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
             titleRowRange.Cells.Value = headingText;
@@ -404,6 +401,9 @@ namespace ReleaseNotes
             this.currentRow = 2;
             this.currentColumnCount = 4;
             this.currentColumnOffset = 2;
+
+            // rem grid lines
+            app.ActiveWindow.DisplayGridlines = false;
         }
 
         /// <summary>
@@ -423,16 +423,16 @@ namespace ReleaseNotes
         /// <summary>
         /// Sets a basic theme for the currently selected table range
         /// </summary>
-        private void setBasicTheme(bool innerBordersThemed)
+        private void setBasicTheme(bool bordersThemed)
         {
             Excel.Range styled = getBlockedRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, starterRow, currentRow);
-            styled.Borders[Excel.XlBordersIndex.xlEdgeBottom].Color = Excel.XlRgbColor.rgbBlack;
-            styled.Borders[Excel.XlBordersIndex.xlEdgeTop].Color = Excel.XlRgbColor.rgbBlack;
-            styled.Borders[Excel.XlBordersIndex.xlEdgeRight].Color = Excel.XlRgbColor.rgbBlack;
-            styled.Borders[Excel.XlBordersIndex.xlEdgeLeft].Color = Excel.XlRgbColor.rgbBlack;
 
-            if (innerBordersThemed)
+            if (bordersThemed)
             {
+                styled.Borders[Excel.XlBordersIndex.xlEdgeBottom].Color = Excel.XlRgbColor.rgbBlack;
+                styled.Borders[Excel.XlBordersIndex.xlEdgeTop].Color = Excel.XlRgbColor.rgbBlack;
+                styled.Borders[Excel.XlBordersIndex.xlEdgeRight].Color = Excel.XlRgbColor.rgbBlack;
+                styled.Borders[Excel.XlBordersIndex.xlEdgeLeft].Color = Excel.XlRgbColor.rgbBlack;
                 styled.Borders[Excel.XlBordersIndex.xlInsideHorizontal].Color = Excel.XlRgbColor.rgbBlack;
                 styled.Borders[Excel.XlBordersIndex.xlInsideVertical].Color = Excel.XlRgbColor.rgbBlack;
             }
