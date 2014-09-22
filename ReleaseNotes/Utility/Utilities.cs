@@ -23,6 +23,7 @@ namespace ReleaseNotes
             string noHTML = Regex.Replace(inputHTML, @"<[^>]+>|&nbsp;|&quot;", "").Trim();
             if (removeWhitespace)
                 noHTML = Regex.Replace(noHTML, @"\s{2,}", " ");
+            noHTML = noHTML.Replace("&gt;", ">").Replace("&amp;", "&");
             return noHTML.Trim();
         }
 

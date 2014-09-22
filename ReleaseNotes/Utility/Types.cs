@@ -13,17 +13,20 @@ namespace ReleaseNotes.Utility
     {
         private string name;
         private Dictionary<string, string> lookup;
+        private List<string> columnNames;
 
         public NamedLookup(string name)
         {
             this.name = name;
             this.lookup = new Dictionary<string, string>();
+            this.columnNames = new List<string>();
         }
 
         public NamedLookup(string name, Dictionary<string, string> predefinedLookup)
         {
             this.name = name;
             this.lookup = predefinedLookup;
+            this.columnNames = new List<string>();
         }
 
         public string getName()
@@ -49,6 +52,24 @@ namespace ReleaseNotes.Utility
         public Dictionary<string, string> getLookup()
         {
             return this.lookup;
+        }
+
+        public void addColumnName(string columnName)
+        {
+            this.columnNames.Add(columnName);
+        }
+
+        public void addColumnNames(string[] columnNames)
+        {
+            foreach (string name in columnNames)
+            {
+                this.columnNames.Add(name);
+            }
+        }
+
+        public List<string> getColumnNames()
+        {
+            return this.columnNames;
         }
     }
 }

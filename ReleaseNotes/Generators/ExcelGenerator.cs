@@ -95,7 +95,7 @@ namespace ReleaseNotes
             // set sizing and theming
             setDefaultTheme(header);
             setBasicTheme(true);
-            advanceRow(0);
+            advanceRow();
         }
 
         /// <summary>
@@ -347,14 +347,35 @@ namespace ReleaseNotes
         /// <summary>
         /// Formats anything post document creation
         /// </summary>
-        public override void createDocumentSpecificPostFormatting()
+        public override void createDocumentSpecificPostFormatting(bool wide = false)
         {
             this.worksheet.UsedRange.WrapText = true;
 
-            for (int i = 1; i <= this.worksheet.UsedRange.Columns.Count; i++)
+            for (int i = 1; i <= this.worksheet.UsedRange.Columns.Count + 1; i++)
             {
                 Excel.Range columnCell = getSingleCellRange(worksheet, i, 1);
-                columnCell.EntireColumn.ColumnWidth = 28;
+                if (!wide)
+                {
+                    if (i >= currentColumnOffset)
+                    {
+                        columnCell.EntireColumn.ColumnWidth = 28;
+                    }
+                    else
+                    {
+                        columnCell.EntireColumn.ColumnWidth = 10;
+                    }
+                }
+                else
+                {
+                    if (i >= currentColumnOffset)
+                    {
+                        columnCell.EntireColumn.ColumnWidth = 50;
+                    }
+                    else
+                    {
+                        columnCell.EntireColumn.ColumnWidth = 10;
+                    }
+                }
             }
 
             for (int i = 1; i <= this.worksheet.UsedRange.Rows.Count; i++)
@@ -362,6 +383,27 @@ namespace ReleaseNotes
                 Excel.Range rowCell = getSingleCellRange(worksheet, 1, i);
                 rowCell.EntireRow.RowHeight = 28;
             }
+        }
+
+        /// <summary>
+        /// Creates a new page with a given name (if Excel)
+        /// </summary>
+        /// <param name="worksheetName"></param>
+        public override void createNewPage(string worksheetName)
+        {
+            // post format the previous document
+            this.createDocumentSpecificPostFormatting();
+
+            // worksheet information
+            worksheet = (Excel.Worksheet)workbook.Worksheets.Add();
+            worksheet.Select();
+            worksheet.Name = worksheetName;
+
+            // excel positioning vars
+            this.starterRow = 1;
+            this.currentRow = 2;
+            this.currentColumnCount = 4;
+            this.currentColumnOffset = 2;
         }
 
         /// <summary>

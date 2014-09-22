@@ -41,7 +41,7 @@ namespace ReleaseNotes.Generators
             throw new NotImplementedException();
         }
 
-        public override void createDocumentSpecificPostFormatting()
+        public override void createDocumentSpecificPostFormatting(bool wide = false)
         {
             throw new NotImplementedException();
         }

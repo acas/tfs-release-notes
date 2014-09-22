@@ -35,7 +35,7 @@ namespace ReleaseNotes
         }
 
         public virtual void createDocumentSpecificPreFormatting() { }
-        public virtual void createDocumentSpecificPostFormatting() { }
+        public virtual void createDocumentSpecificPostFormatting(bool wide = false) { }
         public virtual void createNamedSection(string headername, string text, string hyperlink) { }
         public virtual void createErrorMessage(string message) { }
         public virtual void createHeaderGraphic(string path) { }
@@ -157,10 +157,9 @@ namespace ReleaseNotes
                 createNewPage("Test Cases");
 
                 // create a vertical table for test cases/user stories here
-                // unimplemented
-
-                // post formatting
-                createDocumentSpecificPostFormatting();
+                // special post formatting
+                createVerticalTable(TFS.getTestCases(), "Test Cases", true);
+                createDocumentSpecificPostFormatting(true);
 
                 // done!
                 logger.setType(Logger.Type.Success)

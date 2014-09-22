@@ -28,7 +28,8 @@ namespace ReleaseNotes
             app = new Word.Application();
             app.Visible = !this.silent;
             document.UserControl = !this.silent;
-            document = app.Documents.Add(Type.Missing, Type.Missing, Word.WdNewDocumentType.wdNewBlankDocument, !this.silent);
+            document = app.Documents.Add(Type.Missing, Type.Missing, 
+                Word.WdNewDocumentType.wdNewBlankDocument, !this.silent);
         }
 
         /// <summary>

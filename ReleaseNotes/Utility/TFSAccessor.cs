@@ -13,6 +13,7 @@ using Microsoft.TeamFoundation.Server;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.TeamFoundation.Build.Client;
 using Microsoft.TeamFoundation.TestManagement.Client;
+using ReleaseNotes.Utility;
 
 namespace ReleaseNotes
 {
@@ -85,7 +86,7 @@ namespace ReleaseNotes
                 .setMessage("Querying work items.")
                 .setType(Logger.Type.Information)
                 .display();
-            return getWorkItemsFromQuery("SELECT [System.ID], [System.Title], [System.AreaPath], [System.IterationPath], [System.Description] " +
+            return getWorkItemsFromQuery("SELECT * " +
                 "FROM workitems " +
                 "WHERE [System.TeamProject] = '" + projectName + "' " +
                 "AND ([System.Tags] CONTAINS 'Service Now'" +
@@ -161,10 +162,73 @@ namespace ReleaseNotes
         /// </summary>
         public DataTable getTestCases()
         {
+            (new Logger())
+            .setMessage("Querying test cases.")
+            .setType(Logger.Type.Information)
+            .display();
+
+            // create steps data table
+            DataTable testCasesTable = new DataTable();
+            testCasesTable.Columns.Add("ID", typeof(int));
+            testCasesTable.Columns.Add("Title", typeof(string));
+            testCasesTable.Columns.Add("Steps", typeof(string));
+
+            // get the TFS test management server and query
             ITestManagementService testManagementService = this.projectCollection.GetService<ITestManagementService>();
             ITestManagementTeamProject testProject = testManagementService.GetTeamProject(this.projectName);
             ITestCaseHelper testCaseHelper = testProject.TestCases;
-            return null;
+            IEnumerable<ITestCase> tcc = testProject.TestCases.Query("SELECT * " +
+                "FROM workitems " +
+                "WHERE [System.TeamProject] = '" + projectName + "' " +
+                "AND [System.WorkItemType] = 'Test Case'" +
+                "AND [System.IterationPath] = '" + projectName + "\\Release " + iterationNumber + "'");
+            
+            // through all items that are test cases
+            foreach(ITestCase testCase in tcc) {
+                
+                // get the work item data
+                WorkItem workItem = testCase.Links.WorkItem;
+                int id = workItem.Id;
+                string title = workItem.Title;
+                string desc = workItem.Description;
+                string steps = "";
+
+                // get collection of test actions
+                TestActionCollection testActionCollection = testCase.Actions;
+                int counter = 1;
+
+                //
+                for (int i = 0; i < testActionCollection.Count; i++)
+                {
+                    // get an action
+                    var action = testCase.Actions[i];
+
+                    // if not test step, ignore
+                    if (!(action is ITestStep))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        // get the test step
+                        var step = action as ITestStep;
+                        int stepNumber = counter; //step.Id;
+                        string stepTitle = Utilities.stripHtmlContrived(step.Title, true);
+                        string result = Utilities.stripHtmlContrived(step.ExpectedResult, true);
+                        steps += "Step #" + stepNumber + ": " + stepTitle + "\n";
+                        if (result.Trim().Count() != 0)
+                        {
+                            steps += "Expected Result: " + result + "\n";
+                        }
+                        steps += "\n";
+                        counter++;
+                    }
+                }
+
+                // add to data table
+                testCasesTable.Rows.Add(id, title, steps);
+            }
+            return testCasesTable;
         }
 
         /// <summary>
