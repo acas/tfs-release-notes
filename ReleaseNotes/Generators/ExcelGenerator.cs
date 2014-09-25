@@ -307,7 +307,16 @@ namespace ReleaseNotes
             {
                 range = getSingleCellRange(this.worksheet, currentColumnOffset + i, currentRow);
                 range.Value = columnValues[i];
-                if (i == 0) { range.EntireColumn.ColumnWidth = 24; }
+                if (i == 0) { 
+                    range.EntireColumn.ColumnWidth = 24;
+                }
+                if (i == 0 && currentRow != 0)
+                {
+                    // assume ID column, idk why it should be?
+                    if (!columnValues[0].Equals("ID"))
+                        range.Hyperlinks.Add(range, settings["Team Project Path"] + "/" + settings["Project Name"] + "/_workitems#_a=edit&id="
+                            + columnValues[0] + "&triage=true", Type.Missing, Type.Missing, columnValues[0]);
+                }
             }
 
             // set row height
