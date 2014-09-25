@@ -321,6 +321,7 @@ namespace ReleaseNotes
                         range.Font.Size = 10;
                         range.Font.Name = "Arial";
                         range.Font.Bold = 1;
+                        range.HorizontalAlignment = Excel.XlHAlign.xlHAlignLeft;
                     }
                 }
             }
@@ -408,7 +409,7 @@ namespace ReleaseNotes
             this.createDocumentSpecificPostFormatting();
 
             // worksheet information
-            worksheet = (Excel.Worksheet)workbook.Worksheets.Add();
+            worksheet = (Excel.Worksheet)workbook.Worksheets.Add(Type.Missing, worksheet);
             worksheet.Select();
             worksheet.Name = worksheetName;
 
