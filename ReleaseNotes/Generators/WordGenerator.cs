@@ -27,9 +27,9 @@ namespace ReleaseNotes
         {
             app = new Word.Application();
             app.Visible = !this.silent;
+            document = app.Documents.Add(Type.Missing, Type.Missing,
+            Word.WdNewDocumentType.wdNewBlankDocument, !this.silent);
             document.UserControl = !this.silent;
-            document = app.Documents.Add(Type.Missing, Type.Missing, 
-                Word.WdNewDocumentType.wdNewBlankDocument, !this.silent);
         }
 
         /// <summary>
@@ -260,13 +260,17 @@ namespace ReleaseNotes
             // try to print data out
             try
             {
-                // add another paragraph
-                Word.Paragraph paragraph = document.Paragraphs.Add();
-                Word.Range range = paragraph.Range;
+                // get rid of the description column
+                if (dt.Columns.Contains("Description"))
+                    dt.Columns.Remove("Description");
 
                 // create header
                 if (header)
                     createHeader(headerText);
+
+                // add another paragraph
+                Word.Paragraph paragraph = document.Paragraphs.Add();
+                Word.Range range = paragraph.Range;
 
                 // create the entire table with styling
                 Word.Table table = document.Tables.Add(range, dt.Rows.Count + 1, dt.Columns.Count,
@@ -389,6 +393,7 @@ namespace ReleaseNotes
             heading.Indent();
 
             // split
+            insertTableSplit(heading);
             insertTableSplit(heading);
         }
 

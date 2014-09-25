@@ -91,6 +91,7 @@ namespace ReleaseNotes
                 "WHERE [System.TeamProject] = '" + projectName + "' " +
                 "AND ([System.Tags] CONTAINS 'Service Now'" +
                 "OR [System.Tags] CONTAINS 'UAT' " +
+                "OR [System.Tags] CONTAINS 'PROD' " +
                 "OR [System.WorkItemType] = 'Product Backlog Item')" +
                 "AND [System.State] IN ('Committed', 'Done')" +
                 "AND [System.IterationPath] = '" + projectName + "\\Release " + iterationNumber + "'");
@@ -109,12 +110,13 @@ namespace ReleaseNotes
             releaseNotesTable.Columns.Add("WorkItem", typeof(string));
             releaseNotesTable.Columns.Add("Title", typeof(string));
             releaseNotesTable.Columns.Add("Area", typeof(string));
-            releaseNotesTable.Columns.Add("Iteration", typeof(string));
+            releaseNotesTable.Columns.Add("Description", typeof(string));
+            // releaseNotesTable.Columns.Add("Tag", typeof(string));
 
             WorkItemCollection c = getReleaseNotesFromQuery();
             if (c != null)
                 foreach (WorkItem i in c)
-                    releaseNotesTable.Rows.Add(i.Id, i.Type.Name, i.Title, i.AreaPath, i.IterationPath);
+                    releaseNotesTable.Rows.Add(i.Id, i.Type.Name, i.Title, i.AreaPath, Utilities.stripHtmlContrived(i.Description, false) /*, i.Tags */);
             return releaseNotesTable;
         }
 
@@ -197,7 +199,7 @@ namespace ReleaseNotes
                 TestActionCollection testActionCollection = testCase.Actions;
                 int counter = 1;
 
-                //
+                // iterate through all test actions
                 for (int i = 0; i < testActionCollection.Count; i++)
                 {
                     // get an action

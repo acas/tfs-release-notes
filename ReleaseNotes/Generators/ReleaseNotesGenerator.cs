@@ -23,15 +23,15 @@ namespace ReleaseNotes
 
         public virtual void createHorizontalTable(NamedLookup data, int splits, bool header) 
         {
-            Contract.Requires<ArgumentNullException>(splits > 0, "At least 1 table split must be specified");
+            // Contract.Requires<ArgumentNullException>(splits > 0, "At least 1 table split must be specified");
         }
 
         public virtual void createVerticalTable(DataTable dt, string headerText, bool header) 
         {
-            Contract.Requires<ArgumentNullException>(dt != null, "Data cannot be null");
-            Contract.Requires<ArgumentNullException>((dt.Rows.Count > 0 && !header) || (dt.Rows.Count > 1 && !header), "Row count must be greater than 0.");
-            Contract.Requires<ArgumentNullException>(dt.Columns.Count > 0, "Column count must be greater than 0.");
-            Contract.Requires<ArgumentNullException>(headerText != null, "Header text cannot be null");
+            // Contract.Requires<ArgumentNullException>(dt != null, "Data table cannot be null");
+            // Contract.Requires<ArgumentNullException>((dt.Rows.Count > 0 && !header) || (dt.Rows.Count > 1 && !header), "Row count must be greater than 0.");
+            // Contract.Requires<ArgumentNullException>(dt.Columns.Count > 0, "Column count must be greater than 0.");
+            // Contract.Requires<ArgumentNullException>(headerText != null, "Header text cannot be null");
         }
 
         public virtual void createDocumentSpecificPreFormatting() { }

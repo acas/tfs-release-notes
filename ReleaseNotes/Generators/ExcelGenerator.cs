@@ -155,7 +155,8 @@ namespace ReleaseNotes
                                 // hyperlink
                                 cellRange.Font.Name = "Arial";
                                 cellRange.Font.Size = 10;
-                                cellRange.Value = data[currentKey];
+                                cellRange.Hyperlinks.Add(cellRange, settings["Team Project Path"] + "/" + settings["Project Name"] + "/_workitems", Type.Missing, "Work Items",
+                                    settings["Team Project Path"] + "/" + settings["Project Name"] + "/_workitems" + Environment.NewLine + data[currentKey]);
                             }
                             else
                             {

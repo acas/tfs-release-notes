@@ -20,7 +20,7 @@ namespace ReleaseNotes
         /// <returns>An HTML (almost) free string</returns>
         public static string stripHtmlContrived(string inputHTML, bool removeWhitespace)
         {
-            string noHTML = Regex.Replace(inputHTML, @"<[^>]+>|&nbsp;|&quot;", "").Trim();
+            string noHTML = Regex.Replace(Regex.Replace(Regex.Replace(Regex.Replace(Regex.Replace(inputHTML, "<br>", "\n\n"), "<li>", "- "), "</p>|</div>|</ul>|</li>|</ol>", "\n"), "&nbsp;", "\n"), @"<[^>]+>|&quot;", "").Trim();
             if (removeWhitespace)
                 noHTML = Regex.Replace(noHTML, @"\s{2,}", " ");
             noHTML = noHTML.Replace("&gt;", ">").Replace("&amp;", "&");
