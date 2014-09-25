@@ -155,6 +155,7 @@ namespace ReleaseNotes
                                 // hyperlink
                                 cellRange.Font.Name = "Arial";
                                 cellRange.Font.Size = 10;
+                                cellRange.Font.Bold = 1;
                                 cellRange.Hyperlinks.Add(cellRange, settings["Team Project Path"] + "/" + settings["Project Name"] + "/_workitems", Type.Missing, "Work Items",
                                     settings["Team Project Path"] + "/" + settings["Project Name"] + "/_workitems" + Environment.NewLine + data[currentKey]);
                             }
@@ -314,8 +315,13 @@ namespace ReleaseNotes
                 {
                     // assume ID column, idk why it should be?
                     if (!columnValues[0].Equals("ID"))
+                    {
                         range.Hyperlinks.Add(range, settings["Team Project Path"] + "/" + settings["Project Name"] + "/_workitems#_a=edit&id="
                             + columnValues[0] + "&triage=true", Type.Missing, Type.Missing, columnValues[0]);
+                        range.Font.Size = 10;
+                        range.Font.Name = "Arial";
+                        range.Font.Bold = 1;
+                    }
                 }
             }
 
