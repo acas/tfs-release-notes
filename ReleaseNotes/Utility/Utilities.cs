@@ -24,6 +24,7 @@ namespace ReleaseNotes
             if (removeWhitespace)
                 noHTML = Regex.Replace(noHTML, @"\s{2,}", " ");
             noHTML = noHTML.Replace("&gt;", ">").Replace("&amp;", "&");
+            noHTML = Regex.Replace(noHTML, "(\\n){3,}|(\n){3,}", "\n");
             return noHTML.Trim();
         }
 
