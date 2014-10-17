@@ -1,8 +1,15 @@
-tfs-release-notes
+TFS Release Notes
 =================
 
-Generates customizeable release notes for a project hosted on Team Foundation Server with Word and Excel.
+TFS Release Notes automatically generates release notes for a project hosted on Team Foundation Server using MS Word or MS Excel.
+The release notes contain all PBIs in a given iteration plus any bugs in that iteration with specific tags. 
+They also contain the test cases for those work items.
 
+Prerequisites
+------------------
+* TFS Release Notes generates MS Word and MS Excel documents using their respective interops, so you
+must have Word/Excel installed on the machine you will use to generate the release notes.
+* The Windows user running ReleaseNotes.exe must have read access to the team project specified.
 
 Usage
 ------------------
