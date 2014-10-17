@@ -150,11 +150,17 @@ namespace ReleaseNotes
                 .setMessage("Querying build definitions.")
                 .setType(Logger.Type.Information)
                 .display();
+
             IBuildServer buildServer = this.projectCollection.GetService<IBuildServer>();
             IBuildDetailSpec buildSpec = buildServer.CreateBuildDetailSpec(projectName);
             buildSpec.MaxBuildsPerDefinition = 1;
             buildSpec.QueryOrder = BuildQueryOrder.FinishTimeDescending;
             IBuildQueryResult query = buildServer.QueryBuilds(buildSpec);
+
+			if (query.Builds.Count() == 0)
+			{
+				return null;
+			}
             IBuildDetail detail = query.Builds[0];
             return detail.BuildNumber;
         }
