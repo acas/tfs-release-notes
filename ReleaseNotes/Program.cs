@@ -33,7 +33,7 @@ namespace ReleaseNotes
                 ReleaseNotesGenerator generator = null;
 
                 // check cmd args length
-                if (args.Length != 8) { throw new IndexOutOfRangeException("Too many/few command line arguments"); }
+                if (args.Length != 8) { throw new IndexOutOfRangeException("Too many/few command line arguments. Exactly eight must be supplied."); }
 
                 // set vars from args (hardcoded until able to run with cmd line args)
                 string generatorType = args[3].ToLowerInvariant();

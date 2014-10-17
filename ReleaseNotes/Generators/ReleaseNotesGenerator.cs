@@ -91,9 +91,13 @@ namespace ReleaseNotes
             NamedLookup executiveSummary = new NamedLookup("Executive Summary");
             executiveSummary["Application"] = settings["Project Name"];
             executiveSummary["Release Date"] = DateTime.Now.ToShortDateString();
-            executiveSummary["Release"] = settings["Project Name"] + " " + settings["Iteration"];
-            executiveSummary["Iteration (Sprint) #"] = settings["Iteration"];
-            executiveSummary["Build #"] = TFS.getLatestBuildNumber();
+            //executiveSummary["Release"] = settings["Project Name"] + " " + settings["Iteration"];
+            executiveSummary["Iteration (Sprint)"] = settings["Iteration"];
+			string buildNumber = TFS.getLatestBuildNumber();
+			if (buildNumber != null)
+			{
+				executiveSummary["Build #"] = buildNumber;
+			}            
             return executiveSummary;
         }
 
@@ -117,10 +121,10 @@ namespace ReleaseNotes
         public void generateReleaseNotes()
         {
             // set silent to false
-            silent = false;
+            silent = true;
 
             // create excel writer
-            logger.setMessage("Generating Word release notes document.")
+            logger.setMessage("Generating release notes document.")
                 .setType(Logger.Type.Information)
                 .display();
 
