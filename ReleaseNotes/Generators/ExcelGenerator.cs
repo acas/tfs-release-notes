@@ -35,7 +35,7 @@ namespace ReleaseNotes
         /// Generates an excel instance
         /// </summary>
         /// <param name="settings"></param>
-        private ExcelGenerator(NamedLookup settings) : base(settings)
+        private ExcelGenerator(NamedLookup settings, bool silent) : base(settings, silent)
         {
             app = new Excel.Application();
             app.Visible = !this.silent;
@@ -51,11 +51,11 @@ namespace ReleaseNotes
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        public static ExcelGenerator ExcelGeneratorFactory(NamedLookup settings)
+        public static ExcelGenerator ExcelGeneratorFactory(NamedLookup settings, bool silent)
         {
             try
             {
-                return new ExcelGenerator(settings);
+                return new ExcelGenerator(settings, silent);
             }
             catch (COMException e)
             {
@@ -396,7 +396,7 @@ namespace ReleaseNotes
             {
                 Excel.Range rowCell = getSingleCellRange(worksheet, 1, i);
                 rowCell.EntireRow.RowHeight = 28;
-            }
+            }			
         }
 
         /// <summary>

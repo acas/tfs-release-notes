@@ -13,8 +13,13 @@ namespace ReleaseNotes
     {
         static void Main(string[] args)
         {
-            // silent mode (server side?) is false by default
-            bool silent = false;
+            // silent mode is true by default -
+			// it's faster and quieter.
+            bool silent = true;
+
+			#if DEBUG
+				silent = false;
+			#endif
             
             if (!silent)
             {
@@ -51,10 +56,10 @@ namespace ReleaseNotes
                 switch (generatorType)
                 {
                     case "excel":
-                        generator = ExcelGenerator.ExcelGeneratorFactory(settings);
+                        generator = ExcelGenerator.ExcelGeneratorFactory(settings, silent);
                         break;
                     case "word":
-                        generator = WordGenerator.WordGeneratorFactory(settings);
+                        generator = WordGenerator.WordGeneratorFactory(settings, silent);
                         break;
                     case "html":
                         throw new NotImplementedException("Not implemented generator type");
@@ -74,7 +79,7 @@ namespace ReleaseNotes
                     .display();
             }
 
-            if (!silent)
+            if (!silent) //if we're in silent mode, the program exits. The file has been saved.
             {
                 // wait for exit
                 logger.setType(Logger.Type.General)

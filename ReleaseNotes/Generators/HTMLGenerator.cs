@@ -10,8 +10,8 @@ namespace ReleaseNotes.Generators
 {
     class HTMLGenerator : ReleaseNotesGenerator
     {
-        public HTMLGenerator(NamedLookup settings)
-            : base(settings)
+        public HTMLGenerator(NamedLookup settings, bool silent)
+            : base(settings, silent)
         {
             throw new NotImplementedException();
         }

@@ -42,13 +42,13 @@ namespace ReleaseNotes
         public virtual void createNewPage(string worksheetName) { }
         public virtual void save() { }
 
-        public ReleaseNotesGenerator(NamedLookup settings)
+        public ReleaseNotesGenerator(NamedLookup settings, bool silent)
         {
             this.settings = settings;
             checkRequiredFields();
             this.TFS = TFSAccessor.TFSAccessorFactory(settings["Team Project Path"], settings["Project Name"], settings["Iteration"]);
             this.logger = new Logger();
-            this.silent = false;
+            this.silent = silent;
         }
 
         public void checkRequiredFields()
@@ -90,9 +90,8 @@ namespace ReleaseNotes
         {
             NamedLookup executiveSummary = new NamedLookup("Executive Summary");
             executiveSummary["Application"] = settings["Project Name"];
-            executiveSummary["Release Date"] = DateTime.Now.ToShortDateString();
-            //executiveSummary["Release"] = settings["Project Name"] + " " + settings["Iteration"];
-            executiveSummary["Iteration (Sprint)"] = settings["Iteration"];
+            executiveSummary["Release Date"] = DateTime.Now.ToShortDateString();            
+            executiveSummary["Release (Sprint)"] = settings["Iteration"];
 			string buildNumber = TFS.getLatestBuildNumber();
 			if (buildNumber != null)
 			{
@@ -167,7 +166,7 @@ namespace ReleaseNotes
 
                 // done!
                 logger.setType(Logger.Type.Success)
-                    .setMessage("Document generated.")
+                    .setMessage("Document generated and saved in the current directory.")
                     .display();
             }
             catch (Exception e)
