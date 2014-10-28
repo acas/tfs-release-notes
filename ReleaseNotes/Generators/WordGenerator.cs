@@ -23,7 +23,7 @@ namespace ReleaseNotes
         /// Generates a word instance
         /// </summary>
         /// <param name="settings"></param>
-        private WordGenerator(NamedLookup settings) : base(settings)
+        private WordGenerator(NamedLookup settings, bool silent) : base(settings, silent)
         {
             app = new Word.Application();
             app.Visible = !this.silent;
@@ -37,11 +37,11 @@ namespace ReleaseNotes
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
-        public static WordGenerator WordGeneratorFactory(NamedLookup settings)
+        public static WordGenerator WordGeneratorFactory(NamedLookup settings, bool silent)
         {
             try
             {
-                return new WordGenerator(settings);
+                return new WordGenerator(settings, silent);
             }
             catch (COMException e)
             {
