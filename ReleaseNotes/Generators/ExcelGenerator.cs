@@ -73,14 +73,14 @@ namespace ReleaseNotes
         /// <param name="dataTable"></param>
         /// <param name="headerText"></param>
         /// <param name="header"></param>
-        public override void createVerticalTable(DataTable dataTable, string headerText, bool header)
+        public override void CreateVerticalTable(DataTable dataTable, string headerText, bool header)
         {
             // set the column count
             this.currentColumnCount = dataTable.Columns.Count;
             
             // create header
             if (header)
-                createHeader(headerText);
+                CreateHeader(headerText);
 
             // set the current column count
             this.starterRow = currentRow;
@@ -93,8 +93,8 @@ namespace ReleaseNotes
                 addVerticalTableRow(Utilities.tableRowToStringArray(row), false);
 
             // set sizing and theming
-            setDefaultTheme(header);
-            setBasicTheme(false);
+            SetDefaultTheme(header);
+            SetBasicTheme(false);
             advanceRow();
         }
 
@@ -104,7 +104,7 @@ namespace ReleaseNotes
         /// <param name="data"></param>
         /// <param name="splits"></param>
         /// <param name="header"></param>
-        public override void createHorizontalTable(NamedLookup data, int splits, bool header)
+        public override void CreateHorizontalTable(NamedLookup data, int splits, bool header)
         {
             // 2 splits = 4 columns
             this.currentColumnCount = 2 * splits;
@@ -112,7 +112,7 @@ namespace ReleaseNotes
 
             // if header needed
             if (header)
-                createHeader(data.getName());
+                CreateHeader(data.getName());
 
             // get a list of the keys
             List<string> tableKeys = data.getLookup().Keys.ToList();
@@ -127,7 +127,7 @@ namespace ReleaseNotes
             {
                 for (int j = 1; j <= this.currentColumnCount; j++)
                 {
-                    Excel.Range cellRange = getSingleCellRange(worksheet, j + currentColumnOffset - 1, currentRow);
+                    Excel.Range cellRange = GetSingleCellRange(worksheet, j + currentColumnOffset - 1, currentRow);
 
                     string currentKey = "";
                     if (counter != tableKeys.Count())
@@ -175,7 +175,7 @@ namespace ReleaseNotes
                 if (i == optimalRowNumber)
                 {
                     // style with basic theme
-                    setBasicTheme(true);
+                    SetBasicTheme(true);
                 }
                 advanceRow(0);
             }
@@ -188,13 +188,13 @@ namespace ReleaseNotes
         /// Creates a title for this Excel document
         /// </summary>
         /// <param name="titleText"></param>
-        public override void createTitle(string titleText)
+        public override void CreateTitle(string titleText)
         {
             // don't start at the top of the table
             advanceRow(0);
 
             // get the range of the title
-            Excel.Range titleRowRange = getMultiCellRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, currentRow);
+            Excel.Range titleRowRange = GetMultiCellRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, currentRow);
 
             // merge
             titleRowRange.Merge();
@@ -221,10 +221,10 @@ namespace ReleaseNotes
         /// Creates an Excel table heading
         /// </summary>
         /// <param name="headingText"></param>
-        public override void createHeader(string headingText)
+        public override void CreateHeader(string headingText)
         {
             // get the range of the title
-            Excel.Range titleRowRange = getMultiCellRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, currentRow);
+            Excel.Range titleRowRange = GetMultiCellRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, currentRow);
 
             // merge
             titleRowRange.Merge();
@@ -250,7 +250,7 @@ namespace ReleaseNotes
         /// Creates the header graphic for this table
         /// </summary>
         /// <param name="path"></param>
-        public override void createHeaderGraphic(string path)
+        public override void CreateHeaderGraphic(string path)
         {
             // add header graphics
             // save the graphic before its path can be referenced
@@ -269,11 +269,11 @@ namespace ReleaseNotes
                 Microsoft.Office.Core.MsoTriState.msoCTrue, 5, 5, width, height);
 
             // resize the first row to avoid a border issue
-            Excel.Range range = getMultiCellRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, currentRow);
+            Excel.Range range = GetMultiCellRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, currentRow);
             range.RowHeight = height + 1;
 
             // resize the first columnm
-            range = getSingleCellRange(worksheet, currentColumnOffset, 1);
+            range = GetSingleCellRange(worksheet, currentColumnOffset, 1);
             range.ColumnWidth = width + 1;
 
             // go forward 
@@ -284,14 +284,14 @@ namespace ReleaseNotes
         /// Creates an error message in the table
         /// </summary>
         /// <param name="message"></param>
-        public override void createErrorMessage(string message)
+        public override void CreateErrorMessage(string message)
         {
             // autosize and theme, with error message
             addVerticalTableRow(new string[] { message }, true);
 
             // set sizing and theming
             autoSize();
-            setDefaultTheme(false);
+            SetDefaultTheme(false);
         }
 
         /// <summary>
@@ -306,7 +306,7 @@ namespace ReleaseNotes
             // set column values
             for (int i = 0; i < columnValues.Count(); i++)
             {
-                range = getSingleCellRange(this.worksheet, currentColumnOffset + i, currentRow);
+                range = GetSingleCellRange(this.worksheet, currentColumnOffset + i, currentRow);
                 range.Value = columnValues[i];
                 if (i == 0) { 
                     range.EntireColumn.ColumnWidth = 24;
@@ -332,7 +332,7 @@ namespace ReleaseNotes
             // merge if supplied
             if (merge)
             {
-                range = getMultiCellRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, currentRow);
+                range = GetMultiCellRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, currentRow);
                 range.Merge();
             }
 
@@ -354,20 +354,20 @@ namespace ReleaseNotes
         /// </summary>
         private void autoSize()
         {
-            Excel.Range sized = getBlockedRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, starterRow, currentRow);
+            Excel.Range sized = GetBlockedRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, starterRow, currentRow);
             sized.Columns.AutoFit();
         }
 
         /// <summary>
         /// Formats anything post document creation
         /// </summary>
-        public override void createDocumentSpecificPostFormatting(bool wide = false)
+        public override void CreateDocumentSpecificPostFormatting(bool wide = false)
         {
             this.worksheet.UsedRange.WrapText = true;
 
             for (int i = 1; i <= this.worksheet.UsedRange.Columns.Count + 1; i++)
             {
-                Excel.Range columnCell = getSingleCellRange(worksheet, i, 1);
+                Excel.Range columnCell = GetSingleCellRange(worksheet, i, 1);
                 if (!wide)
                 {
                     if (i >= currentColumnOffset)
@@ -394,7 +394,7 @@ namespace ReleaseNotes
 
             for (int i = 1; i <= this.worksheet.UsedRange.Rows.Count; i++)
             {
-                Excel.Range rowCell = getSingleCellRange(worksheet, 1, i);
+                Excel.Range rowCell = GetSingleCellRange(worksheet, 1, i);
                 rowCell.EntireRow.RowHeight = 28;
             }			
         }
@@ -403,10 +403,10 @@ namespace ReleaseNotes
         /// Creates a new page with a given name (if Excel)
         /// </summary>
         /// <param name="worksheetName"></param>
-        public override void createNewPage(string worksheetName)
+        public override void CreateNewPage(string worksheetName)
         {
             // post format the previous document
-            this.createDocumentSpecificPostFormatting();
+            this.CreateDocumentSpecificPostFormatting();
 
             // worksheet information
             worksheet = (Excel.Worksheet)workbook.Worksheets.Add(Type.Missing, worksheet);
@@ -426,9 +426,9 @@ namespace ReleaseNotes
         /// <summary>
         /// Sets the workbooks default theme
         /// </summary>
-        private void setDefaultTheme(bool header)
+        private void SetDefaultTheme(bool header)
         {
-            Excel.Range styled = getBlockedRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, starterRow, currentRow);
+            Excel.Range styled = GetBlockedRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, starterRow, currentRow);
             Excel.XlYesNoGuess headerExists = Excel.XlYesNoGuess.xlNo;
             if (header)
                 headerExists = Excel.XlYesNoGuess.xlYes;
@@ -440,9 +440,9 @@ namespace ReleaseNotes
         /// <summary>
         /// Sets a basic theme for the currently selected table range
         /// </summary>
-        private void setBasicTheme(bool bordersThemed)
+        private void SetBasicTheme(bool bordersThemed)
         {
-            Excel.Range styled = getBlockedRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, starterRow, currentRow);
+            Excel.Range styled = GetBlockedRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, starterRow, currentRow);
 
             if (bordersThemed)
             {
@@ -464,7 +464,7 @@ namespace ReleaseNotes
         /// <param name="firstRow"></param>
         /// <param name="lastRow"></param>
         /// <returns></returns>
-        private Excel.Range getBlockedRange(Excel.Worksheet currentSheet, char firstCol, char lastCol, int firstRow, int lastRow)
+        private Excel.Range GetBlockedRange(Excel.Worksheet currentSheet, char firstCol, char lastCol, int firstRow, int lastRow)
         {
             return (Excel.Range)currentSheet.Range[firstCol.ToString() + firstRow.ToString(), lastCol.ToString() + lastRow.ToString()];
         }
@@ -478,7 +478,7 @@ namespace ReleaseNotes
         /// <param name="firstRow"></param>
         /// <param name="lastRow"></param>
         /// <returns></returns>
-        private Excel.Range getBlockedRange(Excel.Worksheet currentSheet, int firstCol, int lastCol, int firstRow, int lastRow)
+        private Excel.Range GetBlockedRange(Excel.Worksheet currentSheet, int firstCol, int lastCol, int firstRow, int lastRow)
         {
             return (Excel.Range)currentSheet.Range[currentSheet.Cells[firstRow, firstCol], currentSheet.Cells[lastRow, lastCol]];
         }
@@ -491,7 +491,7 @@ namespace ReleaseNotes
         /// <param name="lastCol"></param>
         /// <param name="row"></param>
         /// <returns></returns>
-        private Excel.Range getMultiCellRange(Excel.Worksheet currentSheet, char firstCol, char lastCol, int row)
+        private Excel.Range GetMultiCellRange(Excel.Worksheet currentSheet, char firstCol, char lastCol, int row)
         {
             return (Excel.Range)currentSheet.Range[firstCol.ToString() + row.ToString() + ":" + lastCol.ToString() + row.ToString(), Type.Missing];
         }
@@ -504,7 +504,7 @@ namespace ReleaseNotes
         /// <param name="lastCol"></param>
         /// <param name="row"></param>
         /// <returns></returns>
-        private Excel.Range getMultiCellRange(Excel.Worksheet currentSheet, int firstCol, int lastCol, int row)
+        private Excel.Range GetMultiCellRange(Excel.Worksheet currentSheet, int firstCol, int lastCol, int row)
         {
             return (Excel.Range)currentSheet.Range[currentSheet.Cells[row, firstCol], currentSheet.Cells[row, lastCol]];
         }
@@ -516,7 +516,7 @@ namespace ReleaseNotes
         /// <param name="col"></param>
         /// <param name="row"></param>
         /// <returns></returns>
-        private Excel.Range getSingleCellRange(Excel.Worksheet currentSheet, char col, int row)
+        private Excel.Range GetSingleCellRange(Excel.Worksheet currentSheet, char col, int row)
         {
             return (Excel.Range)currentSheet.Range[col.ToString() + row.ToString(), Type.Missing];
         }
@@ -528,7 +528,7 @@ namespace ReleaseNotes
         /// <param name="col"></param>
         /// <param name="row"></param>
         /// <returns></returns>
-        private Excel.Range getSingleCellRange(Excel.Worksheet currentSheet, int col, int row)
+        private Excel.Range GetSingleCellRange(Excel.Worksheet currentSheet, int col, int row)
         {
             return (Excel.Range)currentSheet.Range[currentSheet.Cells[row, col], currentSheet.Cells[row, col]];
         }

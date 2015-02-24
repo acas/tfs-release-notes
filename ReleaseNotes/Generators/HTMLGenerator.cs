@@ -16,47 +16,47 @@ namespace ReleaseNotes.Generators
             throw new NotImplementedException();
         }
 
-        public override void createTitle(string titleText)
+        public override void CreateTitle(string titleText)
         {
             throw new NotImplementedException();
         }
 
-        public override void createHeader(string headingText)
+        public override void CreateHeader(string headingText)
         {
             throw new NotImplementedException();
         }
 
-        public override void createHorizontalTable(NamedLookup nl, int splits, bool header)
+        public override void CreateHorizontalTable(NamedLookup nl, int splits, bool header)
         {
             throw new NotImplementedException();
         }
 
-        public override void createVerticalTable(DataTable dt, string headerText, bool header)
+        public override void CreateVerticalTable(DataTable dt, string headerText, bool header)
         {
             throw new NotImplementedException();
         }
 
-        public override void createDocumentSpecificPreFormatting()
+        public override void CreateDocumentSpecificPreFormatting()
         {
             throw new NotImplementedException();
         }
 
-        public override void createDocumentSpecificPostFormatting(bool wide = false)
+        public override void CreateDocumentSpecificPostFormatting(bool wide = false)
         {
             throw new NotImplementedException();
         }
 
-        public override void createNamedSection(string headername, string text, string hyperlink)
+        public override void CreateNamedSection(string headername, string text, string hyperlink)
         {
             throw new NotImplementedException();
         }
 
-        public override void createErrorMessage(string message)
+        public override void CreateErrorMessage(string message)
         {
             throw new NotImplementedException();
         }
 
-        public override void createHeaderGraphic(string path)
+        public override void CreateHeaderGraphic(string path)
         {
             throw new NotImplementedException();
         }

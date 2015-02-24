@@ -55,7 +55,7 @@ namespace ReleaseNotes
         /// <summary>
         /// Formats document pre creation
         /// </summary>
-        public override void createDocumentSpecificPreFormatting()
+        public override void CreateDocumentSpecificPreFormatting()
         {
             // set margins
             document.PageSetup.LeftMargin = app.InchesToPoints(0.25F);
@@ -73,7 +73,7 @@ namespace ReleaseNotes
         /// <summary>
         /// Creates a header graphic
         /// </summary>
-        public override void createHeaderGraphic(string path = null)
+        public override void CreateHeaderGraphic(string path = null)
         {
             // add header graphics
             // save the graphic before its path can be referenced
@@ -101,7 +101,7 @@ namespace ReleaseNotes
         /// Creates a title with associated text
         /// </summary>
         /// <param name="text"></param>
-        public override void createTitle(string text)
+        public override void CreateTitle(string text)
         {
             // get range of the first paragraph
             Word.Paragraph titleParagraph = document.Paragraphs.Add();
@@ -121,10 +121,10 @@ namespace ReleaseNotes
         /// <param name="headername"></param>
         /// <param name="text"></param>
         /// <param name="hyperlink"></param>
-        public override void createNamedSection(string headername, string text, string hyperlink)
+        public override void CreateNamedSection(string headername, string text, string hyperlink)
         {
             // new heading
-            createHeader(headername);
+            CreateHeader(headername);
             Word.Paragraph accessParagraph = document.Paragraphs.Add();
 
             // create caption
@@ -140,7 +140,7 @@ namespace ReleaseNotes
                 webLink, Type.Missing, settings["Project Name"], webLink, Type.Missing);
 
             // split
-            insertTableSplit(accessParagraph);
+            InsertTableSplit(accessParagraph);
         }
 
         /// <summary>
@@ -149,14 +149,14 @@ namespace ReleaseNotes
         /// <param name="data"></param>
         /// <param name="splits"></param>
         /// <param name="header"></param>
-        public override void createHorizontalTable(NamedLookup data, int splits, bool header)
+        public override void CreateHorizontalTable(NamedLookup data, int splits, bool header)
         {
             // test preconditions
-            base.createHorizontalTable(data, splits, header);
+            base.CreateHorizontalTable(data, splits, header);
 
             // if header needed
             if (header)
-                createHeader(data.getName());
+                CreateHeader(data.getName());
 
             // add another paragraph
             Word.Paragraph paragraph = document.Paragraphs.Add();
@@ -240,7 +240,7 @@ namespace ReleaseNotes
             }
 
             // split
-            insertTableSplit(paragraph);
+            InsertTableSplit(paragraph);
         }
 
         /// <summary>
@@ -249,10 +249,10 @@ namespace ReleaseNotes
         /// <param name="dt"></param>
         /// <param name="headerText"></param>
         /// <param name="header"></param>
-        public override void createVerticalTable(DataTable dt, string headerText, bool header)
+        public override void CreateVerticalTable(DataTable dt, string headerText, bool header)
         {
             // test preconditions
-            base.createVerticalTable(dt, headerText, header);
+            base.CreateVerticalTable(dt, headerText, header);
 
             // need a counter to get word rows
             int counter = 1;
@@ -266,7 +266,7 @@ namespace ReleaseNotes
 
                 // create header
                 if (header)
-                    createHeader(headerText);
+                    CreateHeader(headerText);
 
                 // add another paragraph
                 Word.Paragraph paragraph = document.Paragraphs.Add();
@@ -338,7 +338,7 @@ namespace ReleaseNotes
                 }
 
                 // split
-                insertTableSplit(paragraph);
+                InsertTableSplit(paragraph);
             }
             catch (Exception e)
             {
@@ -348,7 +348,7 @@ namespace ReleaseNotes
                     .display();
 
                 // create error message
-                createErrorMessage(e.Message); 
+                CreateErrorMessage(e.Message); 
             }
         }
 
@@ -356,13 +356,13 @@ namespace ReleaseNotes
         /// Creates an error table at the end of the current paragraph from a string
         /// </summary>
         /// <param name="message"></param>
-        public override void createErrorMessage(string message)
+        public override void CreateErrorMessage(string message)
         {
             // insert a break
             Word.Paragraph errorParagraph = document.Paragraphs.Add();
 
             // insert table split
-            insertTableSplit(errorParagraph);
+            InsertTableSplit(errorParagraph);
 
             // create the entire table with styling
             Word.Table table = document.Tables.Add(errorParagraph.Range, 1, 1,
@@ -380,7 +380,7 @@ namespace ReleaseNotes
         /// Creates a heading with text
         /// </summary>
         /// <param name="headerText"></param>
-        public override void createHeader(string headerText)
+        public override void CreateHeader(string headerText)
         {
             // add a details header
             Word.Paragraph heading = document.Paragraphs.Add();
@@ -393,15 +393,15 @@ namespace ReleaseNotes
             heading.Indent();
 
             // split
-            insertTableSplit(heading);
-            insertTableSplit(heading);
+            InsertTableSplit(heading);
+            InsertTableSplit(heading);
         }
 
         /// <summary>
         /// Inserts a table split into the document
         /// </summary>
         /// <param name="paragraph"></param>
-        private void insertTableSplit(Word.Paragraph paragraph)
+        private void InsertTableSplit(Word.Paragraph paragraph)
         {
             // paragraph.Range.Collapse(Word.WdCollapseDirection.wdCollapseEnd);
             paragraph.Range.InsertParagraphAfter();
