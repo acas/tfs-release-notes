@@ -86,16 +86,16 @@ namespace ReleaseNotes
             this.starterRow = currentRow;
 
             // add header row
-            addVerticalTableRow(Utilities.tableColumnsToStringArray(dataTable), false);
+            AddVerticalTableRow(Utilities.tableColumnsToStringArray(dataTable), false);
 
             // add table information
             foreach (DataRow row in dataTable.Rows)
-                addVerticalTableRow(Utilities.tableRowToStringArray(row), false);
+                AddVerticalTableRow(Utilities.tableRowToStringArray(row), false);
 
             // set sizing and theming
             SetDefaultTheme(header);
             SetBasicTheme(false);
-            advanceRow();
+            AdvanceRow();
         }
 
         /// <summary>
@@ -177,11 +177,11 @@ namespace ReleaseNotes
                     // style with basic theme
                     SetBasicTheme(true);
                 }
-                advanceRow(0);
+                AdvanceRow(0);
             }
 
             // insert final table split
-            advanceRow();
+            AdvanceRow();
         }
 
         /// <summary>
@@ -191,7 +191,7 @@ namespace ReleaseNotes
         public override void CreateTitle(string titleText)
         {
             // don't start at the top of the table
-            advanceRow(0);
+            AdvanceRow(0);
 
             // get the range of the title
             Excel.Range titleRowRange = GetMultiCellRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, currentRow);
@@ -213,8 +213,8 @@ namespace ReleaseNotes
             titleRowRange.Cells.Value = titleText;
 
             // increment the current row
-            advanceRow();
-            autoSize();
+            AdvanceRow();
+            AutoSizeWorksheet();
         }
 
         /// <summary>
@@ -242,8 +242,8 @@ namespace ReleaseNotes
             titleRowRange.Cells.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
             titleRowRange.Cells.Value = headingText;
 
-            advanceRow(0);
-            autoSize();
+            AdvanceRow(0);
+            AutoSizeWorksheet();
         }
 
         /// <summary>
@@ -277,7 +277,7 @@ namespace ReleaseNotes
             range.ColumnWidth = width + 1;
 
             // go forward 
-            advanceRow(0);
+            AdvanceRow(0);
         }
 
         /// <summary>
@@ -287,10 +287,10 @@ namespace ReleaseNotes
         public override void CreateErrorMessage(string message)
         {
             // autosize and theme, with error message
-            addVerticalTableRow(new string[] { message }, true);
+            AddVerticalTableRow(new string[] { message }, true);
 
             // set sizing and theming
-            autoSize();
+            AutoSizeWorksheet();
             SetDefaultTheme(false);
         }
 
@@ -298,7 +298,7 @@ namespace ReleaseNotes
         /// Add a row to an Excel sheet
         /// </summary>
         /// <param name="columnValues"></param>
-        private void addVerticalTableRow(string[] columnValues, bool merge)
+        private void AddVerticalTableRow(string[] columnValues, bool merge)
         {
             // get a range
             Excel.Range range = null;
@@ -343,7 +343,7 @@ namespace ReleaseNotes
         /// <summary>
         /// Splits the table
         /// </summary>
-        private void advanceRow(int numExtraRows = 1)
+        private void AdvanceRow(int numExtraRows = 1)
         {
             currentRow++;
             for (int i = 0; i < numExtraRows; i++) { currentRow++; }
@@ -352,7 +352,7 @@ namespace ReleaseNotes
         /// <summary>
         /// Autosizes the workbook
         /// </summary>
-        private void autoSize()
+        private void AutoSizeWorksheet()
         {
             Excel.Range sized = GetBlockedRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, starterRow, currentRow);
             sized.Columns.AutoFit();

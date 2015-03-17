@@ -34,6 +34,9 @@ namespace ReleaseNotes
 			// try to generate the notes
 			try
 			{
+				// arguments
+				if (args.Length == 0) throw new Exception("Settings.json file path argument missing.");
+
 				// create release notes generator
 				ReleaseNotesGenerator generator = null;
 
@@ -76,6 +79,7 @@ namespace ReleaseNotes
 					.setType(Logger.Type.Error)
 					.setMessage(e.Message)
 					.display();
+				Thread.Sleep(1000);
 			}
 
 			if (!silent) //if we're in silent mode, the program exits. The file has been saved.

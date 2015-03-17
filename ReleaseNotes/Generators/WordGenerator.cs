@@ -426,7 +426,7 @@ namespace ReleaseNotes
 
                 // quit
                 app.Documents.Close(false);
-                app.Quit(Word.WdSaveOptions.wdSaveChanges, Word.WdOriginalFormat.wdOriginalDocumentFormat, Type.Missing);
+                ((Microsoft.Office.Interop.Word._Application)app).Quit(Word.WdSaveOptions.wdSaveChanges, Word.WdOriginalFormat.wdOriginalDocumentFormat, Type.Missing);
 
                 // unmarshall all COM objects
                 Marshal.ReleaseComObject(document);

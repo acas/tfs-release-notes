@@ -1,0 +1,12 @@
+﻿{
+    "Team Project Path": "https://tfs.somedomain.com/tfs/ProjectCollection/",
+    "Project Name": "Project",
+    "Project Subpath": "Subproject Name", // optional project subpath
+    "Iteration": "Release 0.0",
+    // (ie. https://tfs.somedomain.com/tfs/ProjectCollection/ProjectName/Subproject/Release 0.0)
+    "Database": "DatabaseName",
+    "Database Server": "somedomainsqlserver.somedomain.com",
+    "Web Server": "somedomainwebserver.somedomain.com",
+    "Web Location": "http://project.somedomain.com/",
+    "Generator Type":  "excel"
+}
