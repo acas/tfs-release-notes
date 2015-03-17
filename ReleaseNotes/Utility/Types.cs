@@ -29,37 +29,37 @@ namespace ReleaseNotes.Utility
             this.columnNames = new List<string>();
         }
 
-        public string getName()
+        public string GetName()
         {
             return this.name;
         }
 
-        public string this[string name]
+        public string this[string Name]
         {
-            get { return this.lookup[name]; }
+            get { return this.lookup[Name]; }
             set
             {
-                if (name != null && value != null)
-                    lookup[name] = value.ToString();
+                if (Name != null && value != null)
+                    lookup[Name] = value.ToString();
             }
         }
 
-        public void removeProperty(string name)
+        public void RemoveProperty(string name)
         {
             lookup.Remove(name);
         }
 
-        public Dictionary<string, string> getLookup()
+        public Dictionary<string, string> GetLookup()
         {
             return this.lookup;
         }
 
-        public void addColumnName(string columnName)
+        public void AddColumnName(string columnName)
         {
             this.columnNames.Add(columnName);
         }
 
-        public void addColumnNames(string[] columnNames)
+        public void AddColumnNames(string[] columnNames)
         {
             foreach (string name in columnNames)
             {
@@ -67,7 +67,7 @@ namespace ReleaseNotes.Utility
             }
         }
 
-        public List<string> getColumnNames()
+        public List<string> GetColumnNames()
         {
             return this.columnNames;
         }

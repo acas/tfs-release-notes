@@ -54,9 +54,9 @@ namespace ReleaseNotes
 		public void CheckRequiredFields()
 		{
 			List<bool> keysAlright = new List<bool>();
-			keysAlright.Add(settings.getLookup().ContainsKey("Team Project Path"));
-			keysAlright.Add(settings.getLookup().ContainsKey("Project Name"));
-			keysAlright.Add(settings.getLookup().ContainsKey("Iteration"));
+			keysAlright.Add(settings.GetLookup().ContainsKey("Team Project Path"));
+			keysAlright.Add(settings.GetLookup().ContainsKey("Project Name"));
+			keysAlright.Add(settings.GetLookup().ContainsKey("Iteration"));
 			if (keysAlright.Where(a => a == false).ToList().Count() > 0)
 				throw new Exception("Expected params not found.");
 		}
@@ -74,7 +74,7 @@ namespace ReleaseNotes
 
 		public void RemovePropertiesList(string name)
 		{
-			propertiesList = propertiesList.Where(a => !a.getName().Equals(name)).ToList();
+			propertiesList = propertiesList.Where(a => !a.GetName().Equals(name)).ToList();
 		}
 
 		public List<NamedLookup> GetPropertiesList()
@@ -123,17 +123,17 @@ namespace ReleaseNotes
 			silent = true;
 
 			// create excel writer
-			logger.setMessage("Generating release notes document.")
-				.setType(Logger.Type.Information)
-				.display();
+			logger.SetMessage("Generating release notes document.")
+				.SetLoggingType(Logger.Type.Information)
+				.Display();
 
 			// try to generate the document
 			try
 			{
 				// log generating document
-				logger.setMessage("Preparing document, please wait...")
-					.setType(Logger.Type.Information)
-					.display();
+				logger.SetMessage("Preparing document, please wait...")
+					.SetLoggingType(Logger.Type.Information)
+					.Display();
 
 				// pre formatting
 				CreateDocumentSpecificPreFormatting();
@@ -165,16 +165,16 @@ namespace ReleaseNotes
 				CreateDocumentSpecificPostFormatting(true);
 
 				// done!
-				logger.setType(Logger.Type.Success)
-					.setMessage("Document generated and saved in the current directory.")
-					.display();
+				logger.SetLoggingType(Logger.Type.Success)
+					.SetMessage("Document generated and saved in the current directory.")
+					.Display();
 			}
 			catch (Exception e)
 			{
 				// set sizing and theming
-				logger.setType(Logger.Type.Error)
-					.setMessage("Document not generated. " + e.Message)
-					.display();
+				logger.SetLoggingType(Logger.Type.Error)
+					.SetMessage("Document not generated. " + e.Message)
+					.Display();
 			}
 		}
 	}

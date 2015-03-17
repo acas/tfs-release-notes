@@ -30,7 +30,7 @@ namespace ReleaseNotes
         [TestMethod]
         public void testSpacing()
         {
-            Assert.AreEqual(Utilities.spaceCapitalizedNames("HelloWorldOfAwesomeStuff"), "Hello World Of Awesome Stuff");
+            Assert.AreEqual(Utilities.SpaceCapitalizedNames("HelloWorldOfAwesomeStuff"), "Hello World Of Awesome Stuff");
         }
     }
 }

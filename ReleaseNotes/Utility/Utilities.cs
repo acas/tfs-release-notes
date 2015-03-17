@@ -18,7 +18,7 @@ namespace ReleaseNotes
         /// <param name="inputHTML"></param>
         /// <param name="removeWhitespace"></param>
         /// <returns>An HTML (almost) free string</returns>
-        public static string stripHtmlContrived(string inputHTML, bool removeWhitespace)
+        public static string StripHtmlContrived(string inputHTML, bool removeWhitespace)
         {
             string noHTML = Regex.Replace(Regex.Replace(Regex.Replace(Regex.Replace(Regex.Replace(inputHTML, "<br>", "\n\n"), "<li>", "- "), "</p>|</div>|</ul>|</li>|</ol>", "\n"), "&nbsp;", "\n"), @"<[^>]+>|&quot;", "").Trim();
             if (removeWhitespace)
@@ -32,7 +32,7 @@ namespace ReleaseNotes
         /// Gets the path the program is currently executing in
         /// </summary>
         /// <returns>The path (with ending slash) </returns>
-        public static string getExecutingPath()
+        public static string GetExecutingPath()
         {
             return System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase) + "/";
         }
@@ -43,7 +43,7 @@ namespace ReleaseNotes
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static int greatestCommonDivisor(int a, int b)
+        public static int GreatestCommonDivisor(int a, int b)
         {
             while (b != 0)
             {
@@ -59,7 +59,7 @@ namespace ReleaseNotes
         /// </summary>
         /// <param name="name"></param>
         /// <returns>A string where capitalize letters are split into separate words</returns>
-        public static string spaceCapitalizedNames(string name)
+        public static string SpaceCapitalizedNames(string name)
         {
             return string.Join(
                     string.Empty,
@@ -75,7 +75,7 @@ namespace ReleaseNotes
         /// <param name="existingBuffer"></param>
         /// <param name="sizeofRemaining"></param>
         /// <returns>A string with right padding given a particular size</returns>
-        public static string implicitMalloc(string existingBuffer, int sizeofRemaining)
+        public static string ImplicitMalloc(string existingBuffer, int sizeofRemaining)
         {
             for (int i = 0; i < sizeofRemaining; i++) { existingBuffer += " "; }
             return existingBuffer;
@@ -86,7 +86,7 @@ namespace ReleaseNotes
         /// </summary>
         /// <param name="dt"></param>
         /// <returns></returns>
-        public static string[] tableColumnsToStringArray(DataTable dt)
+        public static string[] TableColumnsToStringArray(DataTable dt)
         {
             List<String> tableColumns = new List<String>();
             foreach (DataColumn dc in dt.Columns)
@@ -99,10 +99,10 @@ namespace ReleaseNotes
         /// </summary>
         /// <param name="dr"></param>
         /// <returns></returns>
-        public static string[] tableRowToStringArray(DataRow dr)
+        public static string[] TableRowToStringArray(DataRow dr)
         {
             List<string> tableRows = new List<string>();
-            string[] tableColumns = tableColumnsToStringArray(dr.Table);
+            string[] tableColumns = TableColumnsToStringArray(dr.Table);
             foreach (string columnName in tableColumns)
                 tableRows.Add(dr[columnName].ToString());
             return tableRows.ToArray<String>();

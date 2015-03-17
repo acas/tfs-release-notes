@@ -60,9 +60,9 @@ namespace ReleaseNotes
             catch (COMException e)
             {
                 (new Logger())
-                    .setType(Logger.Type.Error)
-                    .setMessage(e.Message + "Excel not initialized. \n Are you trying to run this server-side?...")
-                    .display();
+                    .SetLoggingType(Logger.Type.Error)
+                    .SetMessage(e.Message + "Excel not initialized. \n Are you trying to run this server-side?...")
+                    .Display();
                 return null;
             }
         }
@@ -86,11 +86,11 @@ namespace ReleaseNotes
             this.starterRow = currentRow;
 
             // add header row
-            AddVerticalTableRow(Utilities.tableColumnsToStringArray(dataTable), false);
+            AddVerticalTableRow(Utilities.TableColumnsToStringArray(dataTable), false);
 
             // add table information
             foreach (DataRow row in dataTable.Rows)
-                AddVerticalTableRow(Utilities.tableRowToStringArray(row), false);
+                AddVerticalTableRow(Utilities.TableRowToStringArray(row), false);
 
             // set sizing and theming
             SetDefaultTheme(header);
@@ -112,10 +112,10 @@ namespace ReleaseNotes
 
             // if header needed
             if (header)
-                CreateHeader(data.getName());
+                CreateHeader(data.GetName());
 
             // get a list of the keys
-            List<string> tableKeys = data.getLookup().Keys.ToList();
+            List<string> tableKeys = data.GetLookup().Keys.ToList();
 
             // determine the optimal number of rows for the table
             int optimalRowNumber = (tableKeys.Count() / splits) + (tableKeys.Count() % splits);
@@ -254,7 +254,7 @@ namespace ReleaseNotes
         {
             // add header graphics
             // save the graphic before its path can be referenced
-            if (!File.Exists(Utilities.getExecutingPath() + "ACAS.jpg"))
+            if (!File.Exists(Utilities.GetExecutingPath() + "ACAS.jpg"))
             {
                 Resources.Resources.ACAS.Save(@"ACAS.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
             }
@@ -264,7 +264,7 @@ namespace ReleaseNotes
             int width = 125;
 
             // add a picture to the worksheet
-            worksheet.Shapes.AddPicture(Utilities.getExecutingPath() + "ACAS.jpg", 
+            worksheet.Shapes.AddPicture(Utilities.GetExecutingPath() + "ACAS.jpg", 
                 Microsoft.Office.Core.MsoTriState.msoFalse, 
                 Microsoft.Office.Core.MsoTriState.msoCTrue, 5, 5, width, height);
 
@@ -544,7 +544,7 @@ namespace ReleaseNotes
                 app.UserControl = false;
 
                 // save this workbook in the application directory
-                workbook.SaveAs(Utilities.getExecutingPath() + settings["Project Name"] + " " + settings["Iteration"] + " Release Notes.xlsx",
+                workbook.SaveAs(Utilities.GetExecutingPath() + settings["Project Name"] + " " + settings["Iteration"] + " Release Notes.xlsx",
                     Excel.XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing,
                     false, false, Excel.XlSaveAsAccessMode.xlNoChange,
                     Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
@@ -569,11 +569,11 @@ namespace ReleaseNotes
                 // exception, up to system to free objects
                 // once program is gone
                 (new Logger())
-                    .setType(Logger.Type.Warning)
-                    .setSilence(this.silent)
-                    .setMessage(e.Message + "\n Excel may not have been freed from user control, \n" +
+                    .SetLoggingType(Logger.Type.Warning)
+                    .SetLoggingSilenceState(this.silent)
+                    .SetMessage(e.Message + "\n Excel may not have been freed from user control, \n" +
                                             "is waiting on user save, \nor cannot save (another open workbook?).")
-                    .display();
+                    .Display();
             }
 
             // collect the remaining garbage

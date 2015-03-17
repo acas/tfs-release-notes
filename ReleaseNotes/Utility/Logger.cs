@@ -97,7 +97,7 @@ namespace ReleaseNotes
         /// with the specified params
         /// </summary>
         /// <returns>A logger object</returns>
-        public Logger display() 
+        public Logger Display() 
         {
             MessageBoxIcon mbi = MessageBoxIcon.None;
             switch (this.type)
@@ -130,7 +130,6 @@ namespace ReleaseNotes
 
             switch (this.method) 
             {
-                
                 case Method.Console:
                     if (!this.silence)
                         if (this.type != Type.General)
@@ -153,7 +152,7 @@ namespace ReleaseNotes
         /// </summary>
         /// <param name="message"></param>
         /// <returns>A logger object</returns>
-        public Logger setMessage(string message)
+        public Logger SetMessage(string message)
         {
             this.logString = message;
             return this;
@@ -164,7 +163,7 @@ namespace ReleaseNotes
         /// </summary>
         /// <param name="type"></param>
         /// <returns>A logger object</returns>
-        public Logger setType(Type type)
+        public Logger SetLoggingType(Type type)
         {
             this.type = type;
             return this;
@@ -175,7 +174,7 @@ namespace ReleaseNotes
         /// </summary>
         /// <param name="method"></param>
         /// <returns>A logger object</returns>
-        public Logger setMethod(Method method)
+        public Logger SetLoggingMethod(Method method)
         {
             this.method = method;
             return this;
@@ -186,7 +185,7 @@ namespace ReleaseNotes
         /// </summary>
         /// <param name="silent"></param>
         /// <returns>A logger object</returns>
-        public Logger setSilence(bool silent)
+        public Logger SetLoggingSilenceState(bool silent)
         {
             this.silence = silent;
             return this;

@@ -29,7 +29,7 @@ namespace ReleaseNotes
 
 			// create logger
 			Logger logger = new Logger()
-				.setType(Logger.Type.Message);
+				.SetLoggingType(Logger.Type.Message);
 
 			// try to generate the notes
 			try
@@ -76,18 +76,18 @@ namespace ReleaseNotes
 			{
 				// display error
 				logger
-					.setType(Logger.Type.Error)
-					.setMessage(e.Message)
-					.display();
+					.SetLoggingType(Logger.Type.Error)
+					.SetMessage(e.Message)
+					.Display();
 				Thread.Sleep(1000);
 			}
 
 			if (!silent) //if we're in silent mode, the program exits. The file has been saved.
 			{
 				// wait for exit
-				logger.setType(Logger.Type.General)
-					.setMessage("Press any key to exit.")
-					.display();
+				logger.SetLoggingType(Logger.Type.General)
+					.SetMessage("Press any key to exit.")
+					.Display();
 
 				// wait for key
 				Console.ReadKey();

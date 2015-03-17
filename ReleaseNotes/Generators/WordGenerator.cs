@@ -46,8 +46,8 @@ namespace ReleaseNotes
             catch (COMException e)
             {
                 (new Logger())
-                    .setType(Logger.Type.Error)
-                    .setMessage(e.Message).display();
+                    .SetLoggingType(Logger.Type.Error)
+                    .SetMessage(e.Message).Display();
                 return null;
             }
         }
@@ -77,7 +77,7 @@ namespace ReleaseNotes
         {
             // add header graphics
             // save the graphic before its path can be referenced
-            if (!File.Exists(Utilities.getExecutingPath() + "ACAS.jpg"))
+            if (!File.Exists(Utilities.GetExecutingPath() + "ACAS.jpg"))
             {
                 Resources.Resources.ACAS.Save(@"ACAS.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
             }
@@ -87,7 +87,7 @@ namespace ReleaseNotes
             Word.Range headerSectionRange = firstSection.Headers[Word.WdHeaderFooterIndex.wdHeaderFooterPrimary].Range;
 
             // get the shape back, put in the header and resize
-            Word.InlineShape ACASLogo = headerSectionRange.InlineShapes.AddPicture(Utilities.getExecutingPath() + "ACAS.jpg", false, true);
+            Word.InlineShape ACASLogo = headerSectionRange.InlineShapes.AddPicture(Utilities.GetExecutingPath() + "ACAS.jpg", false, true);
 
             // thread sleep to allow COM interop to catch up
             Thread.Sleep(100);
@@ -130,7 +130,7 @@ namespace ReleaseNotes
             // create caption
             string accessParagraphText = text;
             string webLink = hyperlink;
-            accessParagraph.Range.Text = Utilities.implicitMalloc(accessParagraphText, webLink.Length);
+            accessParagraph.Range.Text = Utilities.ImplicitMalloc(accessParagraphText, webLink.Length);
 
             // several indents needed
             for (int i = 0; i < 3; i++) { accessParagraph.Indent(); }
@@ -156,7 +156,7 @@ namespace ReleaseNotes
 
             // if header needed
             if (header)
-                CreateHeader(data.getName());
+                CreateHeader(data.GetName());
 
             // add another paragraph
             Word.Paragraph paragraph = document.Paragraphs.Add();
@@ -166,7 +166,7 @@ namespace ReleaseNotes
             int numberOfColumns = 2 * splits;
 
             // get a list of the keys
-            List<string> tableKeys = data.getLookup().Keys.ToList();
+            List<string> tableKeys = data.GetLookup().Keys.ToList();
 
             // determine the optimal number of rows for the table
             int optimalNumberOfRows = (tableKeys.Count() / splits) + (tableKeys.Count() % splits);
@@ -294,7 +294,7 @@ namespace ReleaseNotes
                     headerRange.Shading.BackgroundPatternColor = (Word.WdColor) ColorTranslator.ToOle(Color.FromArgb(23, 64, 109));
                     for (int i = 0; i < dt.Columns.Count; i++)
                     {
-                        headerRange.Cells[i + 1].Range.Text = Utilities.spaceCapitalizedNames(dt.Columns[i].ToString());
+                        headerRange.Cells[i + 1].Range.Text = Utilities.SpaceCapitalizedNames(dt.Columns[i].ToString());
                         headerRange.Cells[i + 1].VerticalAlignment = Word.WdCellVerticalAlignment.wdCellAlignVerticalCenter;
                     }
                     // don't create more
@@ -324,7 +324,7 @@ namespace ReleaseNotes
                         if (dt.Columns[i].ColumnName == "ID")
                         {
                             string hyperlinkText = settings["Team Project Path"] + settings["Project Name"] + "/_workitems#_a=edit&id=" + row[i].ToString() + "&triage=true";
-                            rowRange.Cells[i + 1].Range.Text = Utilities.implicitMalloc(row[i].ToString(), 6);
+                            rowRange.Cells[i + 1].Range.Text = Utilities.ImplicitMalloc(row[i].ToString(), 6);
                             rowRange.Cells[i + 1].Range.Bold = 1;
                             rowRange.Cells[i + 1].Range.Hyperlinks.Add(document.Range(rowRange.Cells[i+1].Range.Start, rowRange.Cells[i+1].Range.End), 
                                 hyperlinkText, Type.Missing, "Work Item", row[i].ToString(), Type.Missing);
@@ -343,9 +343,9 @@ namespace ReleaseNotes
             catch (Exception e)
             {
                 // log
-                this.logger.setType(Logger.Type.Error)
-                    .setMessage("Table could not be created. " + e.Message)
-                    .display();
+                this.logger.SetLoggingType(Logger.Type.Error)
+                    .SetMessage("Table could not be created. " + e.Message)
+                    .Display();
 
                 // create error message
                 CreateErrorMessage(e.Message); 
@@ -419,7 +419,7 @@ namespace ReleaseNotes
                 document.UserControl = false;
 
                 // save this document
-                document.SaveAs2(Utilities.getExecutingPath() + settings["Project Name"] + " " + settings["Iteration"]
+                document.SaveAs2(Utilities.GetExecutingPath() + settings["Project Name"] + " " + settings["Iteration"]
                     + " Release Notes.docx", Word.WdSaveFormat.wdFormatDocumentDefault,
                     Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, true, true, Type.Missing, Type.Missing, Type.Missing,
                     Type.Missing, Type.Missing, Word.WdLineEndingType.wdCRLF, Type.Missing, Type.Missing);
@@ -441,11 +441,11 @@ namespace ReleaseNotes
                 // exception, up to system to free objects
                 // once program is gone
                 (new Logger())
-                    .setType(Logger.Type.Warning)
-                    .setSilence(this.silent)
-                    .setMessage(e.Message + "\n Word may not have been freed from user control, \n" +
+                    .SetLoggingType(Logger.Type.Warning)
+                    .SetLoggingSilenceState(this.silent)
+                    .SetMessage(e.Message + "\n Word may not have been freed from user control, \n" +
                                             "is waiting on user save, \n or cannot save (another open document?).")
-                    .display();
+                    .Display();
             }
 
             // collect the remaining garbage

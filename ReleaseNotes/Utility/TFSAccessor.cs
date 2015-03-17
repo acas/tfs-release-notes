@@ -69,9 +69,9 @@ namespace ReleaseNotes
 			}
 			catch (Exception e)
 			{
-				(new Logger()).setType(Logger.Type.Error)
-					.setMessage(e.Message)
-					.display();
+				(new Logger()).SetLoggingType(Logger.Type.Error)
+					.SetMessage(e.Message)
+					.Display();
 				return null;
 			}
 		}
@@ -85,9 +85,9 @@ namespace ReleaseNotes
 		public WorkItemCollection GetReleaseNotesFromQuery()
 		{
 			(new Logger())
-				.setMessage("Querying work items.")
-				.setType(Logger.Type.Information)
-				.display();
+				.SetMessage("Querying work items.")
+				.SetLoggingType(Logger.Type.Information)
+				.Display();
 			return GetWorkItemsFromQuery("SELECT * " +
 				"FROM workitems " +
 				"WHERE [System.TeamProject] = '" + this.projectName + "' " +
@@ -117,7 +117,7 @@ namespace ReleaseNotes
 			WorkItemCollection c = GetReleaseNotesFromQuery();
 			if (c != null)
 				foreach (WorkItem i in c)
-					releaseNotesTable.Rows.Add(i.Id, i.Type.Name, i.Title, i.AreaPath, Utilities.stripHtmlContrived(i.Description, false) /*, i.Tags */);
+					releaseNotesTable.Rows.Add(i.Id, i.Type.Name, i.Title, i.AreaPath, Utilities.StripHtmlContrived(i.Description, false) /*, i.Tags */);
 			return releaseNotesTable;
 		}
 
@@ -130,9 +130,9 @@ namespace ReleaseNotes
 		public int GetLatestChangesetNumber()
 		{
 			(new Logger())
-				.setMessage("Querying changeset numbers.")
-				.setType(Logger.Type.Information)
-				.display();
+				.SetMessage("Querying changeset numbers.")
+				.SetLoggingType(Logger.Type.Information)
+				.Display();
 			VersionControlServer versionControlServer = this.projectCollection.GetService<VersionControlServer>();
 			var teamProjectServerPath = versionControlServer.GetTeamProject(projectName).ServerItem;
 			var latestChangesetQuery = versionControlServer.QueryHistory(new QueryHistoryParameters(new ItemSpec(teamProjectServerPath, RecursionType.Full, 0)));
@@ -148,9 +148,9 @@ namespace ReleaseNotes
 		public string GetLatestBuildNumber()
 		{
 			(new Logger())
-				.setMessage("Querying build definitions.")
-				.setType(Logger.Type.Information)
-				.display();
+				.SetMessage("Querying build definitions.")
+				.SetLoggingType(Logger.Type.Information)
+				.Display();
 
 			IBuildServer buildServer = this.projectCollection.GetService<IBuildServer>();
 			IBuildDetailSpec buildSpec = buildServer.CreateBuildDetailSpec(projectName);
@@ -172,9 +172,9 @@ namespace ReleaseNotes
 		public DataTable GetTestCases()
 		{
 			(new Logger())
-			.setMessage("Querying test cases.")
-			.setType(Logger.Type.Information)
-			.display();
+			.SetMessage("Querying test cases.")
+			.SetLoggingType(Logger.Type.Information)
+			.Display();
 
 			// create steps data table
 			DataTable testCasesTable = new DataTable();
@@ -220,8 +220,8 @@ namespace ReleaseNotes
 						// get the test step
 						var step = action as ITestStep;
 						int stepNumber = counter;
-						string stepTitle = Utilities.stripHtmlContrived(step.Title, true);
-						string result = Utilities.stripHtmlContrived(step.ExpectedResult, true);
+						string stepTitle = Utilities.StripHtmlContrived(step.Title, true);
+						string result = Utilities.StripHtmlContrived(step.ExpectedResult, true);
 						steps += "Step #" + stepNumber + ": " + stepTitle + "\n";
 						if (result.Trim().Count() != 0)
 						{
@@ -246,18 +246,18 @@ namespace ReleaseNotes
 		public static TFSAccessor TFSAccessorFactory(string serverTeamProjectUrl, string projectName, string iterationNumber, string projectSubpath = "")
 		{
 			var errorLogger = (new Logger())
-				.setMessage("Connected to TFS")
-				.setType(Logger.Type.Information);
+				.SetMessage("Connected to TFS")
+				.SetLoggingType(Logger.Type.Information);
 			try
 			{
 				TFSAccessor a = new TFSAccessor(serverTeamProjectUrl, projectName, iterationNumber, projectSubpath);
 				if (a != null)
-					errorLogger.display();
+					errorLogger.Display();
 				return a;
 			}
 			catch (Exception e)
 			{
-				errorLogger.setMessage(e.Message).setType(Logger.Type.Error).display();
+				errorLogger.SetMessage(e.Message).SetLoggingType(Logger.Type.Error).Display();
 				return null;
 			}
 		}
