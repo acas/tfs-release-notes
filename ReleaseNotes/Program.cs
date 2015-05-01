@@ -7,6 +7,7 @@ using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.TeamFoundation.Framework.Client;
 using ReleaseNotes.Utility;
 using System.Threading;
+using ReleaseNotes.Generators;
 namespace ReleaseNotes
 {
 	class Program
@@ -21,11 +22,8 @@ namespace ReleaseNotes
 				silent = false;
 			#endif
 			
-			if (!silent)
-			{
-				// print the program header
-				printProgramHeader();
-			}
+			// program header
+			printProgramHeader();
 
 			// create logger
 			Logger logger = new Logger()
@@ -59,6 +57,9 @@ namespace ReleaseNotes
 				{
 					case "excel":
 						generator = ExcelGenerator.ExcelGeneratorFactory(settings, silent);
+						break;
+					case "server":
+						generator = ExcelServerGenerator.ExcelServerGeneratorFactory(settings, silent);
 						break;
 					case "word":
 						generator = WordGenerator.WordGeneratorFactory(settings, silent);

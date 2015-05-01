@@ -25,7 +25,7 @@ namespace ReleaseNotes.Utility
             }
             catch (Exception e)
             {
-                throw e;
+                throw;
             }
         }
 

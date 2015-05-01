@@ -32,12 +32,19 @@ namespace ReleaseNotes
 		/// <param name="TfsServerUri"></param>
 		private TFSAccessor(string TfsServerUri, string projectName, string iterationNumber, string projectSubpath = "")
 		{
-			this.projectCollection = new TfsTeamProjectCollection(new Uri(TfsServerUri));
-			this.projectCollection.EnsureAuthenticated();
-			this.workItems = (WorkItemStore) projectCollection.GetService(typeof(WorkItemStore));
-			this.projectName = projectName;
-			this.projectSubpath = projectSubpath;
-			this.iterationNumber = iterationNumber;
+			try
+			{
+				this.projectCollection = new TfsTeamProjectCollection(new Uri(TfsServerUri));
+				this.projectCollection.EnsureAuthenticated();
+				this.workItems = (WorkItemStore)projectCollection.GetService(typeof(WorkItemStore));
+				this.projectName = projectName;
+				this.projectSubpath = projectSubpath;
+				this.iterationNumber = iterationNumber;
+			}
+			catch (Exception e)
+			{
+				throw new Exception("Error connecting to TFS", e);
+			}
 		}
 
 		/// <summary>
