@@ -164,6 +164,9 @@ namespace ReleaseNotes
 				CreateVerticalTable(TFS.GetTestCases(), "Test Cases", true);
 				CreateDocumentSpecificPostFormatting(true);
 
+                // save this!
+                Save();
+
 				// done!
 				logger.SetLoggingType(Logger.Type.Success)
 					.SetMessage("Document generated and saved in the current directory.")
@@ -175,6 +178,7 @@ namespace ReleaseNotes
 				logger.SetLoggingType(Logger.Type.Error)
 					.SetMessage("Document not generated. " + e.Message)
 					.Display();
+				throw;
 			}
 		}
 	}

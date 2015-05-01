@@ -48,7 +48,7 @@ namespace ReleaseNotes
                 (new Logger())
                     .SetLoggingType(Logger.Type.Error)
                     .SetMessage(e.Message).Display();
-                return null;
+                throw;
             }
         }
 

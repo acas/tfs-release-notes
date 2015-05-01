@@ -63,7 +63,7 @@ namespace ReleaseNotes
                     .SetLoggingType(Logger.Type.Error)
                     .SetMessage(e.Message + "Excel not initialized. \n Are you trying to run this server-side?...")
                     .Display();
-                return null;
+                throw;
             }
         }
 
@@ -574,6 +574,7 @@ namespace ReleaseNotes
                     .SetMessage(e.Message + "\n Excel may not have been freed from user control, \n" +
                                             "is waiting on user save, \nor cannot save (another open workbook?).")
                     .Display();
+                throw;
             }
 
             // collect the remaining garbage
