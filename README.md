@@ -11,7 +11,7 @@ Run the executable (ReleaseNotes.exe) with exactly eight arguments, in the follo
 * TFS Project Collection Path (eg https://mytfsserver.com/MyProjectCollection)
 * TFS Project Name (eg MyProject)
 * Iteration (The full name of the sprint/iteration for which to generate release notes)
-* Release Notes Type (one of  `excel`, `word`, `html`)
+* Release Notes Type (one of  `excel`, `word`, `html`, or `server` for EPPlus specifically)
 * Database Server (arbitrary string - the name of the database server)
 * Web Server (arbitrary string - the name of the web server)
 * Database (arbitrary string - the name of the database)
