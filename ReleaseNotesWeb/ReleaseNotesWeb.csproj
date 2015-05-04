@@ -49,7 +49,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="ReleaseNotesLibrary">
-      <HintPath>..\..\..\..\..\Desktop\Repos\tfs-release-notes\ReleaseNotes\bin\Debug\ReleaseNotesLibrary.dll</HintPath>
+      <HintPath>..\ReleaseNotes\bin\Release\ReleaseNotesLibrary.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

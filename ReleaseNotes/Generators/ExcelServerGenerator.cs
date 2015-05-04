@@ -11,6 +11,7 @@ using OfficeOpenXml.Style;
 using System.Drawing;
 using OfficeOpenXml.Table;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace ReleaseNotesLibrary.Generators
 {
@@ -263,13 +264,17 @@ namespace ReleaseNotesLibrary.Generators
             int width = 125;
             try
             {
-                if (!File.Exists(Utilities.GetExecutingPath() + "ACAS.jpg"))
+                string defaultPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                if (!File.Exists(defaultPath))
                 {
-                    Resources.Resources.ACAS.Save(@"ACAS.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+                    Image i = Resources.Resources.ACAS;
+                    // recommended before save
+                    Thread.Sleep(30);
+                    i.Save(defaultPath + "ACAS.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
                 }
 
                 // add a picture to the worksheet
-                var logo = Image.FromFile(new Uri(Utilities.GetExecutingPath() + "ACAS.jpg").LocalPath);
+                var logo = Image.FromFile(new Uri(defaultPath + "ACAS.jpg").LocalPath);
                 var docPicture = worksheet.Drawings.AddPicture("Logo", logo);
                 docPicture.SetPosition(0, 0);
                 docPicture.EditAs = OfficeOpenXml.Drawing.eEditAs.TwoCell;

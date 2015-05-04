@@ -11,6 +11,7 @@ using System.IO;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using ReleaseNotesLibrary.Utility;
 using System.Drawing;
+using System.Threading;
 
 namespace ReleaseNotesLibrary.Generators
 {
@@ -258,13 +259,17 @@ namespace ReleaseNotesLibrary.Generators
             int width = 125;
             try
             {
-                if (!File.Exists(Utilities.GetExecutingPath() + "ACAS.jpg"))
+                string defaultPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                if (!File.Exists(defaultPath + "ACAS.jpg"))
                 {
-                    Resources.Resources.ACAS.Save(@"ACAS.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+                    Image i = Resources.Resources.ACAS;
+                    // recommended before save
+                    Thread.Sleep(30);
+                    i.Save(defaultPath + "ACAS.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
                 }
 
                 // add a picture to the worksheet
-                worksheet.Shapes.AddPicture(Utilities.GetExecutingPath() + "ACAS.jpg",
+                worksheet.Shapes.AddPicture(defaultPath + "ACAS.jpg",
                     Microsoft.Office.Core.MsoTriState.msoFalse,
                     Microsoft.Office.Core.MsoTriState.msoCTrue, 5, 5, width, height);
             }
