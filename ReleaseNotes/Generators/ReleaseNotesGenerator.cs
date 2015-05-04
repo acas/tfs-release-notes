@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Data;
 using System.Threading.Tasks;
-using ReleaseNotes.Utility;
+using ReleaseNotesLibrary.Utility;
 using System.Diagnostics.Contracts;
 
-namespace ReleaseNotes
+namespace ReleaseNotesLibrary.Generators
 {
-	class ReleaseNotesGenerator
+	public class ReleaseNotesGenerator
 	{
 		protected bool silent;
 		protected Logger logger;
@@ -40,7 +40,7 @@ namespace ReleaseNotes
 		public virtual void CreateErrorMessage(string message) { }
 		public virtual void CreateHeaderGraphic(string path) { }
 		public virtual void CreateNewPage(string worksheetName) { }
-		public virtual void Save() { }
+		public virtual byte[] Save() { return new byte[0]; }
 
 		public ReleaseNotesGenerator(NamedLookup settings, bool silent)
 		{
@@ -117,8 +117,11 @@ namespace ReleaseNotes
 		/// <summary>
 		/// Generate the release notes
 		/// </summary>
-		public void GenerateReleaseNotes()
+		public byte[] GenerateReleaseNotes()
 		{
+			// result
+			byte[] releaseNotesData;
+
 			// set silent to false
 			silent = true;
 
@@ -164,13 +167,15 @@ namespace ReleaseNotes
 				CreateVerticalTable(TFS.GetTestCases(), "Test Cases", true);
 				CreateDocumentSpecificPostFormatting(true);
 
-                // save this!
-                Save();
+				// save this!
+				releaseNotesData = Save();
 
 				// done!
 				logger.SetLoggingType(Logger.Type.Success)
 					.SetMessage("Document generated and saved in the current directory.")
 					.Display();
+
+				return releaseNotesData;
 			}
 			catch (Exception e)
 			{

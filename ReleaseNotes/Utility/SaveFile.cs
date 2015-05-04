@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using System.IO;
 
-namespace ReleaseNotes.Utility
+namespace ReleaseNotesLibrary.Utility
 {
-    class SaveFile
+    public class SaveFile
     {
         private JObject saveFileConfiguration;
 

@@ -5,16 +5,23 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.TeamFoundation.Framework.Client;
-using ReleaseNotes.Utility;
+using ReleaseNotesLibrary.Utility;
 using System.Threading;
-using ReleaseNotes.Generators;
-namespace ReleaseNotes
+using ReleaseNotesLibrary.Generators;
+namespace ReleaseNotesLibrary
 {
-	class Program
+	public class Program
 	{
-		static void Main(string[] args)
-		{
-			// silent mode is true by default -
+        // output a class library instead
+        /*
+        static void Main(string[] args)
+        {
+            programStart(args);
+        }*/
+
+        public static void programStart(string[] args)
+        {
+            // silent mode is true by default -
 			// it's faster and quieter.
 			bool silent = true;
 
@@ -93,12 +100,12 @@ namespace ReleaseNotes
 				// wait for key
 				Console.ReadKey();
 			}
-		}
+        }
 
 		/// <summary>
 		/// Prints the program header
 		/// </summary>
-		static void printProgramHeader()
+		public static void printProgramHeader()
 		{
 			Console.WriteLine();
 			Console.ForegroundColor = ConsoleColor.White;

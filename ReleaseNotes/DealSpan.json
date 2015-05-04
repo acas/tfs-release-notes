@@ -1,0 +1,12 @@
+﻿{
+    "Team Project Path": "https://tfs.americancapital.com/tfs/ACASProjects/",
+    "Project Name": "DealSpan",
+    "Project Subpath": "", // optional project subpath to insert an extra level of indirection
+    "Iteration": "Release 15.6",
+    // all three paths above are concatenated and slashes added
+    "Database": "DealSpan",
+    "Database Server": "SQLNONFinancialCluster02.americancapital.com.test.lab.americancapital.com",
+    "Web Server": "pro00websv01.acas.corp.americancapital.com",
+    "Web Location": "https://dealspan.americancapital.com/",
+    "Generator Type":  "excel"
+}

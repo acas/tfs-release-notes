@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 using Word = Microsoft.Office.Interop.Word;
 using Excel = Microsoft.Office.Interop.Excel;
 
-namespace ReleaseNotes.Utility
+namespace ReleaseNotesLibrary.Utility
 {
     public struct NamedLookup
     {

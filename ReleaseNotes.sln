@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReleaseNotes", "ReleaseNotes\ReleaseNotes.csproj", "{03EA0A40-439B-462A-A6E8-90D920F90C7C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReleaseNotesWeb", "ReleaseNotesWeb\ReleaseNotesWeb.csproj", "{D2C091D8-895A-4648-BA8C-3192BC497AB3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{03EA0A40-439B-462A-A6E8-90D920F90C7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03EA0A40-439B-462A-A6E8-90D920F90C7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03EA0A40-439B-462A-A6E8-90D920F90C7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2C091D8-895A-4648-BA8C-3192BC497AB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2C091D8-895A-4648-BA8C-3192BC497AB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2C091D8-895A-4648-BA8C-3192BC497AB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2C091D8-895A-4648-BA8C-3192BC497AB3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,11 +4,11 @@ using System.Linq;
 using System.Data;
 using System.Text;
 using System.Threading.Tasks;
-using ReleaseNotes.Utility;
+using ReleaseNotesLibrary.Utility;
 
-namespace ReleaseNotes.Generators
+namespace ReleaseNotesLibrary.Generators
 {
-    class HTMLGenerator : ReleaseNotesGenerator
+    public class HTMLGenerator : ReleaseNotesGenerator
     {
         public HTMLGenerator(NamedLookup settings, bool silent)
             : base(settings, silent)
@@ -57,6 +57,11 @@ namespace ReleaseNotes.Generators
         }
 
         public override void CreateHeaderGraphic(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override byte[] Save()
         {
             throw new NotImplementedException();
         }

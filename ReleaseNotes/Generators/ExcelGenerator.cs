@@ -9,12 +9,12 @@ using System.Runtime.InteropServices;
 using System.Data;
 using System.IO;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
-using ReleaseNotes.Utility;
+using ReleaseNotesLibrary.Utility;
 using System.Drawing;
 
-namespace ReleaseNotes
+namespace ReleaseNotesLibrary.Generators
 {
-    class ExcelGenerator : ReleaseNotesGenerator
+    public class ExcelGenerator : ReleaseNotesGenerator
     {
         // excel persistent objects
         private Excel.Application app;
@@ -254,19 +254,27 @@ namespace ReleaseNotes
         {
             // add header graphics
             // save the graphic before its path can be referenced
-            if (!File.Exists(Utilities.GetExecutingPath() + "ACAS.jpg"))
-            {
-                Resources.Resources.ACAS.Save(@"ACAS.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
-            }
-
-            // height
             int height = 70;
             int width = 125;
+            try
+            {
+                if (!File.Exists(Utilities.GetExecutingPath() + "ACAS.jpg"))
+                {
+                    Resources.Resources.ACAS.Save(@"ACAS.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+                }
 
-            // add a picture to the worksheet
-            worksheet.Shapes.AddPicture(Utilities.GetExecutingPath() + "ACAS.jpg", 
-                Microsoft.Office.Core.MsoTriState.msoFalse, 
-                Microsoft.Office.Core.MsoTriState.msoCTrue, 5, 5, width, height);
+                // add a picture to the worksheet
+                worksheet.Shapes.AddPicture(Utilities.GetExecutingPath() + "ACAS.jpg",
+                    Microsoft.Office.Core.MsoTriState.msoFalse,
+                    Microsoft.Office.Core.MsoTriState.msoCTrue, 5, 5, width, height);
+            }
+            catch (ExternalException e)
+            {
+                (new Logger())
+                    .SetLoggingType(Logger.Type.Warning)
+                    .SetMessage(e.Message + "Image could not be saved server side")
+                    .Display();
+            }
 
             // resize the first row to avoid a border issue
             Excel.Range range = GetMultiCellRange(worksheet, currentColumnOffset, currentColumnCount + currentColumnOffset - 1, currentRow);
@@ -533,6 +541,24 @@ namespace ReleaseNotes
             return (Excel.Range)currentSheet.Range[currentSheet.Cells[row, col], currentSheet.Cells[row, col]];
         }
 
+        public override byte[] Save()
+        {
+            string path = Utilities.GetExecutingPath() + settings["Project Name"] + " " + settings["Iteration"] + " Release Notes.xlsx";
+            try
+            {
+                // save this workbook in the application directory
+                workbook.SaveAs(path, Excel.XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing,
+                    false, false, Excel.XlSaveAsAccessMode.xlNoChange,
+                    Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+                return File.ReadAllBytes(path);
+            }
+            finally 
+            {
+                if (File.Exists(path))
+                    File.Delete(path);
+            }
+        }
+
         /// <summary>
         /// Destructor
         /// </summary>
@@ -542,12 +568,6 @@ namespace ReleaseNotes
             {
                 // remove user control
                 app.UserControl = false;
-
-                // save this workbook in the application directory
-                workbook.SaveAs(Utilities.GetExecutingPath() + settings["Project Name"] + " " + settings["Iteration"] + " Release Notes.xlsx",
-                    Excel.XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing,
-                    false, false, Excel.XlSaveAsAccessMode.xlNoChange,
-                    Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
 
                 // quit
                 app.Workbooks.Close();

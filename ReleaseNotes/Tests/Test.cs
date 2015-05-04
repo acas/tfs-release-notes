@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.TeamFoundation.Framework.Client;
 
-namespace ReleaseNotes
+namespace ReleaseNotesLibrary
 {
     [TestClass]
     public class UnitTests
