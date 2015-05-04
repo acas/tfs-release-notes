@@ -13,11 +13,11 @@ using Microsoft.TeamFoundation.Server;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using Microsoft.TeamFoundation.Build.Client;
 using Microsoft.TeamFoundation.TestManagement.Client;
-using ReleaseNotes.Utility;
+using ReleaseNotesLibrary.Utility;
 
-namespace ReleaseNotes
+namespace ReleaseNotesLibrary
 {
-	class TFSAccessor
+	public class TFSAccessor
 	{
 		private TfsTeamProjectCollection projectCollection;
 		private WorkItemStore workItems;

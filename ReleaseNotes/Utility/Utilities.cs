@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 
-namespace ReleaseNotes
+namespace ReleaseNotesLibrary
 {
-    class Utilities
+    public class Utilities
     {
         /// <summary>
         /// Strips contrived HTML from a string

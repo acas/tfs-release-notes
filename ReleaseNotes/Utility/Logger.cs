@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ReleaseNotes
+namespace ReleaseNotesLibrary
 {
-    class Logger
+    public class Logger
     {
         /// <summary>
         /// Describes the method for which a message is to be displayed

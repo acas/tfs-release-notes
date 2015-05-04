@@ -1,4 +1,4 @@
-﻿using ReleaseNotes.Utility;
+﻿using ReleaseNotesLibrary.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +10,12 @@ using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System.Drawing;
 using OfficeOpenXml.Table;
+using System.Runtime.InteropServices;
+using System.Threading;
 
-namespace ReleaseNotes.Generators
+namespace ReleaseNotesLibrary.Generators
 {
-    class ExcelServerGenerator : ReleaseNotesGenerator
+    public class ExcelServerGenerator : ReleaseNotesGenerator
     {
         // excel persistent objects
         private ExcelPackage app;
@@ -258,21 +260,33 @@ namespace ReleaseNotes.Generators
         {
             // add header graphics
             // save the graphic before its path can be referenced
-            if (!File.Exists(Utilities.GetExecutingPath() + "ACAS.jpg"))
-            {
-                Resources.Resources.ACAS.Save(@"ACAS.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
-            }
-
-            // height
             int height = 70;
             int width = 125;
+            try
+            {
+                string defaultPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                if (!File.Exists(defaultPath))
+                {
+                    Image i = Resources.Resources.ACAS;
+                    // recommended before save
+                    Thread.Sleep(30);
+                    i.Save(defaultPath + "ACAS.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+                }
 
-            // add a picture to the worksheet
-            var logo = Image.FromFile(new Uri(Utilities.GetExecutingPath() + "ACAS.jpg").LocalPath);
-            var docPicture = worksheet.Drawings.AddPicture("Logo", logo);
-            docPicture.SetPosition(0, 0);
-            docPicture.EditAs = OfficeOpenXml.Drawing.eEditAs.TwoCell;
-            docPicture.SetSize(65, 75);
+                // add a picture to the worksheet
+                var logo = Image.FromFile(new Uri(defaultPath + "ACAS.jpg").LocalPath);
+                var docPicture = worksheet.Drawings.AddPicture("Logo", logo);
+                docPicture.SetPosition(0, 0);
+                docPicture.EditAs = OfficeOpenXml.Drawing.eEditAs.TwoCell;
+                docPicture.SetSize(65, 75);
+            }
+            catch (ExternalException e)
+            {
+                (new Logger())
+                    .SetLoggingType(Logger.Type.Warning)
+                    .SetMessage(e.Message + "Image could not be saved server side")
+                    .Display();
+            }
 
             // resize the first row to avoid a border issue
             worksheet.Row(this.currentRow).Height = height + 1;
@@ -563,9 +577,20 @@ namespace ReleaseNotes.Generators
             return currentSheet.Cells[row, col, row, col];
         }
 
-        public override void Save()
+        public override byte[] Save()
         {
             app.Save();
+            // save this workbook in the application directory
+            string filePath = Utilities.GetExecutingPath() + settings["Project Name"] + " " + settings["Iteration"] + " Release Notes.xlsx";
+            FileInfo f = new FileInfo(new Uri(filePath).LocalPath);
+            if (f.Exists) f.Delete();
+            FileStream fs = f.Create();
+            // stream to output
+            fs.Position = 0;
+            ms.WriteTo(fs);
+            ms.Close();
+            fs.Close();
+            return ms.ToArray();
         }
 
         /// <summary>
@@ -575,17 +600,6 @@ namespace ReleaseNotes.Generators
         {
             try
             {
-                // save this workbook in the application directory
-                string filePath = Utilities.GetExecutingPath() + settings["Project Name"] + " " + settings["Iteration"] + " Release Notes.xlsx";
-                FileInfo f = new FileInfo(new Uri(filePath).LocalPath);
-                if (f.Exists) f.Delete();
-                FileStream fs = f.Create();
-                // stream to output
-                fs.Position = 0;
-                ms.WriteTo(fs);
-                ms.Close();
-                fs.Close();
-
                 // set to null
                 worksheet = null;
                 workbook = null;

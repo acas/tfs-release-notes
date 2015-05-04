@@ -10,11 +10,12 @@ using System.Runtime.InteropServices;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using System.IO;
 using System.Threading;
-using ReleaseNotes.Utility;
+using ReleaseNotesLibrary.Utility;
+using ReleaseNotesLibrary.Generators;
 
-namespace ReleaseNotes
+namespace ReleaseNotesLibrary
 {
-    class WordGenerator : ReleaseNotesGenerator
+    public class WordGenerator : ReleaseNotesGenerator
     {
         private Word.Application app;
         private Word.Document document;
@@ -75,26 +76,40 @@ namespace ReleaseNotes
         /// </summary>
         public override void CreateHeaderGraphic(string path = null)
         {
-            // add header graphics
-            // save the graphic before its path can be referenced
-            if (!File.Exists(Utilities.GetExecutingPath() + "ACAS.jpg"))
+            try
             {
-                Resources.Resources.ACAS.Save(@"ACAS.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+                // add header graphics
+                // save the graphic before its path can be referenced
+                string defaultPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                if (!File.Exists(defaultPath + "ACAS.jpg"))
+                {
+                    Image i = Resources.Resources.ACAS;
+                    // recommended before save
+                    Thread.Sleep(30);
+                    i.Save(defaultPath + "ACAS.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+                }
+
+                // get the word document range of the header
+                Word.Section firstSection = document.Sections.First;
+                Word.Range headerSectionRange = firstSection.Headers[Word.WdHeaderFooterIndex.wdHeaderFooterPrimary].Range;
+
+                // get the shape back, put in the header and resize
+                Word.InlineShape ACASLogo = headerSectionRange.InlineShapes.AddPicture(defaultPath + "ACAS.jpg", false, true);
+
+                // thread sleep to allow COM interop to catch up
+                Thread.Sleep(100);
+
+                // scale height and width
+                ACASLogo.ScaleHeight = 55.0F;
+                ACASLogo.ScaleWidth = 55.0F;
             }
-
-            // get the word document range of the header
-            Word.Section firstSection = document.Sections.First;
-            Word.Range headerSectionRange = firstSection.Headers[Word.WdHeaderFooterIndex.wdHeaderFooterPrimary].Range;
-
-            // get the shape back, put in the header and resize
-            Word.InlineShape ACASLogo = headerSectionRange.InlineShapes.AddPicture(Utilities.GetExecutingPath() + "ACAS.jpg", false, true);
-
-            // thread sleep to allow COM interop to catch up
-            Thread.Sleep(100);
-
-            // scale height and width
-            ACASLogo.ScaleHeight = 55.0F;
-            ACASLogo.ScaleWidth = 55.0F;
+            catch (ExternalException e)
+            {
+                (new Logger())
+                    .SetLoggingType(Logger.Type.Warning)
+                    .SetMessage(e.Message + "Image could not be saved server side")
+                    .Display();
+            }
         }
          
         /// <summary>
@@ -408,6 +423,27 @@ namespace ReleaseNotes
             paragraph.Range.Collapse(Word.WdCollapseDirection.wdCollapseEnd);
         }
 
+        public override byte[] Save()
+        {
+            // get the path
+            string path = Utilities.GetExecutingPath() + settings["Project Name"] + " " + settings["Iteration"]
+                + " Release Notes.docx";
+
+            try 
+            {
+                // save this document
+                document.SaveAs2(path, Word.WdSaveFormat.wdFormatDocumentDefault,
+                    Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, true, true, Type.Missing, Type.Missing, Type.Missing,
+                    Type.Missing, Type.Missing, Word.WdLineEndingType.wdCRLF, Type.Missing, Type.Missing);
+                return File.ReadAllBytes(path);
+            }
+            finally 
+            {
+                if (File.Exists(path))
+                    File.Delete(path);
+            }
+        }
+
         /// <summary>
         /// Destructor
         /// </summary>
@@ -417,12 +453,6 @@ namespace ReleaseNotes
             {
                 // remove user control
                 document.UserControl = false;
-
-                // save this document
-                document.SaveAs2(Utilities.GetExecutingPath() + settings["Project Name"] + " " + settings["Iteration"]
-                    + " Release Notes.docx", Word.WdSaveFormat.wdFormatDocumentDefault,
-                    Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, true, true, Type.Missing, Type.Missing, Type.Missing,
-                    Type.Missing, Type.Missing, Word.WdLineEndingType.wdCRLF, Type.Missing, Type.Missing);
 
                 // quit
                 app.Documents.Close(false);

@@ -1,0 +1,79 @@
+﻿<div class="content" ng-controller="releaseNotes-controller">
+    <h2>TFS Release Notes</h2>
+    <div class="form">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label for="blah" class="col-sm-4 control-label small">Team Project Path</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control input-sm" id="blah" placeholder="TFS addr" ng-model="releaseNotes.fields.teamProjectPath"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="blah" class="col-sm-4 control-label small">Project Name</label>
+                
+                <div class="col-sm-8">
+                    <input type="text" class="form-control input-sm" id="blah" placeholder="Type in a name" ng-model="releaseNotes.fields.projectName"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="blah" class="col-sm-4 control-label small">Project Subpath</label>
+                
+                <div class="col-sm-8">
+                    <input type="text" class="form-control input-sm" id="blah" placeholder="(optional)" ng-model="releaseNotes.fields.projectSubpath"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="blah" class="col-sm-4 control-label small">Iteration</label>
+                
+                <div class="col-sm-8">
+                    <input type="text" class="form-control input-sm" id="blah" placeholder="Usually 'Release' and a version number" ng-model="releaseNotes.fields.iteration"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="blah" class="col-sm-4 control-label small">Database</label>
+                
+                <div class="col-sm-8">
+                    <input type="text" class="form-control input-sm" id="blah" placeholder="A database name" ng-model="releaseNotes.fields.database" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="blah" class="col-sm-4 control-label small">Database Server</label>
+                
+                <div class="col-sm-8">
+                    <input type="text" class="form-control input-sm" id="blah" placeholder="The server the database above is on" ng-model="releaseNotes.fields.databaseServer" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="blah" class="col-sm-4 control-label small">Web Server</label>
+                
+                <div class="col-sm-8">
+                    <input type="text" class="form-control input-sm" id="blah" placeholder="The server the website is on" ng-model="releaseNotes.fields.webServer" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="blah" class="col-sm-4 control-label small">Web Location</label>
+                
+                <div class="col-sm-8">
+                    <input type="text" class="form-control input-sm" id="blah" placeholder="Where to access this application" ng-model="releaseNotes.fields.webLocation" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="blah" class="col-sm-4 control-label small">Generator</label>
+                <div class="col-sm-8">
+                    <select class="form-control input-sm" id="blah"
+                            ng-options="generator.name for generator in releaseNotes.generators"
+                            ng-model="releaseNotes.fields.generator"
+                            ng-init="releaseNotes.fields.generator = releaseNotes.generators[0]"></select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-4 col-sm-8">
+                    <button class="btn btn-default small"
+                            ng-click="releaseNotes.generate()">
+                        <span class="glyphicon glyphicon-download icon-fix"></span>Generate Release Notes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
