@@ -16,6 +16,12 @@ on IIS to generate release notes. If you have Visual Studio, open the ReleaseNot
 file, click on ReleaseNotesWeb in the Solution Explorer, then click on the play button
 at the top of Visual Studio to run in your browser of choice, prefer Google Chrome!
 
+The default AppData folder for this application is C:\Users\CurrentUser\AppDataFolder\Roaming\ReleaseNotes,
+which is required for both saving resource images and application persistence files.
+The program will attempt to create the directory, though with IIS Express that may be impossible given permissions issues.
+To resolve, simply give the local machine's 'NETWORK SERVICE' account access to the folder. 
+You may need to create this folder by hand (though the application will attempt this for you).
+
 The web form takes 8 parameters:
 
 * TFS Project Collection Path (eg. https://mytfsserver.com/tfs/MyProjectCollection)
