@@ -2,6 +2,46 @@
     <h2>TFS Release Notes</h2>
     <div class="form">
         <div class="form-horizontal">
+            <div class="form-group" ng-if="releaseNotes.configurations.length > 0">
+                <label for="blah" class="col-sm-4 control-label small">Configurations</label>
+                <div class="col-sm-8">
+                    <select class="form-control input-sm" id="blah"
+                            ng-options="configuration.configurationName for configuration in releaseNotes.configurations"
+                            ng-model="releaseNotes.selectedConfiguration"
+                            ng-change="releaseNotes.configurationChanged()">
+                        <option></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="blah" class="col-sm-4 control-label small">Save Configuration</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control input-sm" id="blah" 
+                           placeholder="Configuration name" 
+                           ng-model="releaseNotes.newConfiguration" />
+                </div>
+                <div class="col-sm-3">
+                    <button class="btn btn-default btn-sm" ng-click="releaseNotes.saveConfiguration()">
+                        <span class="glyphicon glyphicon-floppy-disk"></span> Save
+                    </button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="blah" class="col-sm-4 control-label small">Delete Configuration</label>
+                <div class="col-sm-5">
+                    <select class="form-control input-sm" id="blah"
+                            ng-options="configuration.configurationName for configuration in releaseNotes.configurations"
+                            ng-model="releaseNotes.trashyConfiguration">
+                        <option></option>
+                    </select>
+                </div>
+                <div class="col-sm-3">
+                    <button class="btn btn-default btn-sm" ng-click="releaseNotes.deleteConfiguration()">
+                        <span class="glyphicon glyphicon-trash"></span> Delete
+                    </button>
+                </div>
+            </div>
+            <div class="form-group" style="border-top: 1px solid lightgrey; margin-top: 15px; margin-bottom: 20px; height: 0; padding: 0;"></div>
             <div class="form-group">
                 <label for="blah" class="col-sm-4 control-label small">Team Project Path</label>
                 <div class="col-sm-8">
@@ -63,7 +103,7 @@
                     <select class="form-control input-sm" id="blah"
                             ng-options="generator.name for generator in releaseNotes.generators"
                             ng-model="releaseNotes.fields.generator"
-                            ng-init="releaseNotes.fields.generator = releaseNotes.generators[0]"></select>
+                            ng-init="releaseNotes.fields.generator = releaseNotes.generators[0].name"></select>
                 </div>
             </div>
             <div class="form-group">

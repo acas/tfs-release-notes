@@ -259,17 +259,16 @@ namespace ReleaseNotesLibrary.Generators
             int width = 125;
             try
             {
-                string defaultPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                if (!File.Exists(defaultPath + "ACAS.jpg"))
+                if (!File.Exists(Utilities.appDataPath + "ACAS.jpg"))
                 {
                     Image i = Resources.Resources.ACAS;
                     // recommended before save
                     Thread.Sleep(30);
-                    i.Save(defaultPath + "ACAS.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+                    i.Save(Utilities.appDataPath + "ACAS.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
                 }
 
                 // add a picture to the worksheet
-                worksheet.Shapes.AddPicture(defaultPath + "ACAS.jpg",
+                worksheet.Shapes.AddPicture(Utilities.appDataPath + "ACAS.jpg",
                     Microsoft.Office.Core.MsoTriState.msoFalse,
                     Microsoft.Office.Core.MsoTriState.msoCTrue, 5, 5, width, height);
             }

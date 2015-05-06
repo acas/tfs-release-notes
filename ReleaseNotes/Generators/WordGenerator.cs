@@ -80,13 +80,12 @@ namespace ReleaseNotesLibrary
             {
                 // add header graphics
                 // save the graphic before its path can be referenced
-                string defaultPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                if (!File.Exists(defaultPath + "ACAS.jpg"))
+                if (!File.Exists(Utilities.appDataPath + "ACAS.jpg"))
                 {
                     Image i = Resources.Resources.ACAS;
                     // recommended before save
                     Thread.Sleep(30);
-                    i.Save(defaultPath + "ACAS.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+                    i.Save(Utilities.appDataPath + "ACAS.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
                 }
 
                 // get the word document range of the header
@@ -94,7 +93,7 @@ namespace ReleaseNotesLibrary
                 Word.Range headerSectionRange = firstSection.Headers[Word.WdHeaderFooterIndex.wdHeaderFooterPrimary].Range;
 
                 // get the shape back, put in the header and resize
-                Word.InlineShape ACASLogo = headerSectionRange.InlineShapes.AddPicture(defaultPath + "ACAS.jpg", false, true);
+                Word.InlineShape ACASLogo = headerSectionRange.InlineShapes.AddPicture(Utilities.appDataPath + "ACAS.jpg", false, true);
 
                 // thread sleep to allow COM interop to catch up
                 Thread.Sleep(100);
