@@ -32,6 +32,7 @@ namespace ReleaseNotesLibrary.Generators
 
         public override void CreateDocumentSpecificPreFormatting()
         {
+            this.htmlString += "<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /></head>";
             this.htmlString += "<body style=\"font-family: Arial, sans-serif;\">";
             this.htmlString += "<style>";
             this.htmlString += @"table {
