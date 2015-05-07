@@ -8,9 +8,9 @@ Prerequisites
 ------------------
 * TFS Release Notes generates MS Excel documents using EPPlus. There are no installation prerequisites.
 * The Windows user running the ReleaseNotesWeb application must have read access to the team project specified.
-* The Windows user NETWORK SERVICE must be able to modify the contents of the folder: C:\Users\CurrentUser\AppDataFolder\Roaming\ReleaseNotes. Make sure it is not read-only.'
+* The Windows user NETWORK SERVICE must be able to modify the contents of the folder: C:\Users\CurrentUser\AppDataFolder\Roaming\ReleaseNotes (or at least the AppDataFolder). Make sure it is not read-only.
   - The folder will at most contain two files, the ACAS logo (ACAS.jpg) and the presets database (presets.sqlite).
-* The ReleaseNotes library project must be built before ReleaseNotesWeb.
+* The ReleaseNotes library project must be built before ReleaseNotesWeb (using the 'Release' and not 'Debug' configuration).
 
 Usage
 ------------------
