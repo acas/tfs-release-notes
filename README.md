@@ -47,8 +47,9 @@ Presets
 ------------------
 Since the information required to generate release notes requires a lot of typing, presets save time by allowing
 the input parameters of the application to be saved. ReleaseNotesWeb uses a SQLite database to store these presets,
-and the file is easily transferable from one PC to the next. 
+and the file (C:\Users\CurrentUser\AppDataFolder\Roaming\ReleaseNotes\presets.sqlite) is easily transferable from one PC to the next. 
 
 * To create a preset, type in the 'Preset name' next to the 'Save' button in the 'Presets' section of ReleaseNotesWeb.
 * To overwrite an existing preset, select the preset from the 'Recall Presets' dropdown menu, then change any field and click 'Save'.
 * To delete a preset, select any preset from the 'Recall Presets' dropdown menu and click 'Delete'. The delete does not warn, so always have a backup of 'presets.sqlite' handy.
+* To share presets, simply copy 'presets.sqlite' from the folder C:\Users\SourceUser\AppDataFolder\Roaming\ReleaseNotes\ to the same folder on the target user's machine: C:\Users\TargetUser\AppDataFolder\Roaming\ReleaseNotes\. Easy as that.
