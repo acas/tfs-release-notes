@@ -8,6 +8,8 @@ Prerequisites
 ------------------
 * TFS Release Notes generates MS Excel documents using EPPlus. There are no installation prerequisites.
 * The Windows user running the ReleaseNotesWeb application must have read access to the team project specified.
+* The Windows user NETWORK SERVICE must be able to modify the contents of the folder: C:\Users\CurrentUser\AppDataFolder\Roaming\ReleaseNotes. Make sure it is not read-only.
+* The ReleaseNotes library project must be built before ReleaseNotesWeb.
 
 Usage
 ------------------
@@ -15,6 +17,10 @@ The ReleaseNotesWeb folder contains an ASP.NET Web application that you can run
 on IIS to generate release notes. If you have Visual Studio, open the ReleaseNotes.sln
 file, click on ReleaseNotesWeb in the Solution Explorer, then click on the play button
 at the top of Visual Studio to run in your browser of choice, prefer Google Chrome!
+
+If the build fails, you will need to build the ReleaseNotes project in the solution file. Change the build configuration to 'Release'
+and click the Play button at the top of the screen. Then, build ReleaseNotesWeb. You must build with the 'Release' configuration selected
+because the project file ReleaseNotesWeb points to the ReleaseNotesLibrary assembly in the solution's ReleaseNotes project folder: ...SolutionDir\ReleaseNotes\bin\Release\ReleaseNotesLibrary.dll
 
 The default AppData folder for this application is C:\Users\CurrentUser\AppDataFolder\Roaming\ReleaseNotes,
 which is required for both saving resource images and application persistence files.
