@@ -147,7 +147,7 @@ namespace ReleaseNotesLibrary.Generators
                 string[] rowArray = Utilities.TableRowToStringArray(row);
                 foreach (string rowValue in rowArray)
                 {
-                    this.htmlString += "<td>" + rowValue + "</td>";
+                    this.htmlString += "<td>" + rowValue.Replace("\n", "<br>") + "</td>";
                 }
                 this.htmlString += "</tr>";
             }
