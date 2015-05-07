@@ -298,6 +298,19 @@ namespace ReleaseNotesLibrary.Generators
         }
 
         /// <summary>
+        /// Creates a section to display one piece of information
+        /// </summary>
+        /// <param name="headername"></param>
+        /// <param name="text"></param>
+        /// <param name="hyperlink"></param>
+        public override void CreateNamedSection(string headername, string text, string hyperlink)
+        {
+            NamedLookup namedSectionData = new NamedLookup(headername);
+            namedSectionData[text] = hyperlink;
+            CreateHorizontalTable(namedSectionData, 1, true);
+        }
+
+        /// <summary>
         /// Creates an error message in the table
         /// </summary>
         /// <param name="message"></param>

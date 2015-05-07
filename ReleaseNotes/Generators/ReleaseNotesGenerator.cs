@@ -58,7 +58,7 @@ namespace ReleaseNotesLibrary.Generators
 			keysAlright.Add(settings.GetLookup().ContainsKey("Project Name"));
 			keysAlright.Add(settings.GetLookup().ContainsKey("Iteration"));
 			if (keysAlright.Where(a => a == false).ToList().Count() > 0)
-				throw new Exception("Expected params not found.");
+				throw new ArgumentNullException("Expected params not found.");
 		}
 
 		public void AddPropertiesList(string name, Dictionary<string, string> lookup)

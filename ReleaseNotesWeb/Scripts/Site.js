@@ -142,7 +142,9 @@ releaseNotes.controller('releaseNotes-controller', ['$scope', '$http', '$q', '$t
                     }
                 })
                 .error(function (error) {
-                    console.log(error)
+                    if (error) {
+                        console.log(error)
+                    }
                     modalInstance.close()
                 }) 
                 // window.location.href = 'api/ReleaseNotes?data=' + encodeURIComponent(angular.toJson(api.fields))
