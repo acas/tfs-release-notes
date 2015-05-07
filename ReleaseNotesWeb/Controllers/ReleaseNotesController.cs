@@ -41,30 +41,39 @@ namespace ReleaseNotesWeb.Controllers
             {
                 g = ReleaseNotesLibrary.Generators.ExcelServerGenerator.ExcelServerGeneratorFactory(settings, true);
             }
+            else if (generatorType == "html")
+            {
+                g = ReleaseNotesLibrary.Generators.HTMLGenerator.HTMLGeneratorFactory(settings, true);
+            }
             else
             {
-                return Request.CreateResponse(HttpStatusCode.BadRequest);
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "The generator type cannot be null");
             }
 
             byte[] result = g.GenerateReleaseNotes();
 
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
             response.Content = new StreamContent(new MemoryStream(result));
+            string outputFileName = "";
+
             if (generatorType == "excel")
             {
                 response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                outputFileName = settings["Project Name"] + " " + settings["Iteration"] + " Release Notes.xlsx";
             }
             else if (generatorType == "html")
             {
                 response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
+                outputFileName = settings["Project Name"] + " " + settings["Iteration"] + " Release Notes.html";
             }
             else
             {
                 response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
             }
+
             response.Content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment")
             {
-                FileName = settings["Project Name"] + " " + settings["Iteration"] + " Release Notes.xlsx",
+                FileName = outputFileName,
                 Name = "Release Notes"
             };
 
