@@ -32,4 +32,4 @@ The web form takes 8 parameters:
 * Web Server (arbitrary string - the name of the web server)
 * Database (arbitrary string - the name of the database)
 * Web Location (arbitrary string - the location of the published application)
-* Generator Type (either `excel` or `html`, but unfortunately `html` is not yet supported).
+* Generator Type (either `excel` or `html`).
