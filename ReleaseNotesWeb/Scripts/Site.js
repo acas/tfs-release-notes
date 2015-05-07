@@ -9,30 +9,30 @@ releaseNotes.controller('releaseNotes-controller', ['$scope', '$http', '$q', '$t
                     { name: "html"  }
                 ]
             },
-            loadConfigurations: function () {
+            loadPresets: function () {
                 var deferred = $q.defer();
-                $http({ method: 'GET', url: 'api/Configuration/Load' })
+                $http({ method: 'GET', url: 'api/Preset/Load' })
                 .success(function (data) {
-                    api.configurations = data;
+                    api.presets = data;
                     deferred.resolve()
                 })
                 .error(function () { deferred.reject() })
                 return deferred.promise
             },
-            saveConfiguration: function (fields) {
+            savePreset: function (fields) {
                 var deferred = $q.defer();
-                $http({ method: 'POST', url: 'api/Configuration/Save', data: fields })
+                $http({ method: 'POST', url: 'api/Preset/Save', data: fields })
                 .success(function (data) {
                     deferred.resolve()
                 })
                 .error(function () { deferred.reject() })
                 return deferred.promise
             },
-            deleteConfiguration: function (fields) {
+            deletePreset: function (fields) {
                 var deferred = $q.defer();
-                $http({ method: 'POST', url: 'api/Configuration/Delete', data: fields })
+                $http({ method: 'POST', url: 'api/Preset/Delete', data: fields })
                 .success(function (data) {
-                    utilities.loadConfigurations()
+                    utilities.loadPresets()
                     deferred.resolve()
                 })
                 .error(function () { deferred.reject() })
@@ -40,7 +40,7 @@ releaseNotes.controller('releaseNotes-controller', ['$scope', '$http', '$q', '$t
             },
             load: function() {
                 utilities.loadGenerators()
-                utilities.loadConfigurations();
+                utilities.loadPresets();
             },
             initialize: function () {
                 utilities.load()
@@ -48,10 +48,12 @@ releaseNotes.controller('releaseNotes-controller', ['$scope', '$http', '$q', '$t
         }
 
         var api = {
-            configurations: [],
-            selectedConfiguration: null,
-            trashyConfiguration: null,
-            newConfiguration: null,
+            showPresetSection: true,
+            showRequiredSection: false,
+            showOptionalSection: true,
+            presets: [],
+            selectedPreset: null,
+            newPreset: null,
             generators: [],
             fields: {
                 teamProjectPath: null,
@@ -64,32 +66,32 @@ releaseNotes.controller('releaseNotes-controller', ['$scope', '$http', '$q', '$t
                 webLocation: null,
                 generator: null,
             },
-            saveConfiguration: function () {
-                if (api.selectedConfiguration) {
-                    api.fields['configurationName'] = api.selectedConfiguration.configurationName
+            savePreset: function () {
+                if (api.selectedPreset) {
+                    api.fields['presetName'] = api.selectedPreset.presetName
                 }
-                if (api.newConfiguration) {
-                    api.fields['configurationName'] = api.newConfiguration
+                if (api.newPreset) {
+                    api.fields['presetName'] = api.newPreset
                 }
-                utilities.saveConfiguration(api.fields).then(function () {
-                    utilities.loadConfigurations().then(function () {
-                        var selectedConfiguration = _.find(api.configurations, function (configuration) {
-                            return api.fields.configurationName === configuration.configurationName
+                utilities.savePreset(api.fields).then(function () {
+                    utilities.loadPresets().then(function () {
+                        var selectedPreset = _.find(api.presets, function (preset) {
+                            return api.fields.presetName === preset.presetName
                         })
-                        if (selectedConfiguration) api.selectedConfiguration = api.trashyConfiguration = selectedConfiguration
-                        api.newConfiguration = null
+                        if (selectedPreset) api.selectedPreset = api.trashyPreset = selectedPreset
+                        api.newPreset = null
                     })
                 })
-                //delete api.fields['configurationName']
+                //delete api.fields['presetName']
             },
-            deleteConfiguration: function () {
-                if (api.trashyConfiguration) {
-                    utilities.deleteConfiguration(api.fields)
+            deletePreset: function () {
+                if (api.selectedPreset) {
+                    utilities.deletePreset(api.fields)
                 }
             },
-            configurationChanged: function() {
-                if (api.selectedConfiguration) {
-                    api.fields = api.selectedConfiguration
+            presetChanged: function() {
+                if (api.selectedPreset) {
+                    api.fields = api.selectedPreset
                 }
             },
             generate: function () {

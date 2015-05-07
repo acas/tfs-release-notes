@@ -11,11 +11,6 @@ namespace ReleaseNotesLibrary
     public class Utilities
     {
         /// <summary>
-        /// The app data path for saving temp files
-        /// </summary>
-        public static string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\ReleaseNotes\\";
-
-        /// <summary>
         /// Strips contrived HTML from a string
         /// Stackoverflow: http://stackoverflow.com/questions/19523913/remove-html-tags-from-string-including-nbsp-in-c-sharp
         /// Slightly modified for effect

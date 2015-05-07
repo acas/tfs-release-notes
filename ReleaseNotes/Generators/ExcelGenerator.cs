@@ -259,16 +259,16 @@ namespace ReleaseNotesLibrary.Generators
             int width = 125;
             try
             {
-                if (!File.Exists(Utilities.appDataPath + "ACAS.jpg"))
+                if (!File.Exists(Global.appDataPath + "ACAS.jpg"))
                 {
                     Image i = Resources.Resources.ACAS;
                     // recommended before save
                     Thread.Sleep(30);
-                    i.Save(Utilities.appDataPath + "ACAS.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+                    i.Save(Global.appDataPath + "ACAS.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
                 }
 
                 // add a picture to the worksheet
-                worksheet.Shapes.AddPicture(Utilities.appDataPath + "ACAS.jpg",
+                worksheet.Shapes.AddPicture(Global.appDataPath + "ACAS.jpg",
                     Microsoft.Office.Core.MsoTriState.msoFalse,
                     Microsoft.Office.Core.MsoTriState.msoCTrue, 5, 5, width, height);
             }

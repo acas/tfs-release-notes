@@ -264,16 +264,16 @@ namespace ReleaseNotesLibrary.Generators
             int width = 125;
             try
             {
-                if (!File.Exists(Utilities.appDataPath))
+                if (!File.Exists(Global.appDataPath))
                 {
                     Image i = Resources.Resources.ACAS;
                     // recommended before save
                     Thread.Sleep(30);
-                    i.Save(Utilities.appDataPath + "ACAS.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+                    i.Save(Global.appDataPath + "ACAS.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
                 }
 
                 // add a picture to the worksheet
-                var logo = Image.FromFile(new Uri(Utilities.appDataPath + "ACAS.jpg").LocalPath);
+                var logo = Image.FromFile(new Uri(Global.appDataPath + "ACAS.jpg").LocalPath);
                 var docPicture = worksheet.Drawings.AddPicture("Logo", logo);
                 docPicture.SetPosition(0, 0);
                 docPicture.EditAs = OfficeOpenXml.Drawing.eEditAs.TwoCell;

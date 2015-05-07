@@ -11,10 +11,10 @@ using System.Web.Http;
 
 namespace ReleaseNotesWeb.Controllers
 {
-    [RoutePrefix("api/Configuration")]
-    public class ConfigurationController : ApiController
+    [RoutePrefix("api/Preset")]
+    public class PresetController : ApiController
     {
-        internal static BasicSQLiteDriver d = BasicSQLiteDriver.CreateDriver("Data Source=" + ReleaseNotesWeb.WebApiApplication.configDbPath + ";Version=3;");
+        internal static BasicSQLiteDriver d = BasicSQLiteDriver.CreateDriver("Data Source=" + ReleaseNotesWeb.WebApiApplication.presetsDbPath + ";Version=3;");
         internal static List<Tuple<string, DbType>> columns = new List<Tuple<string, DbType>>
         {
             new Tuple<string, DbType>("generator", DbType.String),
@@ -30,14 +30,14 @@ namespace ReleaseNotesWeb.Controllers
 
         [Route("Load")]
         [HttpGet]
-        public DataTable LoadConfigurations()
+        public DataTable LoadPresets()
         {
-            return d.RunQuery("select * from configurations");
+            return d.RunQuery("select * from presets");
         }
 
         [Route("Save")]
         [HttpPost]
-        public void SaveConfiguration([FromBody] JObject fields)
+        public void SavePreset([FromBody] JObject fields)
         {
             List<object> values = new List<object> 
             {
@@ -52,44 +52,44 @@ namespace ReleaseNotesWeb.Controllers
                 fields.GetValueOrDefault<string>("webLocation")
             };
 
-            bool exists = d.GetBasicExistsQueryResult("configurations", "configurationName", DbType.String, fields.GetValueOrDefault<string>("configurationName"));
+            bool exists = d.GetBasicExistsQueryResult("presets", "presetName", DbType.String, fields.GetValueOrDefault<string>("presetName"));
             if (exists)
             {
-                d.CreateBasicUpdateStatement("configurations", columns, values,
+                d.CreateBasicUpdateStatement("presets", columns, values,
                 new List<Tuple<string, DbType>>
                 {
-                    new Tuple<string, DbType>("configurationName", DbType.String)
+                    new Tuple<string, DbType>("presetName", DbType.String)
                 },
                 new List<object>
                 {
-                    fields.GetValueOrDefault<string>("configurationName")
+                    fields.GetValueOrDefault<string>("presetName")
                 });
             }
             else
             {
                 List<Tuple<string, DbType>> insertColumns = new List<Tuple<string, DbType>>();
                 insertColumns.AddRange(columns);
-                insertColumns.Add(new Tuple<string, DbType>("configurationName", DbType.String));
-                values.Add(fields.GetValueOrDefault<string>("configurationName"));
-                d.CreateBasicInsertStatement("configurations", insertColumns, values);
+                insertColumns.Add(new Tuple<string, DbType>("presetName", DbType.String));
+                values.Add(fields.GetValueOrDefault<string>("presetName"));
+                d.CreateBasicInsertStatement("presets", insertColumns, values);
             }
         }
 
         [Route("Delete")]
         [HttpPost]
-        public void DeleteConfiguration([FromBody] JObject fields)
+        public void DeletePreset([FromBody] JObject fields)
         {
             List<Tuple<string, DbType>> deleteColumns = new List<Tuple<string, DbType>> {
-                new Tuple<string, DbType>("configurationName", DbType.String)
+                new Tuple<string, DbType>("presetName", DbType.String)
             };
             List<object> values = new List<object> 
             {
-                fields.GetValueOrDefault<string>("configurationName")
+                fields.GetValueOrDefault<string>("presetName")
             };
-            bool exists = d.GetBasicExistsQueryResult("configurations", "configurationName", DbType.String, (string)fields.GetValueOrDefault<string>("configurationName"));
+            bool exists = d.GetBasicExistsQueryResult("presets", "presetName", DbType.String, (string)fields.GetValueOrDefault<string>("presetName"));
             if (exists)
             {
-                d.CreateBasicDeleteStatement("configurations", deleteColumns, values);
+                d.CreateBasicDeleteStatement("presets", deleteColumns, values);
             }
         }
     }

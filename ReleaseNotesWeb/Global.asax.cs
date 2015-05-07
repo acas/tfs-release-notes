@@ -15,12 +15,12 @@ namespace ReleaseNotesWeb
     public class WebApiApplication : System.Web.HttpApplication
     {
         public static string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\ReleaseNotes\\";
-        public static string dbName = "configurations.sqlite";
-        public static string configDbPath = appDataPath + dbName;
+        public static string dbName = "presets.sqlite";
+        public static string presetsDbPath = appDataPath + dbName;
 
-        public static ReleaseNotesWeb.SQLite.BasicSQLiteDriver.DriverTable configurationTable = new ReleaseNotesWeb.SQLite.BasicSQLiteDriver.DriverTable
+        public static ReleaseNotesWeb.SQLite.BasicSQLiteDriver.DriverTable presetTable = new ReleaseNotesWeb.SQLite.BasicSQLiteDriver.DriverTable
         {
-            TableName = "configurations",
+            TableName = "presets",
             Columns = new List<BasicSQLiteDriver.DriverColumn> {
                         new BasicSQLiteDriver.DriverColumn {
                             ColumnName = "id",
@@ -36,7 +36,7 @@ namespace ReleaseNotesWeb
                             }
                         },
                         new BasicSQLiteDriver.DriverColumn {
-                            ColumnName = "configurationName",
+                            ColumnName = "presetName",
                             ColumnType = BasicSQLiteDriver.ColumnDataType.TEXT,
                             Constraints = new List<BasicSQLiteDriver.ColumnConstraint> {
                                 new BasicSQLiteDriver.ColumnConstraint {
@@ -98,11 +98,13 @@ namespace ReleaseNotesWeb
             {
                 Directory.CreateDirectory(appDataPath);
             }
-            if (!File.Exists(configDbPath))
+
+            // create presets file if it didn't exist before
+            if (!File.Exists(presetsDbPath))
             {
-                SQLiteConnection.CreateFile(configDbPath);
-                BasicSQLiteDriver d = BasicSQLiteDriver.CreateDriver("Data Source=" + configDbPath + ";Version=3;");
-                d.CreateTable(configurationTable);
+                SQLiteConnection.CreateFile(presetsDbPath);
+                BasicSQLiteDriver d = BasicSQLiteDriver.CreateDriver("Data Source=" + presetsDbPath + ";Version=3;");
+                d.CreateTable(presetTable);
             }
         }
     }

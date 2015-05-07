@@ -96,6 +96,7 @@
     <Compile Include="Generators\ExcelServerGenerator.cs" />
     <Compile Include="Generators\HTMLGenerator.cs" />
     <Compile Include="Generators\ReleaseNotesGenerator.cs" />
+    <Compile Include="Global.cs" />
     <Compile Include="Resources\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
