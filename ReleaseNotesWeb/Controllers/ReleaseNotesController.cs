@@ -24,7 +24,7 @@ namespace ReleaseNotesWeb.Controllers
             ReleaseNotesLibrary.Utility.NamedLookup settings = 
                 new ReleaseNotesLibrary.Utility.NamedLookup("Settings");
 
-            string generatorType = ((JObject)(fields.GetValue("generator"))).GetValue("name").ToString();
+            string generatorType = fields.GetValue("generator").ToString();
             settings["Team Project Path"] = fields.GetValue("teamProjectPath").ToString();
             settings["Project Name"] = fields.GetValue("projectName").ToString();
             settings["Project Subpath"] = fields.GetValue("projectSubpath").ToString();
@@ -47,7 +47,8 @@ namespace ReleaseNotesWeb.Controllers
             }
             else
             {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, "The generator type cannot be null");
+                generatorType = "html";
+                g = ReleaseNotesLibrary.Generators.HTMLGenerator.HTMLGeneratorFactory(settings, true);
             }
 
             byte[] result = g.GenerateReleaseNotes();

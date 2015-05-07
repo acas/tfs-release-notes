@@ -159,8 +159,9 @@
                     <select class="form-control input-sm" 
                             id="Generator"
                             ng-options="generator.name for generator in releaseNotes.generators"
-                            ng-model="releaseNotes.fields.generator"
-                            ng-init="releaseNotes.fields.generator = releaseNotes.generators[0].name"></select>
+                            ng-model="releaseNotes.selectedGenerator"
+                            ng-change="releaseNotes.setGenerator()"
+                            ng-init="releaseNotes.selectedGenerator = releaseNotes.generators[0]; releaseNotes.fields.generator = releaseNotes.generators[0].name;"></select>
                 </div>
             </div>
             <div class="form-group">

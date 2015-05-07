@@ -55,6 +55,7 @@ releaseNotes.controller('releaseNotes-controller', ['$scope', '$http', '$q', '$t
             selectedPreset: null,
             newPreset: null,
             generators: [],
+            selectedGenerator: null,
             fields: {
                 teamProjectPath: null,
                 projectName: null,
@@ -92,7 +93,13 @@ releaseNotes.controller('releaseNotes-controller', ['$scope', '$http', '$q', '$t
             presetChanged: function() {
                 if (api.selectedPreset) {
                     api.fields = api.selectedPreset
+                    api.selectedGenerator = _.find(api.generators, function (generator) {
+                        return generator.name === api.fields.generator
+                    })
                 }
+            },
+            setGenerator: function() {
+                api.fields.generator = api.selectedGenerator.name;
             },
             generate: function () {
                 var modalInstance = $modal.open({
