@@ -2,174 +2,134 @@
     <h2>TFS Release Notes</h2>
     <div class="form">
         <div class="form-horizontal">
-            <div class="form-group collapsible-content" 
-                 ng-click="releaseNotes.showPresetSection = !releaseNotes.showPresetSection">
-                <span class="glyphicon" 
-                      ng-class="{ 'glyphicon-chevron-right' : releaseNotes.showPresetSection, 'glyphicon-chevron-down' : !releaseNotes.showPresetSection }">
-                </span> Presets
+            <div class="form-group collapsible-content" ng-click="releaseNotes.showPresetSection = !releaseNotes.showPresetSection">
+                <span class="glyphicon" ng-class="{ 'glyphicon-chevron-right' : releaseNotes.showPresetSection, 'glyphicon-chevron-down' : !releaseNotes.showPresetSection }"> </span> Presets
             </div>
             <div ng-class="{ 'collapse' : releaseNotes.showPresetSection }">
-                <div class="form-group" 
+                <div class="form-group"
                      ng-if="releaseNotes.presets.length > 0">
-                    <label for="Recall Presets" 
-                           class="col-sm-4 control-label small">Recall Presets</label>
-                    <div class="col-sm-5">
-                        <select class="form-control input-sm" 
-                                id="Recall Presets"
-                                ng-options="preset.presetName for preset in releaseNotes.presets"
-                                ng-model="releaseNotes.selectedPreset"
-                                ng-change="releaseNotes.presetChanged()">
-                            <option></option>
-                        </select>
-                    </div>
+                    <label class="control-label small">
+                        <span class="col-sm-4">Recall Presets</span>
+                        <div class="col-sm-5">
+                            <select class="form-control input-sm"
+                                    ng-options="preset.presetName for preset in releaseNotes.presets"
+                                    ng-model="releaseNotes.selectedPreset"
+                                    ng-change="releaseNotes.presetChanged()">
+                                <option></option>
+                            </select>
+                    </label>
+                </div>
                     <div class="col-sm-3">
-                        <button class="btn btn-default btn-sm" 
-                                ng-click="releaseNotes.deletePreset()">
-                            <span class="glyphicon glyphicon-trash"></span> Delete
-                        </button>
+                        <button class="btn btn-default btn-sm" ng-click="releaseNotes.deletePreset()"> <span class="glyphicon glyphicon-trash"></span> Delete </button>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="Save Preset" 
-                           class="col-sm-4 control-label small">Save Preset</label>
-                    <div class="col-sm-5">
-                        <input type="text" 
-                               class="form-control input-sm" id="Save Preset"
-                               placeholder="Preset name"
-                               ng-model="releaseNotes.newPreset" />
-                    </div>
-                    <div class="col-sm-3">
-                        <button class="btn btn-default btn-sm" 
-                                ng-click="releaseNotes.savePreset()">
-                            <span class="glyphicon glyphicon-floppy-disk">
-                            </span> Save
-                        </button>
-                    </div>
+                    <label class="control-label small">
+                        <span class="col-sm-4">Save Preset</span>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control input-sm" placeholder="Preset name" ng-model="releaseNotes.newPreset" />
+                        </div>
+                        <div class="col-sm-3">
+                            <button class="btn btn-default btn-sm" ng-click="releaseNotes.savePreset()"><span class="glyphicon glyphicon-floppy-disk"></span> Save</button>
+                        </div>
+                    </label>
+                 
                 </div>
             </div>
-            <div class="form-group collapsible-content" 
+            <div class="form-group collapsible-content"
                  ng-click="releaseNotes.showRequiredSection = !releaseNotes.showRequiredSection">
-                <span class="glyphicon" 
+                <span class="glyphicon"
                       ng-class="{ 'glyphicon-chevron-right' : releaseNotes.showRequiredSection, 'glyphicon-chevron-down' : !releaseNotes.showRequiredSection }">
                 </span> TFS Server/Project Information (Required)
             </div>
             <div ng-class="{ 'collapse' : releaseNotes.showRequiredSection }">
                 <div class="form-group">
-                    <label for="Team Project Path" 
-                           class="col-sm-4 control-label small">Team Project Path</label>
-                    <div class="col-sm-8">
-                        <input type="text" 
-                               class="form-control input-sm" 
-                               id="Team Project Path" 
-                               placeholder="TFS addr" 
-                               ng-model="releaseNotes.fields.teamProjectPath" />
-                    </div>
+                    <label class="control-label small">
+                        <span class="col-sm-4">Team Projects Collection</span>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control input-sm" ng-model="releaseNotes.fields.teamProjectPath" placeholder="eg. https://mytfs.com/tfs/myprojects"/>
+                        </div>
+                    </label>                       
                 </div>
                 <div class="form-group">
-                    <label for="Project Name" 
-                           class="col-sm-4 control-label small">Project Name</label>
-                    <div class="col-sm-8">
-                        <input type="text" 
-                               class="form-control input-sm" 
-                               id="Project Name" 
-                               placeholder="Type in a name" 
-                               ng-model="releaseNotes.fields.projectName" />
-                    </div>
+                    <label class="control-label small">
+                        <span class="col-sm-4">Project Name</span>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control input-sm" ng-model="releaseNotes.fields.projectName" />
+                        </div>
+                    </label>                      
                 </div>
                 <div class="form-group">
-                    <label for="Project Subpath" 
-                           class="col-sm-4 control-label small">Project Subpath</label>
-                    <div class="col-sm-8">
-                        <input type="text" 
-                               class="form-control input-sm" 
-                               id="Project Subpath" 
-                               placeholder="May be left blank if not part of the project path" 
-                               ng-model="releaseNotes.fields.projectSubpath" />
-                    </div>
+                    <label class="control-label small">
+                        <span class="col-sm-4">Iteration Path</span>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control input-sm" ng-model="releaseNotes.fields.projectSubpath" placeholder="Leave blank if iteration is at project root" />
+                        </div>
+                    </label>                   
                 </div>
                 <div class="form-group">
-                    <label for="Iteration" 
-                           class="col-sm-4 control-label small">Iteration</label>
-                    <div class="col-sm-8">
-                        <input type="text" 
-                               class="form-control input-sm" 
-                               id="Iteration" 
-                               placeholder="Usually 'Release' and a version number" 
-                               ng-model="releaseNotes.fields.iteration" />
-                    </div>
+                    <label class="control-label small">
+                        <span class="col-sm-4">Iteration</span>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control input-sm" ng-model="releaseNotes.fields.iteration" placeholder="Name of iteration (Release 9, Sprint 7, etc.)" />
+                        </div>
+                    </label>                    
                 </div>
             </div>
-            <div class="form-group collapsible-content" 
-                 ng-click="releaseNotes.showOptionalSection = !releaseNotes.showOptionalSection">
-                <span class="glyphicon" 
-                      ng-class="{ 'glyphicon-chevron-right' : releaseNotes.showOptionalSection, 'glyphicon-chevron-down' : !releaseNotes.showOptionalSection }">
-                </span> Optional Info
+            <div class="form-group collapsible-content" ng-click="releaseNotes.showOptionalSection = !releaseNotes.showOptionalSection">
+                <span class="glyphicon" ng-class="{ 'glyphicon-chevron-right' : releaseNotes.showOptionalSection, 'glyphicon-chevron-down' : !releaseNotes.showOptionalSection }"> </span> Optional Info
             </div>
             <div ng-class="{ 'collapse' : releaseNotes.showOptionalSection }">
                 <div class="form-group">
-                    <label for="Database" 
-                           class="col-sm-4 control-label small">Database</label>
-                    <div class="col-sm-8">
-                        <input type="text" 
-                               class="form-control input-sm" 
-                               id="Database" 
-                               placeholder="A database name" 
-                               ng-model="releaseNotes.fields.database" />
-                    </div>
+                    <label class="control-label small">
+                        <span class="col-sm-4">Database Name</span>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control input-sm" ng-model="releaseNotes.fields.database" />
+                        </div>
+                    </label>
                 </div>
                 <div class="form-group">
-                    <label for="Database Server" 
-                           class="col-sm-4 control-label small">Database Server</label>
-                    <div class="col-sm-8">
-                        <input type="text" 
-                               class="form-control input-sm" 
-                               id="Database Server" 
-                               placeholder="The server the database above is on" 
-                               ng-model="releaseNotes.fields.databaseServer" />
-                    </div>
+                    <label class="control-label small">
+                        <span class="col-sm-4">Database Server</span>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control input-sm" ng-model="releaseNotes.fields.databaseServer" />
+                        </div>
+                    </label>
                 </div>
                 <div class="form-group">
-                    <label for="Web Server" 
-                           class="col-sm-4 control-label small">Web Server</label>
-                    <div class="col-sm-8">
-                        <input type="text" 
-                               class="form-control input-sm" 
-                               id="Web Server" 
-                               placeholder="The server the website is on" 
-                               ng-model="releaseNotes.fields.webServer" />
-                    </div>
+                    <label class="control-label small">
+                        <span class="col-sm-4">Web Server</span>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control input-sm" ng-model="releaseNotes.fields.webServer" />
+                        </div>
+                    </label>                   
                 </div>
                 <div class="form-group">
-                    <label for="Web Location" 
-                           class="col-sm-4 control-label small">Web Location</label>
-                    <div class="col-sm-8">
-                        <input type="text" 
-                               class="form-control input-sm" 
-                               id="Web Location" 
-                               placeholder="Where to access this application" 
-                               ng-model="releaseNotes.fields.webLocation" />
-                    </div>
+                    <label class="control-label small">
+                        <span class="col-sm-4">App Location</span>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control input-sm" ng-model="releaseNotes.fields.webLocation" placeholder="How to access this location (eg. URL)" />
+                        </div>
+                    </label>                   
                 </div>
                 <div class="form-group content-divider"></div>
             </div>
             <div class="form-group">
-                <label for="Generator" 
-                       class="col-sm-4 control-label small">Generator</label>
-                <div class="col-sm-8">
-                    <select class="form-control input-sm" 
-                            id="Generator"
-                            ng-options="generator.name for generator in releaseNotes.generators"
-                            ng-model="releaseNotes.selectedGenerator"
-                            ng-change="releaseNotes.setGenerator()"
-                            ng-init="releaseNotes.selectedGenerator = releaseNotes.generators[0]; releaseNotes.fields.generator = releaseNotes.generators[0].name;"></select>
-                </div>
+                <label class="control-label small">
+                    <span class="col-sm-4">Generator</span>
+                    <div class="col-sm-8">
+                        <select class="form-control input-sm"                                
+                                ng-options="generator.name for generator in releaseNotes.generators"
+                                ng-model="releaseNotes.selectedGenerator"
+                                ng-change="releaseNotes.setGenerator()"
+                                ng-init="releaseNotes.selectedGenerator = releaseNotes.generators[0]; releaseNotes.fields.generator = releaseNotes.generators[0].name;"></select>
+                    </div>
+                </label>                              
             </div>
             <div class="form-group">
                 <div class="col-sm-offset-4 col-sm-8">
-                    <button class="btn btn-default small"
-                            ng-click="releaseNotes.generate()">
-                        <span class="glyphicon glyphicon-download icon-fix">
-                        </span>Generate Release Notes
+                    <button class="btn btn-default small" ng-click="releaseNotes.generate()">
+                        <span class="glyphicon glyphicon-download icon-fix"> </span>Generate Release Notes
                     </button>
                 </div>
             </div>

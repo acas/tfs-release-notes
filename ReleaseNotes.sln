@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReleaseNotes", "ReleaseNotes\ReleaseNotes.csproj", "{03EA0A40-439B-462A-A6E8-90D920F90C7C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReleaseNotesWeb", "ReleaseNotesWeb\ReleaseNotesWeb.csproj", "{D2C091D8-895A-4648-BA8C-3192BC497AB3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{03EA0A40-439B-462A-A6E8-90D920F90C7C} = {03EA0A40-439B-462A-A6E8-90D920F90C7C}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

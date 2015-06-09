@@ -11,7 +11,7 @@ releaseNotes.controller('releaseNotes-controller', ['$scope', '$http', '$q', '$t
             },
             loadPresets: function () {
                 var deferred = $q.defer();
-                $http({ method: 'GET', url: 'api/Preset/Load' })
+                $http({ method: 'GET', url: 'api/Presets' })
                 .success(function (data) {
                     api.presets = data;
                     deferred.resolve()
@@ -21,7 +21,7 @@ releaseNotes.controller('releaseNotes-controller', ['$scope', '$http', '$q', '$t
             },
             savePreset: function (fields) {
                 var deferred = $q.defer();
-                $http({ method: 'POST', url: 'api/Preset/Save', data: fields })
+                $http({ method: 'PUT', url: 'api/Presets', data: fields })
                 .success(function (data) {
                     deferred.resolve()
                 })
@@ -30,7 +30,7 @@ releaseNotes.controller('releaseNotes-controller', ['$scope', '$http', '$q', '$t
             },
             deletePreset: function (fields) {
                 var deferred = $q.defer();
-                $http({ method: 'POST', url: 'api/Preset/Delete', data: fields })
+                $http({ method: 'DELETE', url: 'api/Presets', data: fields })
                 .success(function (data) {
                     utilities.loadPresets()
                     deferred.resolve()

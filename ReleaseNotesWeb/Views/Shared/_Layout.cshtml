@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <title>@ViewBag.Title</title>
+    <base href="@Url.RequestContext.HttpContext.Request.Url.Scheme://@Url.RequestContext.HttpContext.Request.Url.Authority@Url.Content("~/")" />
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/modernizr")

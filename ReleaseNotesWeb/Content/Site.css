@@ -1,65 +1,73 @@
 ﻿@font-face {
-    src: url(/fonts/OpenSans-Regular.ttf) format('truetype');
-    font-family: 'Open Sans'
+	src: url(/fonts/OpenSans-Regular.ttf) format('truetype');
+	font-family: 'Open Sans';
 }
 
 body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Open Sans' !important;
+	margin: 0;
+	padding: 0;
+	font-family: 'Open Sans' !important;
 }
 
 .content {
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    padding: 5px 5px 5px 5px;
-    background-color: #efefef;
-    box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
-    width: 500px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	padding: 5px 5px 5px 5px;
+	background-color: #efefef;
+	box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
+	width: 500px;
 }
 
-.content h2 {
-    text-align: center;
-    vertical-align: middle;
-    line-height: 20px;
-}
+	.content h2 {
+		text-align: center;
+		vertical-align: middle;
+		line-height: 20px;
+	}
 
 .form {
-    padding-top: 20px;
-    padding-right: 25px;
-    padding-left: 25px;
+	padding-top: 20px;
+	padding-right: 25px;
+	padding-left: 25px;
 }
 
 .collapsible-content {
-    background-color: lightgrey; 
-    cursor: pointer; 
-    padding: 5px 10px 5px 10px;
-    box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
+	background-color: lightgrey;
+	cursor: pointer;
+	padding: 5px 10px 5px 10px;
+	box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
 }
 
 .content-divider {
-    border-top: 1px solid lightgrey; 
-    margin-top: 15px; 
-    margin-bottom: 20px; 
-    height: 0; 
-    padding: 0;
+	border-top: 1px solid lightgrey;
+	margin-top: 15px;
+	margin-bottom: 20px;
+	height: 0;
+	padding: 0;
 }
 
 /* bootstrap overrides */
 
 .form-control {
-    border-radius: 0;
+	border-radius: 0;
 }
 
 .btn {
-    border-radius: 0;
+	border-radius: 0;
 }
 
 .icon-fix {
-    margin-bottom: 5px; 
-    margin-right: 5px; 
-    vertical-align: middle; 
-    line-height: 12px;
+	margin-bottom: 5px;
+	margin-right: 5px;
+	vertical-align: middle;
+	line-height: 12px;
 }
+
+.control-label {
+	width: 100%;
+}
+
+	.control-label > span {
+		line-height: 2;
+	}

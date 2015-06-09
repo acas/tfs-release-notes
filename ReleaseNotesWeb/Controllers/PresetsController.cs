@@ -10,9 +10,8 @@ using System.Net.Http;
 using System.Web.Http;
 
 namespace ReleaseNotesWeb.Controllers
-{
-    [RoutePrefix("api/Preset")]
-    public class PresetController : ApiController
+{    
+    public class PresetsController : ApiController
     {
         internal static BasicSQLiteDriver d = BasicSQLiteDriver.CreateDriver("Data Source=" + ReleaseNotesWeb.WebApiApplication.presetsDbPath + ";Version=3;");
         internal static List<Tuple<string, DbType>> columns = new List<Tuple<string, DbType>>
@@ -27,17 +26,13 @@ namespace ReleaseNotesWeb.Controllers
             new Tuple<string, DbType>("webServer", DbType.String),
             new Tuple<string, DbType>("webLocation", DbType.String)
         };
-
-        [Route("Load")]
-        [HttpGet]
-        public DataTable LoadPresets()
+        
+        public DataTable Get()
         {
             return d.RunQuery("select * from presets");
         }
-
-        [Route("Save")]
-        [HttpPost]
-        public void SavePreset([FromBody] JObject fields)
+        
+        public void Put([FromBody] JObject fields)
         {
             List<object> values = new List<object> 
             {
@@ -65,7 +60,7 @@ namespace ReleaseNotesWeb.Controllers
                     fields.GetValueOrDefault<string>("presetName")
                 });
             }
-            else
+            else if (!string.IsNullOrEmpty(fields.GetValueOrDefault<string>("presetName")))
             {
                 List<Tuple<string, DbType>> insertColumns = new List<Tuple<string, DbType>>();
                 insertColumns.AddRange(columns);
@@ -73,11 +68,13 @@ namespace ReleaseNotesWeb.Controllers
                 values.Add(fields.GetValueOrDefault<string>("presetName"));
                 d.CreateBasicInsertStatement("presets", insertColumns, values);
             }
+			else
+			{
+				throw new Exception("Preset name cannot be empty.");
+			}
         }
-
-        [Route("Delete")]
-        [HttpPost]
-        public void DeletePreset([FromBody] JObject fields)
+        
+        public void Delete([FromBody] JObject fields)
         {
             List<Tuple<string, DbType>> deleteColumns = new List<Tuple<string, DbType>> {
                 new Tuple<string, DbType>("presetName", DbType.String)
