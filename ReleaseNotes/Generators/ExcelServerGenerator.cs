@@ -164,8 +164,8 @@ namespace ReleaseNotesLibrary.Generators
                                 cellRange.Style.Font.Name = "Arial";
                                 cellRange.Style.Font.Size = 10;
                                 cellRange.Style.Font.Bold = true;
-                                cellRange.Value = settings["Team Project Path"] + "/" + settings["Project Name"] + "/_workitems" + Environment.NewLine + data[currentKey];
-                                string address = settings["Team Project Path"] + "/" + settings["Project Name"] + "/_workitems";
+								cellRange.Value = settings["Team Project Path"] + "/" + settings["Project Name"] + "/_versionControl" + Environment.NewLine + data[currentKey];
+								string address = settings["Team Project Path"] + "/" + settings["Project Name"] + "/_versionControl";
                                 cellRange.Hyperlink = new Uri(address);
                             }
                             else
