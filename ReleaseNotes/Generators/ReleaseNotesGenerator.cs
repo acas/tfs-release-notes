@@ -9,7 +9,7 @@ using System.Diagnostics.Contracts;
 
 namespace ReleaseNotesLibrary.Generators
 {
-	public class ReleaseNotesGenerator
+	public abstract class ReleaseNotesGenerator
 	{
 		protected bool silent;
 		protected Logger logger;

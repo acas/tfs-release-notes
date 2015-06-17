@@ -39,7 +39,7 @@ namespace ReleaseNotesWeb.Controllers
             ReleaseNotesLibrary.Generators.ReleaseNotesGenerator g;
             if (generatorType == "excel")
             {
-                g = ReleaseNotesLibrary.Generators.ExcelServerGenerator.ExcelServerGeneratorFactory(settings, true);
+                g = ReleaseNotesLibrary.Generators.ExcelGenerator.ExcelGeneratorFactory(settings, true);
             }
             else if (generatorType == "html")
             {

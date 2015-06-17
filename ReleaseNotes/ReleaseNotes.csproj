@@ -93,7 +93,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Generators\ExcelGenerator.cs" />
-    <Compile Include="Generators\ExcelServerGenerator.cs" />
     <Compile Include="Generators\HTMLGenerator.cs" />
     <Compile Include="Generators\ReleaseNotesGenerator.cs" />
     <Compile Include="Global.cs" />

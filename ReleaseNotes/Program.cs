@@ -12,13 +12,6 @@ namespace ReleaseNotesLibrary
 {
 	public class Program
 	{
-        // output a class library instead
-        /*
-        static void Main(string[] args)
-        {
-            programStart(args);
-        }*/
-
         public static void programStart(string[] args)
         {
             // silent mode is true by default -
@@ -63,10 +56,7 @@ namespace ReleaseNotesLibrary
 				switch (generatorType.ToLowerInvariant())
 				{
 					case "excel":
-						generator = ExcelGenerator.ExcelGeneratorFactory(settings, silent);
-						break;
-					case "server":
-						generator = ExcelServerGenerator.ExcelServerGeneratorFactory(settings, silent);
+						generator = ExcelGenerator.ExcelGeneratorFactory(settings, silent);											
 						break;
 					case "word":
 						generator = WordGenerator.WordGeneratorFactory(settings, silent);
