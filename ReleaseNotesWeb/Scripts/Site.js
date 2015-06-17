@@ -105,7 +105,8 @@ releaseNotes.controller('releaseNotes-controller', ['$scope', '$http', '$q', '$t
                 var modalInstance = $modal.open({
                     templateUrl: 'Home/Waiting',
                     controller: 'releaseNotes-progressModal-controller',
-                    size: 'md'
+                    size: 'md',
+					backdrop: 'static'
                 })
                 $http({ method: 'POST', url: 'api/ReleaseNotes', data: api.fields, responseType: 'arraybuffer' })
                 .success(function (response, status, xhr) {
